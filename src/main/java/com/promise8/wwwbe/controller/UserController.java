@@ -1,16 +1,13 @@
 package com.promise8.wwwbe.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
-
-    @GetMapping
-    public String test() {
-        return "test";
+    @PostMapping("/join")
+    public String join(@RequestBody String deviceId) {
+        return "join";
     }
 }

@@ -1,11 +1,9 @@
 package com.promise8.wwwbe.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import javax.persistence.*;
+
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,8 @@ import java.util.UUID;
 @ToString
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "user", schema = "www", catalog = "")
 public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class UserEntity {
     @Column(name = "uuid")
     private UUID uuid = UUID.randomUUID();
 
-//    @JsonIgnore
+    //    @JsonIgnore
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<MeetingEntity> meetingEntityList = new ArrayList<>();
 //
