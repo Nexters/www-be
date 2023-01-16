@@ -27,12 +27,12 @@ public class MeetingController {
     }
 
     @PostMapping("/{meetingId}/timetable")
-    public BaseResponse<String> createTimetable() {
+    public BaseResponse<String> createTimetable(@PathVariable("meetingId") long meetingId) {
         return BaseResponse.ok("createTimetable");
     }
 
     @PostMapping("/{meetingId}/places")
-    public BaseResponse<String> createPlace() {
+    public BaseResponse<String> createPlace(@PathVariable("meetingId") long meetingId) {
         return BaseResponse.ok("createPlace");
     }
 }
