@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "meeting_place", schema = "www", catalog = "")
-public class MeetingPlaceEntity {
+public class MeetingPlaceEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_place_id")
