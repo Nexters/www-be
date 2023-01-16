@@ -1,14 +1,11 @@
 package com.promise8.wwwbe.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -16,7 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "meeting_user", schema = "www", catalog = "")
-public class MeetingUserEntity {
+public class MeetingUserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_user_id")
