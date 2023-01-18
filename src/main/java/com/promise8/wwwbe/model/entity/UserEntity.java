@@ -1,12 +1,8 @@
 package com.promise8.wwwbe.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
-
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Setter
@@ -17,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "user", schema = "www", catalog = "")
-public class UserEntity {
+public class UserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "user_id")

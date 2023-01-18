@@ -1,11 +1,11 @@
 package com.promise8.wwwbe.model.entity;
 
-import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Setter
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Table(name = "meeting_user_timetable", schema = "www", catalog = "")
-public class MeetingUserTimetableEntity {
+public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_user_timetable_id")
