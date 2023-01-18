@@ -26,4 +26,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Verify with Maven
-        run: mvn verify -D spring.profiles.active=local
+        run: mvn verify -D spring.profiles.active=alpha
