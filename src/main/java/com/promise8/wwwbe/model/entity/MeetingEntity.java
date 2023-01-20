@@ -32,12 +32,9 @@ public class MeetingEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "end_date")
     private LocalDateTime endDate;
-    @Basic
-    @Column(name = "vote_end_date")
-    private LocalDateTime voteEndDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "hostId")
     private UserEntity userEntity;
 
 //    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
