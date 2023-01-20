@@ -33,6 +33,10 @@ public class MeetingEntity extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @Basic
+    @Column(name = "meeting_code")
+    private String meetingCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hostId")
     private UserEntity userEntity;
