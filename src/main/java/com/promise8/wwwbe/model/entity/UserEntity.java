@@ -3,7 +3,6 @@ package com.promise8.wwwbe.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -24,20 +23,5 @@ public class UserEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "user_name")
     private String userName;
-    @Basic
-    @Column(name = "uuid")
-    private UUID uuid = UUID.randomUUID();
-
-    //    @JsonIgnore
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<MeetingEntity> meetingEntityList = new ArrayList<>();
-//
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<MeetingUserEntity> meetingUserEntityList = new ArrayList<>();
-//
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
 
 }
