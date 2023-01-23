@@ -31,6 +31,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
 
-        return BaseResponse.ok(token);
+        // TODO: advice 테스트용. 추후 변경 필요
+        throw new BizException();
     }
 }
