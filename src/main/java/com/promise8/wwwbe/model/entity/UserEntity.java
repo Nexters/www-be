@@ -11,7 +11,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user", schema = "www", catalog = "")
+@Table(name = "user", schema = "www", catalog = "", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "device_id")
+})
 public class UserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -1,3 +1,7 @@
+logging:
+  level:
+    root: debug
+
 spring:
   mvc:
     pathmatch:
