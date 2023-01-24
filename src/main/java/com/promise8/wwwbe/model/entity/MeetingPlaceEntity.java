@@ -26,7 +26,8 @@ public class MeetingPlaceEntity extends BaseTimeEntity {
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "meeting_place", cascade = CascadeType.ALL)
-//    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
+    public MeetingPlaceEntity(String promisePlace, MeetingUserEntity meetingUserEntity) {
+        this.promisePlace = promisePlace;
+        this.meetingUserEntity = meetingUserEntity;
+    }
 }

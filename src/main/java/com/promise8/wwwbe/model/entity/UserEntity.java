@@ -29,5 +29,4 @@ public class UserEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "fcm_token")
     private String fcmToken;
-
 }

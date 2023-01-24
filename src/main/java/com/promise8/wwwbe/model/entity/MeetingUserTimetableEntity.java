@@ -29,4 +29,10 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
+
+    public MeetingUserTimetableEntity(LocalDateTime promiseDate, String promiseTime, MeetingUserEntity meetingUserEntity) {
+        this.promiseDate = promiseDate;
+        this.promiseTime = promiseTime;
+        this.meetingUserEntity = meetingUserEntity;
+    }
 }

@@ -1,5 +1,6 @@
 package com.promise8.wwwbe.model.entity;
 
+import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,12 @@ public class MeetingEntity extends BaseTimeEntity {
     @JoinColumn(name = "hostId")
     private UserEntity userEntity;
 
-//    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-//    private List<MeetingUserEntity> meetingUserEntityList = new ArrayList<>();
+    public MeetingEntity(MeetingCreateReqDto meetingCreateReqDto, UserEntity userEntity, String meetingCode) {
+        this.meetingName = meetingCreateReqDto.getMeetingName();
+        this.conditionCount = meetingCreateReqDto.getConditionCount();
+        this.startDate = meetingCreateReqDto.getStartDate();
+        this.endDate = meetingCreateReqDto.getEndDate();
+        this.userEntity = userEntity;
+        this.meetingCode = meetingCode;
+    }
 }

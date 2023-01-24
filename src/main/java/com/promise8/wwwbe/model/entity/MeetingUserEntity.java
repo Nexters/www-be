@@ -30,11 +30,9 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "meeting_user", cascade = CascadeType.ALL)
-//    private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-//
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "meeting_user", cascade = CascadeType.ALL)
-//    private List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+    public MeetingUserEntity(String meetingUserName, UserEntity userEntity, MeetingEntity meetingEntity) {
+        this.meetingUserName = meetingUserName;
+        this.userEntity = userEntity;
+        this.meetingEntity = meetingEntity;
+    }
 }
