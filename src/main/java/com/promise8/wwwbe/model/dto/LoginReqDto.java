@@ -6,4 +6,5 @@ import lombok.Data;
 public class LoginReqDto {
     private String userName;
     private String deviceId;
+    private String fcmToken;
 }
