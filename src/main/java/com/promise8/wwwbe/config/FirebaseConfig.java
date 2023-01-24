@@ -44,7 +44,11 @@ public class FirebaseConfig {
                 .setCredentials(credentials)
                 .build();
 
-        return FirebaseApp.initializeApp(options);
+        if(FirebaseApp.getApps().size() > 0) {
+            return FirebaseApp.getInstance();
+        } else {
+            return FirebaseApp.initializeApp(options);
+        }
     }
 
     @Bean
