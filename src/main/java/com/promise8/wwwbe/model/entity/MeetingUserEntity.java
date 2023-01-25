@@ -1,9 +1,6 @@
 package com.promise8.wwwbe.model.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +8,9 @@ import javax.persistence.*;
 @Getter
 @ToString
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "meeting_user", schema = "www", catalog = "")
 public class MeetingUserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,18 +20,10 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "meeting_user_name")
     private String meetingUserName;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
-
-    public MeetingUserEntity(String meetingUserName, UserEntity userEntity, MeetingEntity meetingEntity) {
-        this.meetingUserName = meetingUserName;
-        this.userEntity = userEntity;
-        this.meetingEntity = meetingEntity;
-    }
 }

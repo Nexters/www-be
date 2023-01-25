@@ -38,8 +38,13 @@ public class MeetingService {
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto) {
         String meetingCode = getMeetingCode();
         UserEntity userEntity = getUser(meetingCreateReqDto.getDeviceId(), meetingCreateReqDto.getUserName());
-        MeetingEntity meetingEntity = meetingRepository.save(new MeetingEntity(meetingCreateReqDto, userEntity, meetingCode));
-        MeetingUserEntity meetingUserEntity = meetingUserRepository.save(new MeetingUserEntity(meetingCreateReqDto.getUserName(), userEntity, meetingEntity));
+        MeetingEntity meetingEntity = meetingRepository.save(meetingCreateReqDto.of(userEntity, meetingCode));
+        MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+                .meetingUserName(meetingCreateReqDto.getUserName())
+                .userEntity(userEntity)
+                .meetingEntity(meetingEntity)
+                .build()
+        );
 
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
         for (PromiseDateAndTimeDto promiseDateAndTimeDto : meetingCreateReqDto.getPromiseDateAndTimeDtoList()) {
@@ -47,10 +52,20 @@ public class MeetingService {
             List<PromiseTime> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
-                meetingUserTimetableEntityList.add(new MeetingUserTimetableEntity(promiseDate, null, meetingUserEntity));
+                meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
+                        .promiseDate(promiseDate)
+                        .promiseTime(null)
+                        .meetingUserEntity(meetingUserEntity)
+                        .build()
+                );
             } else {
                 for (PromiseTime promiseTime : promiseTimeList) {
-                    meetingUserTimetableEntityList.add(new MeetingUserTimetableEntity(promiseDate, promiseTime.name(), meetingUserEntity));
+                    meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
+                            .promiseDate(promiseDate)
+                            .promiseTime(promiseTime.name())
+                            .meetingUserEntity(meetingUserEntity)
+                            .build()
+                    );
                 }
             }
         }
@@ -58,12 +73,15 @@ public class MeetingService {
 
         List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
-            meetingPlaceEntityList.add(new MeetingPlaceEntity(promisePlace, meetingUserEntity));
+            meetingPlaceEntityList.add(MeetingPlaceEntity.builder()
+                    .promisePlace(promisePlace)
+                    .meetingUserEntity(meetingUserEntity)
+                    .build());
         }
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
         // TODO Fix deviceType
-        return new MeetingCreateResDto(meetingCode, getDynamicLink(true));
+        return MeetingCreateResDto.of(meetingCode, getDynamicLink(true));
     }
 
     private String getMeetingCode() {
@@ -78,7 +96,11 @@ public class MeetingService {
 
     private UserEntity getUser(String deviceId, String userName) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByDeviceId(deviceId);
-        return optionalUserEntity.orElseGet(() -> userRepository.save(new UserEntity(deviceId, userName)));
+        return optionalUserEntity.orElseGet(() -> userRepository.save(UserEntity.builder()
+                .deviceId(deviceId)
+                .userName(userName)
+                .build()
+        ));
     }
 
     private String getDynamicLink(boolean deviceType) {
@@ -87,10 +109,10 @@ public class MeetingService {
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         DynamicLinkReqDto dynamicLinkReqDto = null;
         if (deviceType) {
-            dynamicLinkReqDto = new DynamicLinkReqDto(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
+            dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
             dynamicLinkUrl += androidApiKey;
         } else {
-            dynamicLinkReqDto = new DynamicLinkReqDto(LONG_DYNAMIC_LINK + "&ibi=" + IOS_PACKAGE);
+            dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&ibi=" + IOS_PACKAGE);
             dynamicLinkUrl += iosApiKey;
         }
 

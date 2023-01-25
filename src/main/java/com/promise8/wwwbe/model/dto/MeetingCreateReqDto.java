@@ -1,5 +1,7 @@
 package com.promise8.wwwbe.model.dto;
 
+import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,4 +19,15 @@ public class MeetingCreateReqDto {
     private String deviceId;
     private List<PromiseDateAndTimeDto> promiseDateAndTimeDtoList;
     private List<String> promisePlaceList;
+    
+    public MeetingEntity of(UserEntity userEntity, String meetingCode) {
+        return MeetingEntity.builder()
+                .meetingName(this.meetingName)
+                .conditionCount(this.conditionCount)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
+                .userEntity(userEntity)
+                .meetingCode(meetingCode)
+                .build();
+    }
 }
