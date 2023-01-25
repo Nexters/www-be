@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MeetingCreateResDto {
-    String meetingCode;
-    String meetingLink;
+    private String meetingCode;
+    private String meetingLink;
 }
