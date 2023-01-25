@@ -25,3 +25,8 @@ spring:
         format_sql: false
         use_sql_comments: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+api-key:
+  android:
+    AIzaSyCOgxZiPMwL2Ji4RTRfsaK-Rr049OSGmsU
+  ios:
+    AIzaSyBJoq-CFsCVGYqA6zslOyMXVLtp3W5CKFM
