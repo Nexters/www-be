@@ -26,4 +26,8 @@ public class UserEntity extends BaseTimeEntity {
     @Column(name = "user_name")
     private String userName;
 
+    @Basic
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
 }
