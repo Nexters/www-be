@@ -3,11 +3,11 @@ package com.promise8.wwwbe.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @Builder
 @NoArgsConstructor
@@ -24,7 +24,8 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "promise_time")
     private String promiseTime;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
 }

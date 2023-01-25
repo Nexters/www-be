@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @Builder
 @NoArgsConstructor
@@ -33,7 +32,7 @@ public class MeetingEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "meeting_code")
     private String meetingCode;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hostId")
     private UserEntity userEntity;
 }

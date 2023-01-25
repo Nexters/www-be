@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @Builder
 @NoArgsConstructor
@@ -18,11 +17,11 @@ public class PlaceVoteEntity extends BaseTimeEntity {
     @Column(name = "place_vote_id")
     private long placeVoteId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "meeting_place_id")
     private MeetingPlaceEntity meetingPlaceEntity;
 }

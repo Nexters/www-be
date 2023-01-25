@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Setter
 @Getter
-@ToString
 @Entity
 @Builder
 @NoArgsConstructor
@@ -20,10 +19,12 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "meeting_user_name")
     private String meetingUserName;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
 }
