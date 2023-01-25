@@ -17,7 +17,7 @@ public class MeetingCreateReqDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String deviceId;
-    private List<PromiseDateAndTimeDto> promiseDateAndTimeDtoList;
+    private List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList;
     private List<String> promisePlaceList;
     
     public MeetingEntity of(UserEntity userEntity, String meetingCode) {

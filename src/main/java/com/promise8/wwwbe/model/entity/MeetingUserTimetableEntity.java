@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -20,7 +19,7 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     private long meetingUserTimetableId;
     @Basic
     @Column(name = "promise_date")
-    private LocalDateTime promiseDate;
+    private LocalDate promiseDate;
     @Basic
     @Column(name = "promise_time")
     private String promiseTime;

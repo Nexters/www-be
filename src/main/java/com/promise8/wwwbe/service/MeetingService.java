@@ -10,7 +10,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +30,7 @@ public class MeetingService {
     private final MeetingUserRepository meetingUserRepository;
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
+    private final PlaceVoteRepository placeVoteRepository;
     @Value("${api-key.android}")
     private String androidApiKey;
     @Value("${api-key.ios}")
@@ -47,9 +48,9 @@ public class MeetingService {
         );
 
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-        for (PromiseDateAndTimeDto promiseDateAndTimeDto : meetingCreateReqDto.getPromiseDateAndTimeDtoList()) {
-            LocalDateTime promiseDate = promiseDateAndTimeDto.getPromiseDate();
-            List<PromiseTime> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
+        for (PromiseDateAndTimeReqDto promiseDateAndTimeReqDto : meetingCreateReqDto.getPromiseDateAndTimeReqDtoList()) {
+            LocalDate promiseDate = promiseDateAndTimeReqDto.getPromiseDate();
+            List<PromiseTime> promiseTimeList = promiseDateAndTimeReqDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
                 meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
@@ -87,7 +88,7 @@ public class MeetingService {
     private String getMeetingCode() {
         String code = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
         while (true) {
-            String existMeetingCode = meetingRepository.findByMeetingCode(code);
+            String existMeetingCode = meetingRepository.isExistMettingCode(code);
             if (existMeetingCode == null) {
                 return code;
             }
@@ -132,5 +133,32 @@ public class MeetingService {
         ResponseEntity<HashMap> response = restTemplate.exchange(dynamicLinkUrl, HttpMethod.POST, dynamicLinkReq, HashMap.class);
 
         return response.getBody().get("shortLink").toString();
+    }
+
+    public MeetingGetRes getMeetingById(long meetingId) {
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
+        return getMeeting(meetingEntity);
+    }
+
+    public MeetingGetRes getMeetingByCode(String meetingCode) {
+        MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
+        return getMeeting(meetingEntity);
+    }
+
+    public MeetingGetRes getMeeting(MeetingEntity meetingEntity) {
+        List<MeetingUserEntity> meetingUserEntityList = meetingUserRepository.findByMeetingEntity_MeetingId(meetingEntity.getMeetingId());
+        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = meetingUserTimetableRepository.findByMeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
+        List<MeetingPlaceEntity> meetingPlaceEntityList = meetingPlaceRepository.findByMeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
+        List<PlaceVoteEntity> placeVoteEntityList = placeVoteRepository.findByMeetingPlaceEntity_MeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
+        MeetingUserEntity meetingUserEntity = meetingUserRepository.findByUserEntity_UserIdAndMeetingEntity_MeetingId(meetingEntity.getUserEntity().getUserId(), meetingEntity.getMeetingId()).orElseThrow();
+
+        return MeetingGetRes.of(
+                meetingEntity,
+                meetingUserEntityList,
+                meetingUserTimetableEntityList,
+                meetingPlaceEntityList,
+                placeVoteEntityList,
+                meetingUserEntity.getMeetingUserName()
+        );
     }
 }

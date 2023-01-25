@@ -2,10 +2,14 @@ package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
+import com.promise8.wwwbe.model.dto.MeetingGetRes;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.MeetingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/meetings")
@@ -13,9 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class MeetingController {
 
     private final MeetingService meetingService;
-    
+
     /**
      * 입력 받을 정보 : 방 이름, 예상인원, 일정 범위, 투표 종료일
+     *
      * @return
      */
     @PostMapping
@@ -23,9 +28,19 @@ public class MeetingController {
         return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto));
     }
 
+    @GetMapping
+    public BaseResponse<List<MeetingGetRes>> getMeetingList(HttpServletRequest req) {
+        return BaseResponse.ok("getMeetingList");
+    }
+
     @GetMapping("/{meetingId}")
-    public BaseResponse<String> getMeeting(@PathVariable("meetingId") long meetingId) {
-        return BaseResponse.ok("meetingId");
+    public BaseResponse<MeetingGetRes> getMeetingById(@PathVariable("meetingId") long meetingId) {
+        return BaseResponse.ok(meetingService.getMeetingById(meetingId));
+    }
+
+    @GetMapping("/code/{meetingCode}")
+    public BaseResponse<MeetingGetRes> getMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
+        return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode));
     }
 
     @PostMapping("/{meetingId}/timetable")
