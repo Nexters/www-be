@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -40,22 +41,26 @@ public class MeetingService {
         MeetingEntity meetingEntity = meetingRepository.save(new MeetingEntity(meetingCreateReqDto, userEntity, meetingCode));
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(new MeetingUserEntity(meetingCreateReqDto.getUserName(), userEntity, meetingEntity));
 
+        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
         for (PromiseDateAndTimeDto promiseDateAndTimeDto : meetingCreateReqDto.getPromiseDateAndTimeDtoList()) {
             LocalDateTime promiseDate = promiseDateAndTimeDto.getPromiseDate();
             List<PromiseTime> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
-                meetingUserTimetableRepository.save(new MeetingUserTimetableEntity(promiseDate, null, meetingUserEntity));
+                meetingUserTimetableEntityList.add(new MeetingUserTimetableEntity(promiseDate, null, meetingUserEntity));
             } else {
                 for (PromiseTime promiseTime : promiseTimeList) {
-                    meetingUserTimetableRepository.save(new MeetingUserTimetableEntity(promiseDate, promiseTime.name(), meetingUserEntity));
+                    meetingUserTimetableEntityList.add(new MeetingUserTimetableEntity(promiseDate, promiseTime.name(), meetingUserEntity));
                 }
             }
         }
+        meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
+        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
-            meetingPlaceRepository.save(new MeetingPlaceEntity(promisePlace, meetingUserEntity));
+            meetingPlaceEntityList.add(new MeetingPlaceEntity(promisePlace, meetingUserEntity));
         }
+        meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
         // TODO Fix deviceType
         return new MeetingCreateResDto(meetingCode, getDynamicLink(true));
