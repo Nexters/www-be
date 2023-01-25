@@ -6,13 +6,8 @@ import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -23,11 +18,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MeetingService {
-    private final int MEETING_CODE_LENGTH = 6;
-    private final String androidPackage = "com.promiseeight.www";
-    private final String iosPackage = "com.promise8.www";
+    private static final int MEETING_CODE_LENGTH = 6;
+    private static final String ANDROID_PACKAGE = "com.promiseeight.www";
+    private static final String IOS_PACKAGE = "com.promise8.www";
     // TODO Fix link
-    private final String longDynamicLink = "https://whenwheres.page.link/?link=https://naver.com";
+    private static final String LONG_DYNAMIC_LINK = "https://whenwheres.page.link/?link=https://naver.com";
     private final PushService pushService;
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
@@ -74,17 +69,16 @@ public class MeetingService {
     private String getDynamicLink(boolean deviceType) {
         String dynamicLinkUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=";
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-type", "application/json");
-        MultiValueMap<String, String> httpBody = new LinkedMultiValueMap<>();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        DynamicLinkReqDto dynamicLinkReqDto = null;
         if (deviceType) {
-            httpBody.add("longDynamicLink", longDynamicLink + "&apn=" + androidPackage);
+            dynamicLinkReqDto = new DynamicLinkReqDto(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
             dynamicLinkUrl += androidApiKey;
         } else {
-            httpBody.add("longDynamicLink", longDynamicLink + "&ibi=" + iosPackage);
+            dynamicLinkReqDto = new DynamicLinkReqDto(LONG_DYNAMIC_LINK + "&ibi=" + IOS_PACKAGE);
             dynamicLinkUrl += iosApiKey;
         }
 
-        DynamicLinkReqDto dynamicLinkReqDto = new DynamicLinkReqDto(longDynamicLink + "&apn=" + androidPackage);
         HttpEntity<DynamicLinkReqDto> dynamicLinkReq = new HttpEntity<>(dynamicLinkReqDto, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
