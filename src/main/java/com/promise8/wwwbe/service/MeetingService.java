@@ -35,7 +35,7 @@ public class MeetingService {
     private String iosApiKey;
 
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto) {
-        String meetingCode = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
+        String meetingCode = getMeetingCode();
         UserEntity userEntity = getUser(meetingCreateReqDto.getDeviceId(), meetingCreateReqDto.getUserName());
         MeetingEntity meetingEntity = meetingRepository.save(new MeetingEntity(meetingCreateReqDto, userEntity, meetingCode));
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(new MeetingUserEntity(meetingCreateReqDto.getUserName(), userEntity, meetingEntity));
@@ -59,6 +59,16 @@ public class MeetingService {
 
         // TODO Fix deviceType
         return new MeetingCreateResDto(meetingCode, getDynamicLink(true));
+    }
+
+    private String getMeetingCode() {
+        String code = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
+        while (true) {
+            String existMeetingCode = meetingRepository.findByMeetingCode(code);
+            if (existMeetingCode == null) {
+                return code;
+            }
+        }
     }
 
     private UserEntity getUser(String deviceId, String userName) {
