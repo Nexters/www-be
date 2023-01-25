@@ -10,5 +10,5 @@ import java.util.List;
 @Getter
 public class PromiseDateAndTimeDto {
     private LocalDateTime promiseDate;
-    private List<String> promiseTimeList;
+    private List<PromiseTime> promiseTimeList;
 }

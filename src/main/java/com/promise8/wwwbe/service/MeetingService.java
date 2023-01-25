@@ -1,9 +1,6 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.DynamicLinkReqDto;
-import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
-import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
-import com.promise8.wwwbe.model.dto.PromiseDateAndTimeDto;
+import com.promise8.wwwbe.model.dto.*;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +47,13 @@ public class MeetingService {
 
         for (PromiseDateAndTimeDto promiseDateAndTimeDto : meetingCreateReqDto.getPromiseDateAndTimeDtoList()) {
             LocalDateTime promiseDate = promiseDateAndTimeDto.getPromiseDate();
-            List<String> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
+            List<PromiseTime> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
                 meetingUserTimetableRepository.save(new MeetingUserTimetableEntity(promiseDate, null, meetingUserEntity));
             } else {
-                for (String promiseTime : promiseTimeList) {
-                    meetingUserTimetableRepository.save(new MeetingUserTimetableEntity(promiseDate, promiseTime, meetingUserEntity));
+                for (PromiseTime promiseTime : promiseTimeList) {
+                    meetingUserTimetableRepository.save(new MeetingUserTimetableEntity(promiseDate, promiseTime.name(), meetingUserEntity));
                 }
             }
         }
