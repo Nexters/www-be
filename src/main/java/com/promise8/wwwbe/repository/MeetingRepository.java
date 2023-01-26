@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<MeetingEntity, Long> {
     @Query(value = "select m.meeting_code from meeting m where meeting_code= ?1", nativeQuery = true)
-    public String isExistMettingCode(String meetingCode);
+    public String isExistMeetingCode(String meetingCode);
+
     public Optional<MeetingEntity> findByMeetingCode(String meetingCode);
 }

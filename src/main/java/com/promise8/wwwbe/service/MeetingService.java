@@ -88,7 +88,7 @@ public class MeetingService {
     private String getMeetingCode() {
         String code = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
         while (true) {
-            String existMeetingCode = meetingRepository.isExistMettingCode(code);
+            String existMeetingCode = meetingRepository.isExistMeetingCode(code);
             if (existMeetingCode == null) {
                 return code;
             }

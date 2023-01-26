@@ -3,7 +3,7 @@ package com.promise8.wwwbe.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -25,10 +25,10 @@ public class MeetingEntity extends BaseTimeEntity {
     private Long conditionCount;
     @Basic
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @Basic
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @Basic
     @Column(name = "meeting_code")
     private String meetingCode;
