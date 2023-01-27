@@ -28,15 +28,17 @@ public class SecurityConfig {
                 .csrf().disable()
                 .logout().disable()
                 .authorizeRequests()
-                    .antMatchers(
-                            // for login
-                            "/users/join",
-                            // for swagger
-                            "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"
-                    )
-                    .permitAll()
+                .antMatchers(
+                        // for login
+                        "/users/join",
+                        // for create meeting
+                        "/meetings",
+                        // for swagger
+                        "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"
+                )
+                .permitAll()
                 .anyRequest()
-                    .authenticated()
+                .authenticated()
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

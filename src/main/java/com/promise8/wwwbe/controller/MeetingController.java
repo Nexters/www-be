@@ -1,5 +1,7 @@
 package com.promise8.wwwbe.controller;
 
+import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
+import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.MeetingService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,8 @@ public class MeetingController {
      * @return
      */
     @PostMapping
-    public BaseResponse<String> createMeeting() {
-        return BaseResponse.ok("meeting");
+    public BaseResponse<MeetingCreateResDto> createMeeting(@RequestBody MeetingCreateReqDto meetingCreateReqDto) {
+        return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto));
     }
 
     @GetMapping("/{meetingId}")

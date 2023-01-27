@@ -1,9 +1,6 @@
 package com.promise8.wwwbe.model.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "meeting_user_timetable", schema = "www", catalog = "")
 public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +24,6 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "promise_time")
     private String promiseTime;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
