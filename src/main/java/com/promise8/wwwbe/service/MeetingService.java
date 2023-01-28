@@ -134,6 +134,16 @@ public class MeetingService {
         return getMeeting(meetingEntity);
     }
 
+    public List<MeetingGetRes> getMeetingByDeviceId(String deviceId) {
+        List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
+        List<MeetingGetRes> meetingGetResList = new ArrayList<>();
+        meetingEntityList.forEach(res -> {
+            meetingGetResList.add(getMeeting(res));
+        });
+
+        return meetingGetResList;
+    }
+
     public MeetingGetRes getMeeting(MeetingEntity meetingEntity) {
         List<MeetingUserEntity> meetingUserEntityList = meetingUserRepository.findByMeetingEntity_MeetingId(meetingEntity.getMeetingId());
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = meetingUserTimetableRepository.findByMeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
