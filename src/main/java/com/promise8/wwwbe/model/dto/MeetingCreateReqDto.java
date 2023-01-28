@@ -19,6 +19,7 @@ public class MeetingCreateReqDto {
     private String deviceId;
     private List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList;
     private List<String> promisePlaceList;
+    private PlatformType platformType;
     
     public MeetingEntity of(UserEntity userEntity, String meetingCode) {
         return MeetingEntity.builder()
