@@ -95,16 +95,6 @@ public class MeetingService {
         }
     }
 
-    private String getMeetingCode() {
-        String code = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
-        while (true) {
-            String existMeetingCode = meetingRepository.findByMeetingCode(code);
-            if (existMeetingCode == null) {
-                return code;
-            }
-        }
-    }
-
     private UserEntity getUser(String deviceId, String userName) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByDeviceId(deviceId);
         return optionalUserEntity.orElseGet(() -> userRepository.save(UserEntity.builder()
