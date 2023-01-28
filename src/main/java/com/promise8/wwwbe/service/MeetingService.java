@@ -81,8 +81,7 @@ public class MeetingService {
         }
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
-        // TODO Fix deviceType
-        return MeetingCreateResDto.of(meetingCode, getDynamicLink(true));
+        return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
     }
 
     private String getMeetingCode() {
@@ -104,12 +103,12 @@ public class MeetingService {
         ));
     }
 
-    private String getDynamicLink(boolean deviceType) {
+    private String getDynamicLink(PlatformType platformType) {
         String dynamicLinkUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=";
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         DynamicLinkReqDto dynamicLinkReqDto = null;
-        if (deviceType) {
+        if (PlatformType.ANDROID.equals(platformType)) {
             dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
             dynamicLinkUrl += androidApiKey;
         } else {
