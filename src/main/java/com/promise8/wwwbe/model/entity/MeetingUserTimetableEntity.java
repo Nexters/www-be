@@ -26,7 +26,7 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     private String promiseTime;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
 }
