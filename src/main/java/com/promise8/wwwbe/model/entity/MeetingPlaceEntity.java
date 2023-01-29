@@ -26,7 +26,7 @@ public class MeetingPlaceEntity extends BaseTimeEntity {
     private String promisePlace;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
 
