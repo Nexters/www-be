@@ -1,5 +1,6 @@
 package com.promise8.wwwbe.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +25,8 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @Column(name = "promise_time")
     private String promiseTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
 }

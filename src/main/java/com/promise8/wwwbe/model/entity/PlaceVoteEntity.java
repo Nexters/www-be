@@ -1,5 +1,6 @@
 package com.promise8.wwwbe.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,11 +18,12 @@ public class PlaceVoteEntity extends BaseTimeEntity {
     @Column(name = "place_vote_id")
     private long placeVoteId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "meeting_place_id")
     private MeetingPlaceEntity meetingPlaceEntity;
 }

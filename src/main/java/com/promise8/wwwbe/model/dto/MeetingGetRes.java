@@ -1,12 +1,13 @@
 package com.promise8.wwwbe.model.dto;
 
-import com.promise8.wwwbe.model.entity.*;
+import com.promise8.wwwbe.model.entity.MeetingEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -17,37 +18,29 @@ public class MeetingGetRes {
     private Long conditionCount;
     private String hostName;
     private Integer joinedUserCount;
-    private List<UserPromiseTimeResDto> userPromiseTimeResDtoList;
+    private LocalDate promiseDate;
+    private PromiseTime promiseTime;
+    private String promisePlace;
+    private HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap;
     private List<UserPromisePlaceResDto> userPromisePlaceResDtoList;
     private Integer isVoting;
-    private List<UserVoteResDto> userVoteResDtoList;
+    private HashMap<String, List<String>> userVoteHashMap;
 
     public static MeetingGetRes of(
             MeetingEntity meetingEntity,
-            List<MeetingUserEntity> meetingUserEntity,
-            List<MeetingUserTimetableEntity> meetingUserTimetableEntityList,
-            List<MeetingPlaceEntity> meetingPlaceEntityList,
-            List<PlaceVoteEntity> placeVoteEntityList,
-            String hostName) {
+            List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
+            HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap,
+            HashMap<String, List<String>> userVoteHashMap) {
         return MeetingGetRes.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
-                .hostName(hostName)
-                .joinedUserCount(meetingUserEntity.size())
-                .userPromiseTimeResDtoList(
-                        meetingUserTimetableEntityList.stream()
-                                .map(UserPromiseTimeResDto::of).collect(Collectors.toList())
-                )
-                .userPromisePlaceResDtoList(
-                        meetingPlaceEntityList.stream()
-                                .map(UserPromisePlaceResDto::of).collect(Collectors.toList())
-                )
+                .hostName(meetingEntity.getUserEntity().getUserName())
+                .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
+                .userPromiseTimeHashMap(userPromiseTimeHashMap)
+                .userPromisePlaceResDtoList(userPromisePlaceResDtoList)
                 .isVoting(1)
-                .userVoteResDtoList(
-                        placeVoteEntityList.stream()
-                                .map(UserVoteResDto::of).collect(Collectors.toList())
-                )
+                .userVoteHashMap(userVoteHashMap)
                 .build();
     }
 }

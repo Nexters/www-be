@@ -1,9 +1,13 @@
 package com.promise8.wwwbe.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -32,7 +36,12 @@ public class MeetingEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "meeting_code")
     private String meetingCode;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToOne
     @JoinColumn(name = "hostId")
     private UserEntity userEntity;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL)
+    private List<MeetingUserEntity> meetingUserEntityList = new ArrayList<>();
 }

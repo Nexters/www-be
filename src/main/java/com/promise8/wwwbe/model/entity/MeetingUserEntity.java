@@ -1,8 +1,13 @@
 package com.promise8.wwwbe.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -20,11 +25,21 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @Column(name = "meeting_user_name")
     private String meetingUserName;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "meeting_id")
     private MeetingEntity meetingEntity;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "meetingUserEntity", cascade = CascadeType.ALL)
+    private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "meetingUserEntity", cascade = CascadeType.ALL)
+    private List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
 }

@@ -1,8 +1,13 @@
 package com.promise8.wwwbe.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -20,7 +25,12 @@ public class MeetingPlaceEntity extends BaseTimeEntity {
     @Column(name = "promise_place")
     private String promisePlace;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_user_id")
     private MeetingUserEntity meetingUserEntity;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "meetingPlaceEntity", cascade = CascadeType.ALL)
+    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,7 @@ public class MeetingService {
                 .build()
         );
 
+        // TODO Refactoring
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
         for (PromiseDateAndTimeReqDto promiseDateAndTimeReqDto : meetingCreateReqDto.getPromiseDateAndTimeReqDtoList()) {
             LocalDate promiseDate = promiseDateAndTimeReqDto.getPromiseDate();
@@ -72,6 +74,7 @@ public class MeetingService {
         }
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
+        // TODO Refactoring
         List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
             meetingPlaceEntityList.add(MeetingPlaceEntity.builder()
@@ -126,38 +129,79 @@ public class MeetingService {
 
     public MeetingGetRes getMeetingById(long meetingId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
-        return getMeeting(meetingEntity);
+
+        return MeetingGetRes.of(
+                meetingEntity,
+                getUserPromisePlaceResDtoList(meetingEntity),
+                getUserPromiseTimeHashMap(meetingEntity),
+                getUserVoteHashMap(meetingEntity)
+        );
     }
 
     public MeetingGetRes getMeetingByCode(String meetingCode) {
         MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
-        return getMeeting(meetingEntity);
+
+        return MeetingGetRes.of(
+                meetingEntity,
+                getUserPromisePlaceResDtoList(meetingEntity),
+                getUserPromiseTimeHashMap(meetingEntity),
+                getUserVoteHashMap(meetingEntity)
+        );
     }
 
     public List<MeetingGetRes> getMeetingByDeviceId(String deviceId) {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
-        List<MeetingGetRes> meetingGetResList = new ArrayList<>();
-        meetingEntityList.forEach(res -> {
-            meetingGetResList.add(getMeeting(res));
-        });
 
-        return meetingGetResList;
+        // TODO Add more
+        return null;
     }
 
-    public MeetingGetRes getMeeting(MeetingEntity meetingEntity) {
-        List<MeetingUserEntity> meetingUserEntityList = meetingUserRepository.findByMeetingEntity_MeetingId(meetingEntity.getMeetingId());
-        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = meetingUserTimetableRepository.findByMeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
-        List<MeetingPlaceEntity> meetingPlaceEntityList = meetingPlaceRepository.findByMeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
-        List<PlaceVoteEntity> placeVoteEntityList = placeVoteRepository.findByMeetingPlaceEntity_MeetingUserEntity_MeetingEntity_MeetingId(meetingEntity.getMeetingId());
-        MeetingUserEntity meetingUserEntity = meetingUserRepository.findByUserEntity_UserIdAndMeetingEntity_MeetingId(meetingEntity.getUserEntity().getUserId(), meetingEntity.getMeetingId()).orElseThrow();
+    private HashMap<LocalDate, List<String[]>> getUserPromiseTimeHashMap(MeetingEntity meetingEntity) {
+        HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap = new HashMap<>();
 
-        return MeetingGetRes.of(
-                meetingEntity,
-                meetingUserEntityList,
-                meetingUserTimetableEntityList,
-                meetingPlaceEntityList,
-                placeVoteEntityList,
-                meetingUserEntity.getMeetingUserName()
-        );
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
+                LocalDate promiseDate = res.getPromiseDate();
+                if (userPromiseTimeHashMap.containsKey(promiseDate)) {
+                    userPromiseTimeHashMap.get(promiseDate).add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                } else {
+                    List<String[]> promiseList = new ArrayList<>();
+                    promiseList.add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                    userPromiseTimeHashMap.put(promiseDate, promiseList);
+                }
+            });
+        });
+
+        return userPromiseTimeHashMap;
+    }
+
+    private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
+        HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingUser.getMeetingPlaceEntityList().forEach(meetingPlace -> {
+                meetingPlace.getPlaceVoteEntityList().forEach(res -> {
+                    String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
+                    if (userVoteHashMap.containsKey(promisePlace)) {
+                        userVoteHashMap.get(promisePlace).add(res.getUserEntity().getUserName());
+                    } else {
+                        List<String> voteList = new ArrayList<>();
+                        voteList.add(res.getUserEntity().getUserName());
+                        userVoteHashMap.put(promisePlace, voteList);
+                    }
+                });
+            });
+        });
+
+        return userVoteHashMap;
+    }
+
+    private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
+        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            userPromisePlaceResDtoList.addAll(meetingUser.getMeetingPlaceEntityList().stream()
+                    .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
+        });
+
+        return userPromisePlaceResDtoList;
     }
 }
