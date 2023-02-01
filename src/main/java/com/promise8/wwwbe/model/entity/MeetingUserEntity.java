@@ -42,4 +42,8 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "meetingUserEntity", cascade = CascadeType.ALL)
     private List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "meetingUserEntity", cascade = CascadeType.ALL)
+    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
 }

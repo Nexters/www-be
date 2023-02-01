@@ -182,10 +182,10 @@ public class MeetingService {
                 meetingPlace.getPlaceVoteEntityList().forEach(res -> {
                     String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
                     if (userVoteHashMap.containsKey(promisePlace)) {
-                        userVoteHashMap.get(promisePlace).add(res.getUserEntity().getUserName());
+                        userVoteHashMap.get(promisePlace).add(res.getMeetingUserEntity().getMeetingUserName());
                     } else {
                         List<String> voteList = new ArrayList<>();
-                        voteList.add(res.getUserEntity().getUserName());
+                        voteList.add(res.getMeetingUserEntity().getMeetingUserName());
                         userVoteHashMap.put(promisePlace, voteList);
                     }
                 });

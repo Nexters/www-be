@@ -14,7 +14,7 @@ public class UserVoteResDto {
 
     public static UserVoteResDto of(PlaceVoteEntity placeVoteEntity) {
         return UserVoteResDto.builder()
-                .userName(placeVoteEntity.getUserEntity().getUserName())
+                .userName(placeVoteEntity.getMeetingUserEntity().getMeetingUserName())
                 .promisePlace(placeVoteEntity.getMeetingPlaceEntity().getPromisePlace())
                 .build();
     }
