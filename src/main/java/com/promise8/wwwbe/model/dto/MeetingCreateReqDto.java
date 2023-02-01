@@ -20,15 +20,16 @@ public class MeetingCreateReqDto {
     private List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList;
     private List<String> promisePlaceList;
     private PlatformType platformType;
-    
+
     public MeetingEntity of(UserEntity userEntity, String meetingCode) {
         return MeetingEntity.builder()
                 .meetingName(this.meetingName)
                 .conditionCount(this.conditionCount)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
-                .userEntity(userEntity)
                 .meetingCode(meetingCode)
+                .meetingStatus(MeetingStatus.WAITING.name())
+                .userEntity(userEntity)
                 .build();
     }
 }

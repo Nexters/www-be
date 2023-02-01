@@ -23,7 +23,7 @@ public class MeetingGetRes {
     private String promisePlace;
     private HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap;
     private List<UserPromisePlaceResDto> userPromisePlaceResDtoList;
-    private Integer isVoting;
+    private MeetingStatus meetingStatus;
     private HashMap<String, List<String>> userVoteHashMap;
 
     public static MeetingGetRes of(
@@ -35,11 +35,12 @@ public class MeetingGetRes {
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
+                // TODO Fix to hostName of MeetingUserEntity
                 .hostName(meetingEntity.getUserEntity().getUserName())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
                 .userPromiseTimeHashMap(userPromiseTimeHashMap)
                 .userPromisePlaceResDtoList(userPromisePlaceResDtoList)
-                .isVoting(1)
+                .meetingStatus(MeetingStatus.valueOf(meetingEntity.getMeetingStatus()))
                 .userVoteHashMap(userVoteHashMap)
                 .build();
     }

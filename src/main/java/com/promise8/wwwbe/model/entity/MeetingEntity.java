@@ -36,6 +36,9 @@ public class MeetingEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "meeting_code")
     private String meetingCode;
+    @Basic
+    @Column(name = "meeting_status")
+    private String meetingStatus;
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToOne
     @JoinColumn(name = "hostId")
