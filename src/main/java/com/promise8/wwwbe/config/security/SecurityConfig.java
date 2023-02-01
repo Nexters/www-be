@@ -31,8 +31,6 @@ public class SecurityConfig {
                 .antMatchers(
                         // for login
                         "/users/join",
-                        // for create meeting TODO delete after conference of team
-                        "/meetings",
                         // for swagger
                         "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"
                 )
