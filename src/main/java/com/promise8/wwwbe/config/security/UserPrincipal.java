@@ -20,11 +20,13 @@ public class UserPrincipal implements UserDetails {
     private Long id;
     private String deviceId;
     private String userName;
+    private String fcmToken;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserPrincipal create(UserEntity user) {
         List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        return new UserPrincipal(user.getUserId(), user.getDeviceId(), user.getUserName(), authorities);
+        return new UserPrincipal(user.getUserId(), user.getDeviceId(), user.getUserName(), user.getFcmToken(), authorities);
     }
 
 
