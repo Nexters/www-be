@@ -2,7 +2,6 @@ package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.*;
 import com.promise8.wwwbe.model.entity.*;
-import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.*;
@@ -11,6 +10,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -90,6 +90,7 @@ public class MeetingService {
         return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
     }
 
+    @Transactional
     public void putMeetingStatus(long meetingId, ActionType actionType) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
             throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
