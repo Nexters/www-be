@@ -10,11 +10,12 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class MeetingService {
     private final MeetingUserRepository meetingUserRepository;
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
+    private final PlaceVoteRepository placeVoteRepository;
     @Value("${api-key.android}")
     private String androidApiKey;
     @Value("${api-key.ios}")
@@ -46,10 +48,11 @@ public class MeetingService {
                 .build()
         );
 
+        // TODO Refactoring
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-        for (PromiseDateAndTimeDto promiseDateAndTimeDto : meetingCreateReqDto.getPromiseDateAndTimeDtoList()) {
-            LocalDateTime promiseDate = promiseDateAndTimeDto.getPromiseDate();
-            List<PromiseTime> promiseTimeList = promiseDateAndTimeDto.getPromiseTimeList();
+        for (PromiseDateAndTimeReqDto promiseDateAndTimeReqDto : meetingCreateReqDto.getPromiseDateAndTimeReqDtoList()) {
+            LocalDate promiseDate = promiseDateAndTimeReqDto.getPromiseDate();
+            List<PromiseTime> promiseTimeList = promiseDateAndTimeReqDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
                 meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
@@ -71,6 +74,7 @@ public class MeetingService {
         }
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
+        // TODO Refactoring
         List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
             meetingPlaceEntityList.add(MeetingPlaceEntity.builder()
@@ -80,14 +84,13 @@ public class MeetingService {
         }
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
-        // TODO Fix deviceType
-        return MeetingCreateResDto.of(meetingCode, getDynamicLink(true));
+        return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
     }
 
     private String getMeetingCode() {
         String code = RandomStringUtils.random(MEETING_CODE_LENGTH, true, false);
         while (true) {
-            String existMeetingCode = meetingRepository.findByMeetingCode(code);
+            String existMeetingCode = meetingRepository.isExistMeetingCode(code);
             if (existMeetingCode == null) {
                 return code;
             }
@@ -103,12 +106,12 @@ public class MeetingService {
         ));
     }
 
-    private String getDynamicLink(boolean deviceType) {
+    private String getDynamicLink(PlatformType platformType) {
         String dynamicLinkUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=";
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         DynamicLinkReqDto dynamicLinkReqDto = null;
-        if (deviceType) {
+        if (PlatformType.ANDROID.equals(platformType)) {
             dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
             dynamicLinkUrl += androidApiKey;
         } else {
@@ -122,5 +125,83 @@ public class MeetingService {
         ResponseEntity<HashMap> response = restTemplate.exchange(dynamicLinkUrl, HttpMethod.POST, dynamicLinkReq, HashMap.class);
 
         return response.getBody().get("shortLink").toString();
+    }
+
+    public MeetingGetRes getMeetingById(long meetingId) {
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
+
+        return MeetingGetRes.of(
+                meetingEntity,
+                getUserPromisePlaceResDtoList(meetingEntity),
+                getUserPromiseTimeHashMap(meetingEntity),
+                getUserVoteHashMap(meetingEntity)
+        );
+    }
+
+    public MeetingGetRes getMeetingByCode(String meetingCode) {
+        MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
+
+        return MeetingGetRes.of(
+                meetingEntity,
+                getUserPromisePlaceResDtoList(meetingEntity),
+                getUserPromiseTimeHashMap(meetingEntity),
+                getUserVoteHashMap(meetingEntity)
+        );
+    }
+
+    public List<MeetingGetRes> getMeetingByDeviceId(String deviceId) {
+        List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
+
+        // TODO Add more
+        return null;
+    }
+
+    private HashMap<LocalDate, List<String[]>> getUserPromiseTimeHashMap(MeetingEntity meetingEntity) {
+        HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap = new HashMap<>();
+
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
+                LocalDate promiseDate = res.getPromiseDate();
+                if (userPromiseTimeHashMap.containsKey(promiseDate)) {
+                    userPromiseTimeHashMap.get(promiseDate).add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                } else {
+                    List<String[]> promiseList = new ArrayList<>();
+                    promiseList.add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                    userPromiseTimeHashMap.put(promiseDate, promiseList);
+                }
+            });
+        });
+
+        return userPromiseTimeHashMap;
+    }
+
+    private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
+        HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingUser.getMeetingPlaceEntityList().forEach(meetingPlace -> {
+                meetingPlace.getPlaceVoteEntityList().forEach(res -> {
+                    String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
+                    if (userVoteHashMap.containsKey(promisePlace)) {
+                        userVoteHashMap.get(promisePlace).add(res.getUserEntity().getUserName());
+                    } else {
+                        List<String> voteList = new ArrayList<>();
+                        voteList.add(res.getUserEntity().getUserName());
+                        userVoteHashMap.put(promisePlace, voteList);
+                    }
+                });
+            });
+        });
+
+        return userVoteHashMap;
+    }
+
+    private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
+        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            userPromisePlaceResDtoList.addAll(meetingUser.getMeetingPlaceEntityList().stream()
+                    .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
+        });
+
+        return userPromisePlaceResDtoList;
     }
 }
