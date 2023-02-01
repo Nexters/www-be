@@ -38,11 +38,12 @@ public class MeetingEntity extends BaseTimeEntity {
     private String meetingCode;
     @Basic
     @Column(name = "meeting_status")
-    private String meetingStatus;
+    @Enumerated(EnumType.STRING)
+    private MeetingStatus meetingStatus = MeetingStatus.WAITING;
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToOne
     @JoinColumn(name = "hostId")
-    private UserEntity userEntity;
+    private UserEntity creator;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL)

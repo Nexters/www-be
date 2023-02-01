@@ -2,6 +2,9 @@ package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.*;
 import com.promise8.wwwbe.model.entity.*;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.model.exception.BizException;
+import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -85,6 +88,20 @@ public class MeetingService {
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
         return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
+    }
+
+    public void putMeetingStatus(long meetingId, ActionType actionType) {
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
+            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
+        });
+
+        if (ActionType.END_VOTE.equals(actionType)) {
+            meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
+        }
+
+        if (ActionType.END_MEETING.equals(actionType)) {
+            meetingEntity.setMeetingStatus(MeetingStatus.CONFIRMED);
+        }
     }
 
     private String getMeetingCode() {

@@ -11,7 +11,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {BizException.class})
-    public BaseResponse<String> handleBizException() {
-        return BaseResponse.error(BaseErrorCode.SERVER_ERROR);
+    public BaseResponse<String> handleBizException(BizException e) {
+        return BaseResponse.error(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    public BaseResponse<String> handleException(Exception e) {
+        return BaseResponse.error(BaseErrorCode.SERVER_ERROR, e.getMessage());
     }
 }

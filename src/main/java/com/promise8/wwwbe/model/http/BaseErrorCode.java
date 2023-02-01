@@ -7,7 +7,9 @@ public enum BaseErrorCode {
 
     SUCCESS(0, "Success"),
     SERVER_ERROR(1000, "Server Error"),
-    FCM_SEND_ERROR(2000, "FCM Push Error");
+    FCM_SEND_ERROR(2000, "FCM Push Error"),
+
+    INVALID_REQUEST(9000, "Invalid Request");
 
 
 
