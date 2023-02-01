@@ -19,8 +19,8 @@ public class PlaceVoteEntity extends BaseTimeEntity {
     private long placeVoteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private UserEntity userEntity;
+    @JoinColumn(name = "meetingUserId")
+    private MeetingUserEntity meetingUserEntity;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
