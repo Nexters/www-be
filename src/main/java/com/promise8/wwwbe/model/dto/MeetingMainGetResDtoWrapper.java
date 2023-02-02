@@ -1,9 +1,6 @@
 package com.promise8.wwwbe.model.dto;
 
-import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
+import com.promise8.wwwbe.model.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,13 +36,13 @@ public class MeetingMainGetResDtoWrapper {
         for (MeetingEntity meeting : meetingEntityList) {
             ConfirmedPromise confirmedPromise = new ConfirmedPromise();
             if (MeetingStatus.DONE.name().equals(meeting.getMeetingStatus())) {
-                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
+                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
                 meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             } else if (MeetingStatus.CONFIRMED.name().equals(meeting.getMeetingStatus())) {
-                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
+                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
                 meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             } else {
-                confirmedPromise = getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
+                confirmedPromise = getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
                 meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             }
         }

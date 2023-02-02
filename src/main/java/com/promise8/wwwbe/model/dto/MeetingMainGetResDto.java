@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.model.dto;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +36,7 @@ public class MeetingMainGetResDto {
                 .promiseDate(confirmedPromise.getPromiseDate())
                 .promiseTime(confirmedPromise.getPromiseTime())
                 .promisePlace(confirmedPromise.getPromisePlace())
-                .meetingStatus(MeetingStatus.valueOf(meetingEntity.getMeetingStatus()))
+                .meetingStatus(meetingEntity.getMeetingStatus())
                 .build();
     }
 }
