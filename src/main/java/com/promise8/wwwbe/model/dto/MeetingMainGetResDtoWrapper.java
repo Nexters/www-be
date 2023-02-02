@@ -35,10 +35,10 @@ public class MeetingMainGetResDtoWrapper {
         List<MeetingMainGetResDto> meetingMainEndGetResDtoList = new ArrayList<>();
         for (MeetingEntity meeting : meetingEntityList) {
             ConfirmedPromise confirmedPromise = new ConfirmedPromise();
-            if (MeetingStatus.DONE.name().equals(meeting.getMeetingStatus())) {
+            if (MeetingStatus.DONE.equals(meeting.getMeetingStatus())) {
                 confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
                 meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
-            } else if (MeetingStatus.CONFIRMED.name().equals(meeting.getMeetingStatus())) {
+            } else if (MeetingStatus.CONFIRMED.equals(meeting.getMeetingStatus())) {
                 confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
                 meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             } else {
