@@ -16,12 +16,14 @@ import java.util.List;
 @Getter
 @Builder
 public class MeetingMainGetResDtoWrapper {
-    private static class HostAndVotingCnt {
+    @Getter
+    public static class HostAndVotingCnt {
         private Integer votingUserCount = 0;
         private String hostName = null;
     }
 
-    private static class ConfirmedPromise {
+    @Getter
+    public static class ConfirmedPromise {
         private LocalDate promiseDate = null;
         private PromiseTime promiseTime = null;
         private String promisePlace = null;
@@ -36,41 +38,15 @@ public class MeetingMainGetResDtoWrapper {
         List<MeetingMainGetResDto> meetingMainEndGetResDtoList = new ArrayList<>();
         for (MeetingEntity meeting : meetingEntityList) {
             ConfirmedPromise confirmedPromise = new ConfirmedPromise();
-            if (MeetingStatus.DONE.name().equals(meeting.getMeetingStatus()) || MeetingStatus.CONFIRMED.name().equals(meeting.getMeetingStatus())) {
+            if (MeetingStatus.DONE.name().equals(meeting.getMeetingStatus())) {
                 confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
-
-                if (MeetingStatus.DONE.name().equals(meeting.getMeetingStatus())) {
-                    meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(
-                            meeting,
-                            meeting.getMeetingUserEntityList(),
-                            confirmedPromise.hostAndVotingCnt.votingUserCount,
-                            confirmedPromise.promiseDate,
-                            confirmedPromise.promiseTime,
-                            confirmedPromise.promisePlace,
-                            confirmedPromise.hostAndVotingCnt.hostName
-                    ));
-                } else {
-                    meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(
-                            meeting,
-                            meeting.getMeetingUserEntityList(),
-                            confirmedPromise.hostAndVotingCnt.votingUserCount,
-                            confirmedPromise.promiseDate,
-                            confirmedPromise.promiseTime,
-                            confirmedPromise.promisePlace,
-                            confirmedPromise.hostAndVotingCnt.hostName
-                    ));
-                }
+                meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
+            } else if (MeetingStatus.CONFIRMED.name().equals(meeting.getMeetingStatus())) {
+                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             } else {
-                HostAndVotingCnt hostAndVotingCnt = getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
-                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(
-                        meeting,
-                        meeting.getMeetingUserEntityList(),
-                        hostAndVotingCnt.votingUserCount,
-                        null,
-                        null,
-                        null,
-                        hostAndVotingCnt.hostName
-                ));
+                confirmedPromise = getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getUserEntity().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
             }
         }
 
@@ -102,7 +78,9 @@ public class MeetingMainGetResDtoWrapper {
                 }
             }
 
-            confirmedPromise.hostAndVotingCnt.votingUserCount += meetingUser.getPlaceVoteEntityList() != null && meetingUser.getPlaceVoteEntityList().size() > 0 ? 1 : 0;
+            if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
+                confirmedPromise.hostAndVotingCnt.votingUserCount++;
+            }
 
             if (meetingUser.getMeetingUserId() == hostId) {
                 confirmedPromise.hostAndVotingCnt.hostName = meetingUser.getMeetingUserName();
@@ -112,16 +90,18 @@ public class MeetingMainGetResDtoWrapper {
         return confirmedPromise;
     }
 
-    private static HostAndVotingCnt getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        HostAndVotingCnt hostAndVotingCnt = new HostAndVotingCnt();
+    private static ConfirmedPromise getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
+        ConfirmedPromise confirmedPromise = new ConfirmedPromise();
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
-            hostAndVotingCnt.votingUserCount += meetingUser.getPlaceVoteEntityList() != null && meetingUser.getPlaceVoteEntityList().size() > 0 ? 1 : 0;
+            if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
+                confirmedPromise.hostAndVotingCnt.votingUserCount++;
+            }
 
             if (meetingUser.getMeetingUserId() == hostId) {
-                hostAndVotingCnt.hostName = meetingUser.getMeetingUserName();
+                confirmedPromise.hostAndVotingCnt.hostName = meetingUser.getMeetingUserName();
             }
         }
 
-        return hostAndVotingCnt;
+        return confirmedPromise;
     }
 }

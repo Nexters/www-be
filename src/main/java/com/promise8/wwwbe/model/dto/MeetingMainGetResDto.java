@@ -1,13 +1,11 @@
 package com.promise8.wwwbe.model.dto;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Setter
 @Getter
@@ -26,22 +24,17 @@ public class MeetingMainGetResDto {
 
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
-            List<MeetingUserEntity> meetingUserEntityList,
-            Integer votingUserCount,
-            LocalDate promiseDate,
-            PromiseTime promiseTime,
-            String promisePlace,
-            String hostName) {
+            MeetingMainGetResDtoWrapper.ConfirmedPromise confirmedPromise) {
         return MeetingMainGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
-                .hostName(hostName)
+                .hostName(confirmedPromise.getHostAndVotingCnt().getHostName())
                 .conditionCount(meetingEntity.getConditionCount())
-                .joinedUserCount(meetingUserEntityList.size())
-                .votingUserCount(votingUserCount)
-                .promiseDate(promiseDate)
-                .promiseTime(promiseTime)
-                .promisePlace(promisePlace)
+                .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
+                .votingUserCount(confirmedPromise.getHostAndVotingCnt().getVotingUserCount())
+                .promiseDate(confirmedPromise.getPromiseDate())
+                .promiseTime(confirmedPromise.getPromiseTime())
+                .promisePlace(confirmedPromise.getPromisePlace())
                 .meetingStatus(MeetingStatus.valueOf(meetingEntity.getMeetingStatus()))
                 .build();
     }
