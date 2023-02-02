@@ -1,7 +1,7 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.model.dto.MeetingStatus;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +52,8 @@ class MeetingRepositoryTest {
                 .startDate(startDate)
                 .endDate(endDate)
                 .meetingCode(meetingCode)
-                .meetingStatus(MeetingStatus.WAITING.name())
-                .userEntity(userEntity)
+                .meetingStatus(MeetingStatus.WAITING)
+                .creator(userEntity)
                 .build());
         meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
                 .meetingUserName(meetingUserName)
@@ -71,7 +71,7 @@ class MeetingRepositoryTest {
         assertThat(meetingEntity.getEndDate()).isEqualTo(endDate);
         assertThat(meetingEntity.getMeetingCode()).isEqualTo(meetingCode);
         assertThat(meetingEntity.getMeetingStatus()).isEqualTo(MeetingStatus.WAITING.name());
-        assertThat(meetingEntity.getUserEntity().getUserId()).isEqualTo(userEntity.getUserId());
+        assertThat(meetingEntity.getCreator().getUserId()).isEqualTo(userEntity.getUserId());
     }
 
     @Test
@@ -93,6 +93,6 @@ class MeetingRepositoryTest {
     void findMeetingByDeviceId() {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
         assertThat(meetingEntityList.size()).isEqualTo(1);
-        assertThat(meetingEntityList.get(0).getUserEntity().getDeviceId()).isEqualTo(deviceId);
+        assertThat(meetingEntityList.get(0).getCreator().getDeviceId()).isEqualTo(deviceId);
     }
 }
