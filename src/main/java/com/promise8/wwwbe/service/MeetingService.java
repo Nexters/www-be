@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -90,11 +91,32 @@ public class MeetingService {
         return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
     }
 
+    public MeetingJoinRes joinMeeting(long userId, long meetingId) {
+        MeetingEntity meetingEntity = findMeetingById(meetingId);
+        if (!MeetingStatus.WAITING.equals(meetingEntity.getMeetingStatus())) {
+            throw new BizException(BaseErrorCode.MEETING_VOTE_ALREADY_STARTED);
+        }
+
+        UserEntity userEntity = findUserById(userId);
+        MeetingUserEntity meetingUserEntity = MeetingUserEntity.builder()
+                .userEntity(userEntity)
+                .meetingEntity(meetingEntity)
+                .build();
+        meetingUserRepository.save(meetingUserEntity);
+        return new MeetingJoinRes(meetingEntity.getMeetingId(), meetingEntity.getMeetingName());
+    }
+
+    private UserEntity findUserById(long userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> {
+            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist user");
+        });
+        return userEntity;
+    }
+
+
     @Transactional
     public void putMeetingStatus(long meetingId, MeetingStatus meetingStatus) {
-        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
-        });
+        MeetingEntity meetingEntity = findMeetingById(meetingId);
 
         if (MeetingStatus.WAITING.equals(meetingStatus) || MeetingStatus.DONE.equals(meetingStatus)) {
             throw new BizException(BaseErrorCode.INVALID_REQUEST, "not support action");
@@ -218,5 +240,12 @@ public class MeetingService {
         });
 
         return userPromisePlaceResDtoList;
+    }
+
+    private MeetingEntity findMeetingById(long meetingId) {
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
+            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
+        });
+        return meetingEntity;
     }
 }
