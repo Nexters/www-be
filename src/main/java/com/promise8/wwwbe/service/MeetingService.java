@@ -91,18 +91,16 @@ public class MeetingService {
     }
 
     @Transactional
-    public void putMeetingStatus(long meetingId, ActionType actionType) {
+    public void putMeetingStatus(long meetingId, MeetingStatus meetingStatus) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
             throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
         });
 
-        if (ActionType.END_VOTE.equals(actionType)) {
-            meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
+        if (MeetingStatus.WAITING.equals(meetingStatus) || MeetingStatus.DONE.equals(meetingStatus)) {
+            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not support action");
         }
 
-        if (ActionType.END_MEETING.equals(actionType)) {
-            meetingEntity.setMeetingStatus(MeetingStatus.CONFIRMED);
-        }
+        meetingEntity.setMeetingStatus(meetingStatus);
     }
 
     private String getMeetingCode() {

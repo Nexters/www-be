@@ -1,6 +1,5 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.ActionType;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.repository.MeetingRepository;
@@ -14,10 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
@@ -31,7 +27,7 @@ class MeetingServiceTest {
 
 
     @Test
-    @DisplayName("end vote시 meetingStatus 변경 확인")
+    @DisplayName("meetingStatus 변경 확인")
     void putMeetingStatusWhenActionEndVote() {
         // given
         MeetingEntity meetingEntity = MeetingEntity.builder()
@@ -42,27 +38,9 @@ class MeetingServiceTest {
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
 
         // when
-        meetingService.putMeetingStatus(1L, ActionType.END_VOTE);
+        meetingService.putMeetingStatus(1L, MeetingStatus.VOTED);
 
         // then
         Assertions.assertEquals(MeetingStatus.VOTED, meetingEntity.getMeetingStatus());
-    }
-
-    @Test
-    @DisplayName("end meeting시 meetingStatus 변경 확인")
-    void putMeetingStatusWhenActionEndMeeting() {
-        // given
-        MeetingEntity meetingEntity = MeetingEntity.builder()
-                .meetingId(1L)
-                .meetingStatus(MeetingStatus.WAITING)
-                .build();
-
-        when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
-
-        // when
-        meetingService.putMeetingStatus(1L, ActionType.END_MEETING);
-
-        // then
-        Assertions.assertEquals(MeetingStatus.CONFIRMED, meetingEntity.getMeetingStatus());
     }
 }

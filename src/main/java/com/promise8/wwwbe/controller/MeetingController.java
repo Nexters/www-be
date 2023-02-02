@@ -1,10 +1,10 @@
 package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.UserPrincipal;
-import com.promise8.wwwbe.model.dto.ActionType;
 import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
 import com.promise8.wwwbe.model.dto.MeetingGetRes;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.MeetingService;
 import lombok.RequiredArgsConstructor;
@@ -97,17 +97,17 @@ public class MeetingController {
      *
      * @param userPrincipal
      * @param meetingId
-     * @param actionType
+     * @param meetingStatus
      * @return
      */
-    @PutMapping("/meetings/{meetingId}/actions/{actionType}")
+    @PutMapping("/meetings/{meetingId}/meetingStatus/{meetingStatus}")
     @PreAuthorize("@meetingAuthorizer.isCreator(#userPrincipal, #meetingId)")
-    public BaseResponse<Void> createMeetingAction(
+    public BaseResponse<Void> putMeetingAction(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable("meetingId") long meetingId,
-            @PathVariable("actionType") ActionType actionType
+            @PathVariable("meetingStatus") MeetingStatus meetingStatus
     ) {
-        meetingService.putMeetingStatus(meetingId, actionType);
+        meetingService.putMeetingStatus(meetingId, meetingStatus);
         return BaseResponse.ok();
     }
 }
