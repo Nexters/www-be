@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.model.dto;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +29,8 @@ public class MeetingCreateReqDto {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .meetingCode(meetingCode)
-                .meetingStatus(MeetingStatus.WAITING.name())
-                .userEntity(userEntity)
+                .meetingStatus(MeetingStatus.WAITING)
+                .creator(userEntity)
                 .build();
     }
 }

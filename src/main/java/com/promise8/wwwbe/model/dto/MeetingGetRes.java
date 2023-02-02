@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.model.dto;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,11 +37,11 @@ public class MeetingGetRes {
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
                 // TODO Fix to hostName of MeetingUserEntity
-                .hostName(meetingEntity.getUserEntity().getUserName())
+                .hostName(meetingEntity.getCreator().getUserName())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
                 .userPromiseTimeHashMap(userPromiseTimeHashMap)
                 .userPromisePlaceResDtoList(userPromisePlaceResDtoList)
-                .meetingStatus(MeetingStatus.valueOf(meetingEntity.getMeetingStatus()))
+                .meetingStatus(meetingEntity.getMeetingStatus())
                 .userVoteHashMap(userVoteHashMap)
                 .build();
     }
