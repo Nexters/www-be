@@ -70,7 +70,7 @@ class MeetingRepositoryTest {
         assertThat(meetingEntity.getStartDate()).isEqualTo(startDate);
         assertThat(meetingEntity.getEndDate()).isEqualTo(endDate);
         assertThat(meetingEntity.getMeetingCode()).isEqualTo(meetingCode);
-        assertThat(meetingEntity.getMeetingStatus()).isEqualTo(MeetingStatus.WAITING.name());
+        assertThat(meetingEntity.getMeetingStatus()).isEqualTo(MeetingStatus.WAITING);
         assertThat(meetingEntity.getCreator().getUserId()).isEqualTo(userEntity.getUserId());
     }
 
