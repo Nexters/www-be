@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +24,11 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     private LocalDate promiseDate;
     @Basic
     @Column(name = "promise_time")
-    private String promiseTime;
+    @Enumerated(EnumType.STRING)
+    private PromiseTime promiseTime;
+    @Basic
+    @Column(name = "is_confirmed")
+    private Boolean isConfirmed;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class UserPromiseTimeResDto {
     private String userName;
     private LocalDate promiseDate;
-    private String promiseTime;
+    private PromiseTime promiseTime;
 
     public static UserPromiseTimeResDto of(
             MeetingUserTimetableEntity meetingUserTimetableEntity) {
