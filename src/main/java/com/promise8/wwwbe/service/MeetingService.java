@@ -68,7 +68,7 @@ public class MeetingService {
                 for (PromiseTime promiseTime : promiseTimeList) {
                     meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
                             .promiseDate(promiseDate)
-                            .promiseTime(promiseTime.name())
+                            .promiseTime(promiseTime)
                             .meetingUserEntity(meetingUserEntity)
                             .build()
                     );
@@ -165,11 +165,10 @@ public class MeetingService {
         );
     }
 
-    public List<MeetingGetRes> getMeetingByDeviceId(String deviceId) {
+    public MeetingMainGetResDtoWrapper getMeetingByDeviceId(String deviceId) {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
 
-        // TODO Add more
-        return null;
+        return MeetingMainGetResDtoWrapper.of(meetingEntityList);
     }
 
     private HashMap<LocalDate, List<String[]>> getUserPromiseTimeHashMap(MeetingEntity meetingEntity) {
@@ -179,10 +178,10 @@ public class MeetingService {
             meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
                 LocalDate promiseDate = res.getPromiseDate();
                 if (userPromiseTimeHashMap.containsKey(promiseDate)) {
-                    userPromiseTimeHashMap.get(promiseDate).add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                    userPromiseTimeHashMap.get(promiseDate).add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime().name()});
                 } else {
                     List<String[]> promiseList = new ArrayList<>();
-                    promiseList.add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime()});
+                    promiseList.add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime().name()});
                     userPromiseTimeHashMap.put(promiseDate, promiseList);
                 }
             });

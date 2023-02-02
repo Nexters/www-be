@@ -24,6 +24,9 @@ public class MeetingPlaceEntity extends BaseTimeEntity {
     @Basic
     @Column(name = "promise_place")
     private String promisePlace;
+    @Basic
+    @Column(name = "is_confirmed")
+    private Boolean isConfirmed;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
