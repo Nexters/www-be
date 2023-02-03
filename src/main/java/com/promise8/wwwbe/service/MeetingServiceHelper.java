@@ -33,11 +33,11 @@ public class MeetingServiceHelper {
             }
 
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromiseDto.getHostAndVotingCnt().setVotingUserCount(confirmedPromiseDto.getHostAndVotingCnt().getVotingUserCount() + 1);
+                confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
             }
 
             if (meetingUser.getMeetingUserId() == hostId) {
-                confirmedPromiseDto.getHostAndVotingCnt().setHostName(meetingUser.getMeetingUserName());
+                confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
 
@@ -48,11 +48,11 @@ public class MeetingServiceHelper {
         ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromiseDto.getHostAndVotingCnt().setVotingUserCount(confirmedPromiseDto.getHostAndVotingCnt().getVotingUserCount() + 1);
+                confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
             }
 
             if (meetingUser.getMeetingUserId() == hostId) {
-                confirmedPromiseDto.getHostAndVotingCnt().setHostName(meetingUser.getMeetingUserName());
+                confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
 

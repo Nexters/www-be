@@ -55,7 +55,7 @@ public class MeetingGetResDto {
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
-                .hostName(confirmedPromiseDto.getHostAndVotingCnt().getHostName())
+                .hostName(confirmedPromiseDto.getHostName())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
                 .promiseTime(confirmedPromiseDto.getPromiseTime())
