@@ -7,11 +7,8 @@ import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -22,10 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MeetingService {
     private static final int MEETING_CODE_LENGTH = 6;
-    private static final String ANDROID_PACKAGE = "com.promiseeight.www";
-    private static final String IOS_PACKAGE = "com.promise8.www";
-    // TODO Fix link
-    private static final String LONG_DYNAMIC_LINK = "https://whenwheres.page.link/?link=https://naver.com";
+
     private final PushService pushService;
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
@@ -33,10 +27,10 @@ public class MeetingService {
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
     private final PlaceVoteRepository placeVoteRepository;
-    @Value("${api-key.android}")
-    private String androidApiKey;
-    @Value("${api-key.ios}")
-    private String iosApiKey;
+    private final LinkService linkService;
+
+    private static final String TMP_ENDPOINT = "https://naver.com";
+
 
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto) {
         String meetingCode = getMeetingCode();
@@ -85,7 +79,8 @@ public class MeetingService {
         }
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
-        return MeetingCreateResDto.of(meetingCode, getDynamicLink(meetingCreateReqDto.getPlatformType()));
+        String shortLink = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT).getShortLink();
+        return MeetingCreateResDto.of(meetingCode, shortLink);
     }
 
     @Transactional
@@ -118,27 +113,6 @@ public class MeetingService {
                 .userName(userName)
                 .build()
         ));
-    }
-
-    private String getDynamicLink(PlatformType platformType) {
-        String dynamicLinkUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=";
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        DynamicLinkReqDto dynamicLinkReqDto = null;
-        if (PlatformType.ANDROID.equals(platformType)) {
-            dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&apn=" + ANDROID_PACKAGE);
-            dynamicLinkUrl += androidApiKey;
-        } else {
-            dynamicLinkReqDto = DynamicLinkReqDto.of(LONG_DYNAMIC_LINK + "&ibi=" + IOS_PACKAGE);
-            dynamicLinkUrl += iosApiKey;
-        }
-
-        HttpEntity<DynamicLinkReqDto> dynamicLinkReq = new HttpEntity<>(dynamicLinkReqDto, httpHeaders);
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<HashMap> response = restTemplate.exchange(dynamicLinkUrl, HttpMethod.POST, dynamicLinkReq, HashMap.class);
-
-        return response.getBody().get("shortLink").toString();
     }
 
     public MeetingGetResDto getMeetingById(long meetingId) {
