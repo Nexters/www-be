@@ -25,17 +25,17 @@ public class MeetingMainGetResDto {
 
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
-            MeetingMainGetResDtoWrapper.ConfirmedPromise confirmedPromise) {
+            ConfirmedPromiseDto confirmedPromiseDto) {
         return MeetingMainGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
-                .hostName(confirmedPromise.getHostAndVotingCnt().getHostName())
+                .hostName(confirmedPromiseDto.getHostAndVotingCnt().getHostName())
                 .conditionCount(meetingEntity.getConditionCount())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
-                .votingUserCount(confirmedPromise.getHostAndVotingCnt().getVotingUserCount())
-                .promiseDate(confirmedPromise.getPromiseDate())
-                .promiseTime(confirmedPromise.getPromiseTime())
-                .promisePlace(confirmedPromise.getPromisePlace())
+                .votingUserCount(confirmedPromiseDto.getHostAndVotingCnt().getVotingUserCount())
+                .promiseDate(confirmedPromiseDto.getPromiseDate())
+                .promiseTime(confirmedPromiseDto.getPromiseTime())
+                .promisePlace(confirmedPromiseDto.getPromisePlace())
                 .meetingStatus(meetingEntity.getMeetingStatus())
                 .build();
     }
