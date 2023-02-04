@@ -36,7 +36,7 @@ public class MeetingServiceHelper {
                 confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
             }
 
-            if (meetingUser.getMeetingUserId() == hostId) {
+            if (meetingUser.getUserEntity().getUserId() == hostId) {
                 confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
@@ -51,7 +51,7 @@ public class MeetingServiceHelper {
                 confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
             }
 
-            if (meetingUser.getMeetingUserId() == hostId) {
+            if (meetingUser.getUserEntity().getUserId() == hostId) {
                 confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
