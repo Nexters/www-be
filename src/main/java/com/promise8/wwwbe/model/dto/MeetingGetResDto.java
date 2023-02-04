@@ -18,6 +18,7 @@ public class MeetingGetResDto {
     private Long conditionCount;
     private String hostName;
     private Integer joinedUserCount;
+    private String meetingCode;
     private LocalDate promiseDate;
     private PromiseTime promiseTime;
     private String promisePlace;
@@ -47,6 +48,7 @@ public class MeetingGetResDto {
                 .conditionCount(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseDto.getHostName())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
+                .meetingCode(meetingEntity.getMeetingCode())
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
                 .promiseTime(confirmedPromiseDto.getPromiseTime())
                 .promisePlace(confirmedPromiseDto.getPromisePlace())
