@@ -6,7 +6,6 @@ import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -14,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -157,7 +154,7 @@ public class MeetingService {
         return MeetingGetResDto.of(
                 meetingEntity,
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeMultiKeyMap(meetingEntity),
+                getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
                 confirmedPromiseDto
         );
@@ -176,7 +173,7 @@ public class MeetingService {
         return MeetingGetResDto.of(
                 meetingEntity,
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeMultiKeyMap(meetingEntity),
+                getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
                 confirmedPromiseDto
         );
@@ -188,24 +185,50 @@ public class MeetingService {
         return MeetingMainGetResDtoWrapper.of(meetingEntityList);
     }
 
-    private MultiKeyMap<Object, List<String>> getUserPromiseTimeMultiKeyMap(MeetingEntity meetingEntity) {
-        MultiKeyMap<Object, List<String>> userPromiseDateTimeMultiKeyMap = new MultiKeyMap<>();
+    private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
+        List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
 
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
                 LocalDate promiseDate = res.getPromiseDate();
                 PromiseTime promiseTime = res.getPromiseTime();
-                if (userPromiseDateTimeMultiKeyMap.containsKey(promiseDate, promiseTime)) {
-                    userPromiseDateTimeMultiKeyMap.get(promiseDate, promiseTime).add(res.getMeetingUserEntity().getMeetingUserName());
-                } else {
+
+                boolean isAdd = false;
+                for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
+                    if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
+                        userPromiseTime.getUserNameList().add(meetingUser.getMeetingUserName());
+                        isAdd = true;
+                        break;
+                    }
+                }
+
+                if (!isAdd) {
                     List<String> userNameList = new ArrayList<>();
-                    userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
-                    userPromiseDateTimeMultiKeyMap.put(promiseDate, promiseTime, userNameList);
+                    userNameList.add(meetingUser.getMeetingUserName());
+                    userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
+                            .promiseDate(promiseDate)
+                            .promiseTime(promiseTime)
+                            .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
+                            .userNameList(userNameList)
+                            .build());
                 }
             });
         });
 
-        return userPromiseDateTimeMultiKeyMap;
+        Collections.sort(userPromiseTimeResDtoList, new Comparator<UserPromiseTimeResDto>() {
+            @Override
+            public int compare(UserPromiseTimeResDto o1, UserPromiseTimeResDto o2) {
+                return o2.getUserNameList().size() - o1.getUserNameList().size();
+            }
+        });
+
+        return userPromiseTimeResDtoList;
+    }
+
+    private PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
+        DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
+        int idx = dayOfWeek.getValue();
+        return PromiseDayOfWeek.values()[idx - 1];
     }
 
     private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
