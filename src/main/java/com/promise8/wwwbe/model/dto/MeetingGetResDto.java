@@ -27,6 +27,8 @@ public class MeetingGetResDto {
     private MeetingStatus meetingStatus;
     private List<Map.Entry<String, List<String>>> userVoteList;
 
+    // TODO: recentUserName 필드 추가
+
     public static MeetingGetResDto of(
             MeetingEntity meetingEntity,
             List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
