@@ -55,6 +55,8 @@ public class MeetingController {
         return BaseResponse.ok(meetingService.getMeetingById(meetingId));
     }
 
+
+
     /**
      * 링크공유를 통해 약속방 입장
      *
