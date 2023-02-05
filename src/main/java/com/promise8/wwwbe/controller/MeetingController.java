@@ -20,6 +20,17 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     /**
+     * 약속방 메인 view 전용 API
+     *
+     * @param userPrincipal
+     * @return
+     */
+    @GetMapping
+    public BaseResponse<MeetingMainGetResDtoWrapper> getMeetingList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return BaseResponse.ok(meetingService.getMeetingByDeviceId(userPrincipal.getDeviceId()));
+    }
+
+    /**
      * 방 생성
      * <p>
      * 입력 받을 정보 : 방 이름, 예상인원, 일정 범위, 투표 종료일
@@ -32,16 +43,6 @@ public class MeetingController {
         return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto));
     }
 
-    /**
-     * 약속방 메인 view 전용 API
-     *
-     * @param userPrincipal
-     * @return
-     */
-    @GetMapping
-    public BaseResponse<MeetingMainGetResDtoWrapper> getMeetingList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return BaseResponse.ok(meetingService.getMeetingByDeviceId(userPrincipal.getDeviceId()));
-    }
 
     /**
      * TODO: 요청자가 방장인지 여부 응답 필요
@@ -55,10 +56,19 @@ public class MeetingController {
         return BaseResponse.ok(meetingService.getMeetingById(meetingId));
     }
 
-
+    /**
+     * code를 통해 약속방 입장
+     *
+     * @param meetingCode
+     * @return
+     */
+    @GetMapping("/code/{meetingCode}")
+    public BaseResponse<MeetingGetResDto> updateMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
+        return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode));
+    }
 
     /**
-     * 링크공유를 통해 약속방 입장
+     * 링크공유를 통해 약속방 입장 (성찬)
      *
      * @param meetingId
      * @return
@@ -68,20 +78,9 @@ public class MeetingController {
         return BaseResponse.ok();
     }
 
-    /**
-     * code를 통해 약속방 입장
-     *
-     * @param meetingCode
-     * @return
-     */
-    @PostMapping("/code/{meetingCode}")
-    public BaseResponse<MeetingGetResDto> getMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
-        return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode));
-    }
-
 
     /**
-     * 투표하기
+     * 투표하기 (성찬)
      *
      * @param userPrincipal
      * @param meetingId
