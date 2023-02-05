@@ -1,32 +1,21 @@
 package com.promise8.wwwbe.model.dto;
 
-import com.promise8.wwwbe.model.entity.*;
+import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.service.MeetingServiceHelper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Setter
 @Getter
 @Builder
 public class MeetingMainGetResDtoWrapper {
-    @Getter
-    public static class HostAndVotingCnt {
-        private Integer votingUserCount = 0;
-        private String hostName = null;
-    }
-
-    @Getter
-    public static class ConfirmedPromise {
-        private LocalDate promiseDate = null;
-        private PromiseTime promiseTime = null;
-        private String promisePlace = null;
-        private HostAndVotingCnt hostAndVotingCnt = new HostAndVotingCnt();
-    }
-
     private List<MeetingMainGetResDto> meetingMainIngGetResDtoList;
     private List<MeetingMainGetResDto> meetingMainEndGetResDtoList;
 
@@ -34,71 +23,45 @@ public class MeetingMainGetResDtoWrapper {
         List<MeetingMainGetResDto> meetingMainIngGetResDtoList = new ArrayList<>();
         List<MeetingMainGetResDto> meetingMainEndGetResDtoList = new ArrayList<>();
         for (MeetingEntity meeting : meetingEntityList) {
-            ConfirmedPromise confirmedPromise = new ConfirmedPromise();
+            ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
             if (MeetingStatus.DONE.equals(meeting.getMeetingStatus())) {
-                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
+                confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
             } else if (MeetingStatus.CONFIRMED.equals(meeting.getMeetingStatus())) {
-                confirmedPromise = getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
+                confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
             } else {
-                confirmedPromise = getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromise));
+                confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
             }
         }
+
+        Collections.sort(meetingMainIngGetResDtoList, new Comparator<MeetingMainGetResDto>() {
+            @Override
+            public int compare(MeetingMainGetResDto o1, MeetingMainGetResDto o2) {
+                if (o1.getMeetingStatus().equals(o2.getMeetingStatus())) {
+                    if (MeetingStatus.CONFIRMED.equals(o1.getMeetingStatus())) {
+                        if (o1.getPromiseDate().equals(o2.getPromiseDate())) {
+                            if (o1.getPromiseTime().equals(o2.getPromiseTime())) {
+                                return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
+                            } else {
+                                return o1.getPromiseTime().ordinal() - o2.getPromiseTime().ordinal();
+                            }
+                        } else {
+                            return o1.getPromiseTime().ordinal() - o2.getPromiseTime().ordinal();
+                        }
+                    } else {
+                        return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
+                    }
+                } else {
+                    return o2.getMeetingStatus().ordinal() - o1.getMeetingStatus().ordinal();
+                }
+            }
+        });
 
         return MeetingMainGetResDtoWrapper.builder()
                 .meetingMainIngGetResDtoList(meetingMainIngGetResDtoList)
                 .meetingMainEndGetResDtoList(meetingMainEndGetResDtoList)
                 .build();
-    }
-
-    private static ConfirmedPromise getConfirmedPromise(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromise confirmedPromise = new ConfirmedPromise();
-        for (MeetingUserEntity meetingUser : meetingUserEntityList) {
-            if (confirmedPromise.promiseDate == null) {
-                for (MeetingUserTimetableEntity meetingUserTimetable : meetingUser.getMeetingUserTimetableEntityList()) {
-                    if (meetingUserTimetable.getIsConfirmed()) {
-                        confirmedPromise.promiseDate = meetingUserTimetable.getPromiseDate();
-                        confirmedPromise.promiseTime = meetingUserTimetable.getPromiseTime();
-                        break;
-                    }
-                }
-            }
-
-            if (confirmedPromise.promisePlace == null) {
-                for (MeetingPlaceEntity meetingPlace : meetingUser.getMeetingPlaceEntityList()) {
-                    if (meetingPlace.getIsConfirmed()) {
-                        confirmedPromise.promisePlace = meetingPlace.getPromisePlace();
-                        break;
-                    }
-                }
-            }
-
-            if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromise.hostAndVotingCnt.votingUserCount++;
-            }
-
-            if (meetingUser.getMeetingUserId() == hostId) {
-                confirmedPromise.hostAndVotingCnt.hostName = meetingUser.getMeetingUserName();
-            }
-        }
-
-        return confirmedPromise;
-    }
-
-    private static ConfirmedPromise getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromise confirmedPromise = new ConfirmedPromise();
-        for (MeetingUserEntity meetingUser : meetingUserEntityList) {
-            if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromise.hostAndVotingCnt.votingUserCount++;
-            }
-
-            if (meetingUser.getMeetingUserId() == hostId) {
-                confirmedPromise.hostAndVotingCnt.hostName = meetingUser.getMeetingUserName();
-            }
-        }
-
-        return confirmedPromise;
     }
 }

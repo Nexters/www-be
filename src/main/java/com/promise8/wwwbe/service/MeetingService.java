@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,25 +141,41 @@ public class MeetingService {
         return response.getBody().get("shortLink").toString();
     }
 
-    public MeetingGetRes getMeetingById(long meetingId) {
+    public MeetingGetResDto getMeetingById(long meetingId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
 
-        return MeetingGetRes.of(
+        ConfirmedPromiseDto confirmedPromiseDto = null;
+        if (MeetingStatus.DONE.equals(meetingEntity.getMeetingStatus()) || MeetingStatus.CONFIRMED.equals(meetingEntity.getMeetingStatus())) {
+            confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+        } else {
+            confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+        }
+
+        return MeetingGetResDto.of(
                 meetingEntity,
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeHashMap(meetingEntity),
-                getUserVoteHashMap(meetingEntity)
+                getUserPromiseTimeList(meetingEntity),
+                getUserVoteHashMap(meetingEntity),
+                confirmedPromiseDto
         );
     }
 
-    public MeetingGetRes getMeetingByCode(String meetingCode) {
+    public MeetingGetResDto getMeetingByCode(String meetingCode) {
         MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
 
-        return MeetingGetRes.of(
+        ConfirmedPromiseDto confirmedPromiseDto = null;
+        if (MeetingStatus.DONE.equals(meetingEntity.getMeetingStatus()) || MeetingStatus.CONFIRMED.equals(meetingEntity.getMeetingStatus())) {
+            confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+        } else {
+            confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+        }
+
+        return MeetingGetResDto.of(
                 meetingEntity,
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeHashMap(meetingEntity),
-                getUserVoteHashMap(meetingEntity)
+                getUserPromiseTimeList(meetingEntity),
+                getUserVoteHashMap(meetingEntity),
+                confirmedPromiseDto
         );
     }
 
@@ -171,23 +185,50 @@ public class MeetingService {
         return MeetingMainGetResDtoWrapper.of(meetingEntityList);
     }
 
-    private HashMap<LocalDate, List<String[]>> getUserPromiseTimeHashMap(MeetingEntity meetingEntity) {
-        HashMap<LocalDate, List<String[]>> userPromiseTimeHashMap = new HashMap<>();
+    private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
+        List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
 
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
                 LocalDate promiseDate = res.getPromiseDate();
-                if (userPromiseTimeHashMap.containsKey(promiseDate)) {
-                    userPromiseTimeHashMap.get(promiseDate).add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime().name()});
-                } else {
-                    List<String[]> promiseList = new ArrayList<>();
-                    promiseList.add(new String[]{res.getMeetingUserEntity().getMeetingUserName(), res.getPromiseTime().name()});
-                    userPromiseTimeHashMap.put(promiseDate, promiseList);
+                PromiseTime promiseTime = res.getPromiseTime();
+
+                boolean isAdd = false;
+                for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
+                    if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
+                        userPromiseTime.getUserNameList().add(meetingUser.getMeetingUserName());
+                        isAdd = true;
+                        break;
+                    }
+                }
+
+                if (!isAdd) {
+                    List<String> userNameList = new ArrayList<>();
+                    userNameList.add(meetingUser.getMeetingUserName());
+                    userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
+                            .promiseDate(promiseDate)
+                            .promiseTime(promiseTime)
+                            .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
+                            .userNameList(userNameList)
+                            .build());
                 }
             });
         });
 
-        return userPromiseTimeHashMap;
+        Collections.sort(userPromiseTimeResDtoList, new Comparator<UserPromiseTimeResDto>() {
+            @Override
+            public int compare(UserPromiseTimeResDto o1, UserPromiseTimeResDto o2) {
+                return o2.getUserNameList().size() - o1.getUserNameList().size();
+            }
+        });
+
+        return userPromiseTimeResDtoList;
+    }
+
+    private PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
+        DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
+        int idx = dayOfWeek.getValue();
+        return PromiseDayOfWeek.values()[idx - 1];
     }
 
     private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
@@ -199,9 +240,9 @@ public class MeetingService {
                     if (userVoteHashMap.containsKey(promisePlace)) {
                         userVoteHashMap.get(promisePlace).add(res.getMeetingUserEntity().getMeetingUserName());
                     } else {
-                        List<String> voteList = new ArrayList<>();
-                        voteList.add(res.getMeetingUserEntity().getMeetingUserName());
-                        userVoteHashMap.put(promisePlace, voteList);
+                        List<String> userNameList = new ArrayList<>();
+                        userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
+                        userVoteHashMap.put(promisePlace, userNameList);
                     }
                 });
             });

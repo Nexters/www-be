@@ -3,7 +3,7 @@ package com.promise8.wwwbe.controller;
 import com.promise8.wwwbe.config.security.UserPrincipal;
 import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
-import com.promise8.wwwbe.model.dto.MeetingGetRes;
+import com.promise8.wwwbe.model.dto.MeetingGetResDto;
 import com.promise8.wwwbe.model.dto.MeetingMainGetResDtoWrapper;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.http.BaseResponse;
@@ -51,7 +51,7 @@ public class MeetingController {
      * @return
      */
     @GetMapping("/{meetingId}")
-    public BaseResponse<MeetingGetRes> getMeetingById(@PathVariable("meetingId") long meetingId) {
+    public BaseResponse<MeetingGetResDto> getMeetingById(@PathVariable("meetingId") long meetingId) {
         return BaseResponse.ok(meetingService.getMeetingById(meetingId));
     }
 
@@ -73,7 +73,7 @@ public class MeetingController {
      * @return
      */
     @PostMapping("/code/{meetingCode}")
-    public BaseResponse<MeetingGetRes> getMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
+    public BaseResponse<MeetingGetResDto> getMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
         return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode));
     }
 

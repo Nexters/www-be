@@ -1,5 +1,6 @@
 package com.promise8.wwwbe.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -22,21 +24,24 @@ public class MeetingMainGetResDto {
     private PromiseTime promiseTime;
     private String promisePlace;
     private MeetingStatus meetingStatus;
+    @JsonIgnore
+    private LocalDateTime createdDatetime;
 
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
-            MeetingMainGetResDtoWrapper.ConfirmedPromise confirmedPromise) {
+            ConfirmedPromiseDto confirmedPromiseDto) {
         return MeetingMainGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
-                .hostName(confirmedPromise.getHostAndVotingCnt().getHostName())
+                .hostName(confirmedPromiseDto.getHostName())
                 .conditionCount(meetingEntity.getConditionCount())
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
-                .votingUserCount(confirmedPromise.getHostAndVotingCnt().getVotingUserCount())
-                .promiseDate(confirmedPromise.getPromiseDate())
-                .promiseTime(confirmedPromise.getPromiseTime())
-                .promisePlace(confirmedPromise.getPromisePlace())
+                .votingUserCount(confirmedPromiseDto.getVotingUserCount())
+                .promiseDate(confirmedPromiseDto.getPromiseDate())
+                .promiseTime(confirmedPromiseDto.getPromiseTime())
+                .promisePlace(confirmedPromiseDto.getPromisePlace())
                 .meetingStatus(meetingEntity.getMeetingStatus())
+                .createdDatetime(meetingEntity.getCreatedDatetime())
                 .build();
     }
 }
