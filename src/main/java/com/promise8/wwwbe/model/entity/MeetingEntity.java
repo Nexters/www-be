@@ -37,6 +37,9 @@ public class MeetingEntity extends BaseTimeEntity {
     @Column(name = "meeting_code")
     private String meetingCode;
     @Basic
+    @Column(name = "short_link")
+    private String shortLink;
+    @Basic
     @Column(name = "meeting_status")
     @Enumerated(EnumType.STRING)
     private MeetingStatus meetingStatus = MeetingStatus.WAITING;

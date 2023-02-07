@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MeetingService {
     private static final int MEETING_CODE_LENGTH = 6;
-
+    private static final String TMP_ENDPOINT = "https://naver.com";
     private final PushService pushService;
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
@@ -29,13 +29,13 @@ public class MeetingService {
     private final PlaceVoteRepository placeVoteRepository;
     private final LinkService linkService;
 
-    private static final String TMP_ENDPOINT = "https://naver.com";
-
-
+    @Transactional
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto) {
         String meetingCode = getMeetingCode();
+        // TODO FIX deviceId dto to accessToken
         UserEntity userEntity = getUser(meetingCreateReqDto.getDeviceId(), meetingCreateReqDto.getUserName());
-        MeetingEntity meetingEntity = meetingRepository.save(meetingCreateReqDto.of(userEntity, meetingCode));
+        String shortLink = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT).getShortLink();
+        MeetingEntity meetingEntity = meetingRepository.save(meetingCreateReqDto.of(userEntity, meetingCode, shortLink));
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
                 .meetingUserName(meetingCreateReqDto.getUserName())
                 .userEntity(userEntity)
@@ -79,7 +79,6 @@ public class MeetingService {
         }
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
 
-        String shortLink = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT).getShortLink();
         return MeetingCreateResDto.of(meetingCode, shortLink);
     }
 
@@ -115,7 +114,7 @@ public class MeetingService {
         ));
     }
 
-    public MeetingGetResDto getMeetingById(long meetingId) {
+    public MeetingGetResDto getMeetingById(long meetingId, long currentUserId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
 
         ConfirmedPromiseDto confirmedPromiseDto = null;
@@ -130,11 +129,12 @@ public class MeetingService {
                 getUserPromisePlaceResDtoList(meetingEntity),
                 getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
-                confirmedPromiseDto
+                confirmedPromiseDto,
+                currentUserId
         );
     }
 
-    public MeetingGetResDto getMeetingByCode(String meetingCode) {
+    public MeetingGetResDto getMeetingByCode(String meetingCode, long currentUserId) {
         MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
 
         ConfirmedPromiseDto confirmedPromiseDto = null;
@@ -149,7 +149,8 @@ public class MeetingService {
                 getUserPromisePlaceResDtoList(meetingEntity),
                 getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
-                confirmedPromiseDto
+                confirmedPromiseDto,
+                currentUserId
         );
     }
 
