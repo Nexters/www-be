@@ -45,16 +45,16 @@ public class MeetingMainGetResDtoWrapper {
                             if (o1.getPromiseTime().equals(o2.getPromiseTime())) {
                                 return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
                             } else {
-                                return o1.getPromiseTime().ordinal() - o2.getPromiseTime().ordinal();
+                                return o1.getPromiseTime().getPriority() - o2.getPromiseTime().getPriority();
                             }
                         } else {
-                            return o1.getPromiseTime().ordinal() - o2.getPromiseTime().ordinal();
+                            return o1.getPromiseTime().getPriority() - o2.getPromiseTime().getPriority();
                         }
                     } else {
                         return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
                     }
                 } else {
-                    return o2.getMeetingStatus().ordinal() - o1.getMeetingStatus().ordinal();
+                    return o2.getMeetingStatus().getPriority() - o1.getMeetingStatus().getPriority();
                 }
             }
         });
