@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Entity(name = "meeting_place")
 @Builder
+@ToString(of = {"meetingPlaceId", "promisePlace", "isConfirmed"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "meeting_place", schema = "www", catalog = "")
