@@ -22,13 +22,14 @@ public class MeetingCreateReqDto {
     private List<String> promisePlaceList;
     private PlatformType platformType;
 
-    public MeetingEntity of(UserEntity userEntity, String meetingCode) {
+    public MeetingEntity of(UserEntity userEntity, String meetingCode, String shortLink) {
         return MeetingEntity.builder()
                 .meetingName(this.meetingName)
                 .conditionCount(this.conditionCount)
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .meetingCode(meetingCode)
+                .shortLink(shortLink)
                 .meetingStatus(MeetingStatus.WAITING)
                 .creator(userEntity)
                 .build();

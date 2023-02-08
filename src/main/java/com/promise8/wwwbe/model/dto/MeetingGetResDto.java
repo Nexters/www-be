@@ -17,8 +17,10 @@ public class MeetingGetResDto {
     private String meetingName;
     private Long conditionCount;
     private String hostName;
+    private Boolean isHost;
     private Integer joinedUserCount;
     private String meetingCode;
+    private String shortLink;
     private LocalDate promiseDate;
     private PromiseTime promiseTime;
     private String promisePlace;
@@ -34,7 +36,8 @@ public class MeetingGetResDto {
             List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
-            ConfirmedPromiseDto confirmedPromiseDto) {
+            ConfirmedPromiseDto confirmedPromiseDto,
+            Long currentUserId) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
 
         Collections.sort(userVoteList, new Comparator<Map.Entry<String, List<String>>>() {
@@ -49,8 +52,10 @@ public class MeetingGetResDto {
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseDto.getHostName())
+                .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
                 .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
                 .meetingCode(meetingEntity.getMeetingCode())
+                .shortLink(meetingEntity.getShortLink())
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
                 .promiseTime(confirmedPromiseDto.getPromiseTime())
                 .promisePlace(confirmedPromiseDto.getPromisePlace())

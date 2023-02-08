@@ -52,8 +52,10 @@ public class MeetingController {
      * @return
      */
     @GetMapping("/{meetingId}")
-    public BaseResponse<MeetingGetResDto> getMeetingById(@PathVariable("meetingId") long meetingId) {
-        return BaseResponse.ok(meetingService.getMeetingById(meetingId));
+    public BaseResponse<MeetingGetResDto> getMeetingById(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("meetingId") long meetingId) {
+        return BaseResponse.ok(meetingService.getMeetingById(meetingId, userPrincipal.getId()));
     }
 
     /**
@@ -63,8 +65,10 @@ public class MeetingController {
      * @return
      */
     @GetMapping("/code/{meetingCode}")
-    public BaseResponse<MeetingGetResDto> updateMeetingByCode(@PathVariable("meetingCode") String meetingCode) {
-        return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode));
+    public BaseResponse<MeetingGetResDto> updateMeetingByCode(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("meetingCode") String meetingCode) {
+        return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode, userPrincipal.getId()));
     }
 
     /**
