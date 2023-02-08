@@ -52,6 +52,7 @@ public class MeetingController {
      * @return
      */
     @GetMapping("/{meetingId}")
+    @PreAuthorize("@meetingAuthorizer.isJoinedUser(#userPrincipal, #meetingId)")
     public BaseResponse<MeetingGetResDto> getMeetingById(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable("meetingId") long meetingId) {
