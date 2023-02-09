@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MeetingService {
     private static final int MEETING_CODE_LENGTH = 6;
+    // TODO FIX ENDPOINT
     private static final String TMP_ENDPOINT = "https://naver.com";
     private final PushService pushService;
     private final UserRepository userRepository;
@@ -30,10 +31,9 @@ public class MeetingService {
     private final LinkService linkService;
 
     @Transactional
-    public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto) {
+    public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto, String deviceId) {
         String meetingCode = getMeetingCode();
-        // TODO FIX deviceId dto to accessToken
-        UserEntity userEntity = getUser(meetingCreateReqDto.getDeviceId(), meetingCreateReqDto.getUserName());
+        UserEntity userEntity = getUser(deviceId, meetingCreateReqDto.getUserName());
         String shortLink = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT).getShortLink();
         MeetingEntity meetingEntity = meetingRepository.save(meetingCreateReqDto.of(userEntity, meetingCode, shortLink));
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()

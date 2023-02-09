@@ -17,7 +17,6 @@ public class MeetingCreateReqDto {
     private Long conditionCount;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String deviceId;
     private List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList;
     private List<String> promisePlaceList;
     private PlatformType platformType;

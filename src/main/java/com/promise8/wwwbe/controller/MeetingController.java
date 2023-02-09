@@ -39,8 +39,10 @@ public class MeetingController {
      * @return
      */
     @PostMapping
-    public BaseResponse<MeetingCreateResDto> createMeeting(@RequestBody MeetingCreateReqDto meetingCreateReqDto) {
-        return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto));
+    public BaseResponse<MeetingCreateResDto> createMeeting(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody MeetingCreateReqDto meetingCreateReqDto) {
+        return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto, userPrincipal.getDeviceId()));
     }
 
 
