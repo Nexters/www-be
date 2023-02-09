@@ -30,12 +30,13 @@ public class MeetingMainGetResDto {
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
             ConfirmedPromiseDto confirmedPromiseDto) {
+        boolean isNoMeetingUser = meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty();
         return MeetingMainGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .hostName(confirmedPromiseDto.getHostName())
                 .conditionCount(meetingEntity.getConditionCount())
-                .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
+                .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseDto.getVotingUserCount())
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
                 .promiseTime(confirmedPromiseDto.getPromiseTime())

@@ -34,7 +34,12 @@ public class MeetingService {
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto, String deviceId) {
         String meetingCode = getMeetingCode();
         UserEntity userEntity = getUser(deviceId, meetingCreateReqDto.getUserName());
-        String shortLink = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT).getShortLink();
+        DynamicLinkResDto dynamicLinkResDto = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT);
+        String shortLink = null;
+        if (dynamicLinkResDto != null) {
+            shortLink = dynamicLinkResDto.getShortLink();
+        }
+
         MeetingEntity meetingEntity = meetingRepository.save(meetingCreateReqDto.of(userEntity, meetingCode, shortLink));
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
                 .meetingUserName(meetingCreateReqDto.getUserName())
@@ -135,6 +140,7 @@ public class MeetingService {
     }
 
     public MeetingGetResDto getMeetingByCode(String meetingCode, long currentUserId) {
+        // TODO FIX to throw new Exception
         MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
 
         ConfirmedPromiseDto confirmedPromiseDto = null;
@@ -154,7 +160,7 @@ public class MeetingService {
         );
     }
 
-    public MeetingMainGetResDtoWrapper getMeetingByDeviceId(String deviceId) {
+    public MeetingMainGetResDtoWrapper getMeetingListByDeviceId(String deviceId) {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
 
         return MeetingMainGetResDtoWrapper.of(meetingEntityList);
@@ -162,6 +168,9 @@ public class MeetingService {
 
     private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
         List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            return userPromiseTimeResDtoList;
+        }
 
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
@@ -208,6 +217,10 @@ public class MeetingService {
 
     private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
         HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            return userVoteHashMap;
+        }
+
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             meetingUser.getMeetingPlaceEntityList().forEach(meetingPlace -> {
                 meetingPlace.getPlaceVoteEntityList().forEach(res -> {
@@ -228,6 +241,10 @@ public class MeetingService {
 
     private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
         List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            return userPromisePlaceResDtoList;
+        }
+
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             userPromisePlaceResDtoList.addAll(meetingUser.getMeetingPlaceEntityList().stream()
                     .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));

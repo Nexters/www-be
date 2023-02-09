@@ -3,6 +3,7 @@ package com.promise8.wwwbe.model.dto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.UserEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Setter
 @Getter
+@Builder
 public class MeetingCreateReqDto {
     private String meetingName;
     private String userName;

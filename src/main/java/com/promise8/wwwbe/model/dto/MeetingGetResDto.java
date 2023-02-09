@@ -47,13 +47,14 @@ public class MeetingGetResDto {
             }
         });
 
+        boolean isNoMeetingUser = meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty();
         return MeetingGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .conditionCount(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseDto.getHostName())
                 .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
-                .joinedUserCount(meetingEntity.getMeetingUserEntityList().size())
+                .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .meetingCode(meetingEntity.getMeetingCode())
                 .shortLink(meetingEntity.getShortLink())
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
