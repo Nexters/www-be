@@ -115,6 +115,7 @@ public class MeetingService {
 
         UserEntity userEntity = null;
         if (optionalUserEntity.isPresent()) {
+            userEntity = optionalUserEntity.get();
             userEntity.setUserName(userName);
             return userRepository.save(userEntity);
         } else {
