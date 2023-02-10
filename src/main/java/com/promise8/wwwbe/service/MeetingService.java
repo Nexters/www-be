@@ -112,11 +112,17 @@ public class MeetingService {
 
     private UserEntity getUser(String deviceId, String userName) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByDeviceId(deviceId);
-        return optionalUserEntity.orElseGet(() -> userRepository.save(UserEntity.builder()
-                .deviceId(deviceId)
-                .userName(userName)
-                .build()
-        ));
+
+        UserEntity userEntity = null;
+        if (optionalUserEntity.isPresent()) {
+            userEntity.setUserName(userName);
+            return userRepository.save(userEntity);
+        } else {
+            return userRepository.save(UserEntity.builder()
+                    .deviceId(deviceId)
+                    .userName(userName)
+                    .build());
+        }
     }
 
     public MeetingGetResDto getMeetingById(long meetingId, long currentUserId) {
