@@ -12,6 +12,8 @@ import java.util.List;
 public class MeetingServiceHelper {
     public static ConfirmedPromiseDto getConfirmedPromise(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
         ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
+        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseDto;
+
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
             if (confirmedPromiseDto.getPromiseDate() == null) {
                 for (MeetingUserTimetableEntity meetingUserTimetable : meetingUser.getMeetingUserTimetableEntityList()) {
@@ -46,6 +48,8 @@ public class MeetingServiceHelper {
 
     public static ConfirmedPromiseDto getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
         ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
+        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseDto;
+
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
                 confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);

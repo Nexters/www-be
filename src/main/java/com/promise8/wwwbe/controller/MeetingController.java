@@ -27,7 +27,7 @@ public class MeetingController {
      */
     @GetMapping
     public BaseResponse<MeetingMainGetResDtoWrapper> getMeetingList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return BaseResponse.ok(meetingService.getMeetingByDeviceId(userPrincipal.getDeviceId()));
+        return BaseResponse.ok(meetingService.getMeetingListByDeviceId(userPrincipal.getDeviceId()));
     }
 
     /**
@@ -39,8 +39,10 @@ public class MeetingController {
      * @return
      */
     @PostMapping
-    public BaseResponse<MeetingCreateResDto> createMeeting(@RequestBody MeetingCreateReqDto meetingCreateReqDto) {
-        return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto));
+    public BaseResponse<MeetingCreateResDto> createMeeting(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody MeetingCreateReqDto meetingCreateReqDto) {
+        return BaseResponse.ok(meetingService.createMeeting(meetingCreateReqDto, userPrincipal.getDeviceId()));
     }
 
 
@@ -59,13 +61,14 @@ public class MeetingController {
     }
 
     /**
+     * TODO 미팅방 상태 확인
      * code를 통해 약속방 입장
      *
      * @param meetingCode
      * @return
      */
     @GetMapping("/code/{meetingCode}")
-    public BaseResponse<MeetingGetResDto> updateMeetingByCode(
+    public BaseResponse<MeetingGetResDto> getMeetingByCode(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable("meetingCode") String meetingCode) {
         return BaseResponse.ok(meetingService.getMeetingByCode(meetingCode, userPrincipal.getId()));
