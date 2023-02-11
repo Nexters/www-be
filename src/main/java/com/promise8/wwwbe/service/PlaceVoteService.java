@@ -8,6 +8,7 @@ import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,11 @@ public class PlaceVoteService {
         List<MeetingPlaceEntity> meetingPlaceEntityList =
                 meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(meetingUserEntity, placeVoteReqDto.getMeetingPlaceId());
 
+        List<MeetingPlaceEntity> existMeetingPlaceList = meetingPlaceRepository.findByMeetingUserEntity(meetingUserEntity);
+
+        if (!CollectionUtils.isEmpty(existMeetingPlaceList)) {
+            placeVoteRepository.deleteByMeetingUserEntity(meetingUserEntity);
+        }
         List<PlaceVoteEntity> placeVoteEntityList = meetingPlaceEntityList.stream()
                 .map(meetingPlaceEntity -> makePlaceVoteEntity(meetingUserEntity, meetingPlaceEntity))
                 .collect(Collectors.toList());
