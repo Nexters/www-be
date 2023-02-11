@@ -24,12 +24,11 @@ public class MeetingGetResDto {
     private LocalDate promiseDate;
     private PromiseTime promiseTime;
     private String promisePlace;
+    private Boolean isJoined;
     private List<UserPromiseTimeResDto> userPromiseTimeResDtoList;
     private List<UserPromisePlaceResDto> userPromisePlaceResDtoList;
     private MeetingStatus meetingStatus;
     private List<Map.Entry<String, List<String>>> userVoteList;
-
-    // TODO: recentUserName 필드 추가
 
     public static MeetingGetResDto of(
             MeetingEntity meetingEntity,
@@ -37,7 +36,8 @@ public class MeetingGetResDto {
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
             ConfirmedPromiseDto confirmedPromiseDto,
-            Long currentUserId) {
+            Long currentUserId,
+            Boolean isJoined) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
 
         Collections.sort(userVoteList, new Comparator<Map.Entry<String, List<String>>>() {
@@ -60,6 +60,7 @@ public class MeetingGetResDto {
                 .promiseDate(confirmedPromiseDto.getPromiseDate())
                 .promiseTime(confirmedPromiseDto.getPromiseTime())
                 .promisePlace(confirmedPromiseDto.getPromisePlace())
+                .isJoined(isJoined)
                 .userPromiseTimeResDtoList(userPromiseTimeResDtoList)
                 .userPromisePlaceResDtoList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())

@@ -128,28 +128,28 @@ public class MeetingService {
     }
 
     public MeetingGetResDto getMeetingById(long meetingId, long currentUserId) {
-        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow();
-
-        ConfirmedPromiseDto confirmedPromiseDto = null;
-        if (MeetingStatus.DONE.equals(meetingEntity.getMeetingStatus()) || MeetingStatus.CONFIRMED.equals(meetingEntity.getMeetingStatus())) {
-            confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
-        } else {
-            confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
-        }
-
-        return MeetingGetResDto.of(
-                meetingEntity,
-                getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeList(meetingEntity),
-                getUserVoteHashMap(meetingEntity),
-                confirmedPromiseDto,
-                currentUserId
-        );
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING, "Meeting not exist with meetingId."));
+        return getMeetingInfo(meetingEntity, currentUserId);
     }
 
     public MeetingGetResDto getMeetingByCode(String meetingCode, long currentUserId) {
-        // TODO FIX to throw new Exception
-        MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
+        MeetingEntity meetingEntity = meetingRepository.findByMeetingCode(meetingCode)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING, "Meeting not exist with meetingCode."));
+        return getMeetingInfo(meetingEntity, currentUserId);
+    }
+
+    private MeetingGetResDto getMeetingInfo(MeetingEntity meetingEntity, long currentUserId) {
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            throw new BizException(BaseErrorCode.SERVER_ERROR, "Server Error");
+        }
+
+        boolean isJoined = meetingEntity.getMeetingUserEntityList().stream()
+                .anyMatch(meetingUserEntity -> meetingUserEntity.getUserEntity().getUserId() == currentUserId);
+
+        if (!isJoined && !MeetingStatus.WAITING.equals(meetingEntity.getMeetingStatus())) {
+            throw new BizException(BaseErrorCode.ALREADY_VOTING_MEETING, "Voting already start.");
+        }
 
         ConfirmedPromiseDto confirmedPromiseDto = null;
         if (MeetingStatus.DONE.equals(meetingEntity.getMeetingStatus()) || MeetingStatus.CONFIRMED.equals(meetingEntity.getMeetingStatus())) {
@@ -164,7 +164,8 @@ public class MeetingService {
                 getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
                 confirmedPromiseDto,
-                currentUserId
+                currentUserId,
+                isJoined
         );
     }
 

@@ -25,8 +25,4 @@ public class MeetingAuthorizer {
         UserEntity creator = meetingEntity.getCreator();
         return creator.getUserId() == userPrincipal.getId();
     }
-
-    public boolean isJoinedUser(UserPrincipal userPrincipal, long meetingId) {
-        return meetingUserRepository.existsMeetingUserEntityByUserEntity_UserIdAndMeetingEntity_MeetingId(userPrincipal.getId(), meetingId);
-    }
 }
