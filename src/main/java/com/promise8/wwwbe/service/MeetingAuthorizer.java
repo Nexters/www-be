@@ -2,7 +2,6 @@ package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.config.security.UserPrincipal;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
@@ -28,8 +27,6 @@ public class MeetingAuthorizer {
     }
 
     public boolean isJoinedUser(UserPrincipal userPrincipal, long meetingId) {
-        MeetingUserEntity meetingUserEntity =
-                meetingUserRepository.findByUserEntity_UserIdAndMeetingEntity_MeetingId(userPrincipal.getId(), meetingId);
-        return meetingUserEntity != null;
+        return meetingUserRepository.existsMeetingUserEntityByUserEntity_UserIdAndMeetingEntity_MeetingId(userPrincipal.getId(), meetingId);
     }
 }
