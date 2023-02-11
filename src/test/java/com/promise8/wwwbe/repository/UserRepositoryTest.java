@@ -20,12 +20,12 @@ class UserRepositoryTest {
     @DisplayName("유저 생성 테스트")
     void test() {
         UserEntity user = userRepository.save(UserEntity.builder()
-                .deviceId("test")
-                .userName("seongchan.kang")
+                .deviceId("test123")
+                .userName("seongchan.kang22")
                 .build());
 
-        Assertions.assertEquals("test", user.getDeviceId());
-        Assertions.assertEquals("seongchan.kang", user.getUserName());
+        Assertions.assertEquals("test123", user.getDeviceId());
+        Assertions.assertEquals("seongchan.kang22", user.getUserName());
     }
 
 }
