@@ -1,6 +1,8 @@
 package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.TokenProvider;
+import com.promise8.wwwbe.config.security.UserPrincipal;
+import com.promise8.wwwbe.model.dto.AlarmReqDto;
 import com.promise8.wwwbe.model.dto.LoginReqDto;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.UserService;
@@ -8,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,5 +36,13 @@ public class UserController {
         String token = tokenProvider.createToken(authentication);
 
         return BaseResponse.ok(token);
+    }
+
+    @PostMapping("/alarm")
+    public BaseResponse<Void> updateAlarm(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody AlarmReqDto alarmReqDto) {
+        userService.setAlarm(userPrincipal.getId(), alarmReqDto.isAlarmOn());
+        return BaseResponse.ok();
     }
 }
