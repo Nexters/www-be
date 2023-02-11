@@ -1,13 +1,9 @@
 package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.UserPrincipal;
-import com.promise8.wwwbe.model.dto.MeetingCreateReqDto;
-import com.promise8.wwwbe.model.dto.MeetingCreateResDto;
-import com.promise8.wwwbe.model.dto.MeetingGetResDto;
-import com.promise8.wwwbe.model.dto.MeetingMainGetResDtoWrapper;
+import com.promise8.wwwbe.model.dto.*;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.http.BaseResponse;
-import com.promise8.wwwbe.model.dto.PlaceVoteReqDto;
 import com.promise8.wwwbe.service.MeetingService;
 import com.promise8.wwwbe.service.PlaceVoteService;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +81,12 @@ public class MeetingController {
      * @return
      */
     @PostMapping("/{meetingId}")
-    public BaseResponse<Void> joinMeeting(@PathVariable("meetingId") long meetingId) {
+    public BaseResponse<Void> joinMeeting(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("meetingId") long meetingId,
+            @RequestBody JoinMeetingReqDto joinMeetingReqDto
+    ) {
+        meetingService.joinMeetingAndGetMeetingUserId(userPrincipal.getId(), meetingId, joinMeetingReqDto);
         return BaseResponse.ok();
     }
 

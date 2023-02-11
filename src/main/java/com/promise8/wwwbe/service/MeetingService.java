@@ -174,6 +174,49 @@ public class MeetingService {
         return MeetingMainGetResDtoWrapper.of(meetingEntityList);
     }
 
+    public Long joinMeetingAndGetMeetingUserId(long userId, long meetingId, JoinMeetingReqDto joinMeetingReqDto) {
+        Boolean isExistMeetingUser = meetingUserRepository.existsMeetingUserEntityByUserEntity_UserIdAndMeetingEntity_MeetingId(userId, meetingId);
+        if (isExistMeetingUser) {
+            throw new BizException(BaseErrorCode.ALREADY_PARTICIPATED_MEETING);
+        }
+        MeetingEntity meetingEntity =
+                meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting"));
+        UserEntity userEntity =
+                userRepository.findById(userId).orElseThrow(() -> new BizException(BaseErrorCode.INVALID_REQUEST, "not exist user"));
+
+
+        MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+                .userEntity(userEntity)
+                .meetingEntity(meetingEntity)
+                .meetingUserName(joinMeetingReqDto.getNickname())
+                .build());
+
+
+        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList =
+                joinMeetingReqDto.getUserPromiseTimeList().stream()
+                        .map(meetingReq -> MeetingUserTimetableEntity.builder()
+                                .meetingUserEntity(meetingUserEntity)
+                                .promiseDate(meetingReq.getPromiseDate())
+                                .promiseTime(meetingReq.getPromiseTime())
+                                .isConfirmed(false)
+                                .build()
+                        )
+                        .collect(Collectors.toList());
+
+        meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
+
+        List<MeetingPlaceEntity> meetingPlaceEntityList = joinMeetingReqDto.getPromisePlaceList().stream()
+                .map(place -> meetingPlaceRepository.save(MeetingPlaceEntity.builder()
+                        .meetingUserEntity(meetingUserEntity)
+                        .promisePlace(place)
+                        .isConfirmed(false)
+                        .build()))
+                .collect(Collectors.toList());
+
+        meetingPlaceRepository.saveAll(meetingPlaceEntityList);
+        return meetingUserEntity.getMeetingUserId();
+    }
+
     private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
         List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
         if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
