@@ -10,5 +10,5 @@ import org.springframework.data.repository.query.Param;
 public interface PlaceVoteRepository extends JpaRepository<PlaceVoteEntity, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "delete from place_vote pv where pv.meetingUserEntity = :meetingUserEntity")
-    void deleteByMeetingUserEntity(@Param("meetingUserId") MeetingUserEntity meetingUserEntity);
+    void deleteByMeetingUserEntity(@Param("meetingUserEntity") MeetingUserEntity meetingUserEntity);
 }
