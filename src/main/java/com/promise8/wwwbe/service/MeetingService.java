@@ -140,6 +140,10 @@ public class MeetingService {
     }
 
     private MeetingGetResDto getMeetingInfo(MeetingEntity meetingEntity, long currentUserId) {
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            throw new BizException(BaseErrorCode.SERVER_ERROR, "Server Error");
+        }
+
         boolean isJoined = meetingEntity.getMeetingUserEntityList().stream()
                 .anyMatch(meetingUserEntity -> meetingUserEntity.getUserEntity().getUserId() == currentUserId);
 

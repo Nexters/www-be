@@ -5,7 +5,6 @@ import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.repository.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -55,18 +54,13 @@ class MeetingServiceTest {
     private MeetingUserEntity meetingUserEntity;
     private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
     private List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
     private MeetingCreateReqDto meetingCreateReqDto;
     private DynamicLinkResDto dynamicLinkResDto = new DynamicLinkResDto();
     private ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
 
     @BeforeEach
     public void init() {
-        meetingServiceHelper = mockStatic(MeetingServiceHelper.class);
-        when(userRepository.save(any(UserEntity.class))).then(AdditionalAnswers.returnsFirstArg());
-        when(meetingRepository.save(any(MeetingEntity.class))).then(AdditionalAnswers.returnsFirstArg());
-        when(meetingUserRepository.save(any(MeetingUserEntity.class))).then(AdditionalAnswers.returnsFirstArg());
-        when(meetingUserTimetableRepository.saveAll(anyList())).then(AdditionalAnswers.returnsFirstArg());
-        when(meetingPlaceRepository.saveAll(anyList())).then(AdditionalAnswers.returnsFirstArg());
 
         List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList = new ArrayList<>();
         List<String> promisePlaceList = new ArrayList<>();
@@ -75,6 +69,42 @@ class MeetingServiceTest {
         List<PromiseTime> promiseTimeList = List.of(promiseTime);
         promiseDateAndTimeReqDtoList.add(new PromiseDateAndTimeReqDto(promiseDate, promiseTimeList));
         promisePlaceList.add(meetingPlace);
+
+        userEntity = UserEntity.builder()
+                .userId(55L)
+                .deviceId(deviceId)
+                .userName(userName)
+                .build();
+
+        meetingEntity = MeetingEntity.builder()
+                .meetingId(55L)
+                .meetingName(meetingName)
+                .conditionCount(conditionCount)
+                .startDate(startDate)
+                .endDate(endDate)
+                .meetingCode(meetingCode)
+                .meetingStatus(MeetingStatus.WAITING)
+                .creator(userEntity)
+                .build();
+
+        meetingUserEntity = MeetingUserEntity.builder()
+                .meetingUserName(meetingUserName)
+                .userEntity(userEntity)
+                .meetingEntity(meetingEntity)
+                .build();
+
+        meetingPlaceEntityList = List.of(MeetingPlaceEntity.builder()
+                .promisePlace(meetingPlace)
+                .isConfirmed(false)
+                .meetingUserEntity(meetingUserEntity)
+                .build());
+
+        meetingUserTimetableEntityList = List.of(MeetingUserTimetableEntity.builder()
+                .promiseDate(LocalDate.now())
+                .promiseTime(PromiseTime.MORNING)
+                .isConfirmed(false)
+                .meetingUserEntity(meetingUserEntity)
+                .build());
 
         meetingCreateReqDto = MeetingCreateReqDto.builder()
                 .meetingName(meetingName)
@@ -86,38 +116,21 @@ class MeetingServiceTest {
                 .promisePlaceList(promisePlaceList)
                 .platformType(PlatformType.ANDROID)
                 .build();
-        userEntity = userRepository.save(UserEntity.builder()
-                .userId(55L)
-                .deviceId(deviceId)
-                .userName(userName)
-                .build());
-        meetingEntity = meetingRepository.save(MeetingEntity.builder()
-                .meetingId(55L)
-                .meetingName(meetingName)
-                .conditionCount(conditionCount)
-                .startDate(startDate)
-                .endDate(endDate)
-                .meetingCode(meetingCode)
-                .meetingStatus(MeetingStatus.WAITING)
-                .creator(userEntity)
-                .build());
-        meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
-                .meetingUserName(meetingUserName)
-                .userEntity(userEntity)
-                .meetingEntity(meetingEntity)
-                .build());
-        meetingUserTimetableEntityList = meetingUserTimetableRepository.saveAll(List.of(MeetingUserTimetableEntity.builder()
-                .promiseDate(LocalDate.now())
-                .promiseTime(PromiseTime.MORNING)
-                .isConfirmed(false)
+
+        placeVoteEntityList = List.of(PlaceVoteEntity.builder()
                 .meetingUserEntity(meetingUserEntity)
-                .build()));
-        meetingPlaceEntityList = meetingPlaceRepository.saveAll(List.of(MeetingPlaceEntity.builder()
-                .promisePlace(meetingPlace)
-                .isConfirmed(false)
-                .meetingUserEntity(meetingUserEntity)
-                .build()));
+                .meetingPlaceEntity(meetingPlaceEntityList.get(0))
+                .build());
+
+        meetingEntity.setMeetingUserEntityList(List.of(meetingUserEntity));
+        meetingPlaceEntityList.get(0).setPlaceVoteEntityList(placeVoteEntityList);
+        meetingUserEntity.setMeetingUserTimetableEntityList(meetingUserTimetableEntityList);
+        meetingUserEntity.setMeetingPlaceEntityList(meetingPlaceEntityList);
+        meetingUserEntity.setPlaceVoteEntityList(placeVoteEntityList);
+
+        meetingServiceHelper = mockStatic(MeetingServiceHelper.class);
     }
+
 
     @AfterEach
     public void clear() {
