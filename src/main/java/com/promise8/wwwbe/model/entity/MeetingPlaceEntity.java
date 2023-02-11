@@ -11,7 +11,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@Entity
+@Entity(name = "meeting_place")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

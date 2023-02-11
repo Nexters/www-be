@@ -7,6 +7,7 @@ import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -258,5 +259,15 @@ public class MeetingService {
         });
 
         return userPromisePlaceResDtoList;
+    }
+
+    @Scheduled(cron = "2 0 0 * * ?", zone = "Asia/Seoul")
+    public void promiseDone() {
+        List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED);
+        for (MeetingEntity meeting : meetingEntityList) {
+            meeting.setMeetingStatus(MeetingStatus.DONE);
+        }
+
+        meetingRepository.saveAll(meetingEntityList);
     }
 }
