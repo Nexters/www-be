@@ -7,7 +7,9 @@ import com.promise8.wwwbe.model.dto.MeetingGetResDto;
 import com.promise8.wwwbe.model.dto.MeetingMainGetResDtoWrapper;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.http.BaseResponse;
+import com.promise8.wwwbe.model.dto.PlaceVoteReqDto;
 import com.promise8.wwwbe.service.MeetingService;
+import com.promise8.wwwbe.service.PlaceVoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MeetingController {
     private final MeetingService meetingService;
+    private final PlaceVoteService placeVoteService;
 
     /**
      * 약속방 메인 view 전용 API
@@ -97,7 +100,11 @@ public class MeetingController {
     @PostMapping("/meetings/{meetingId}/votes")
     public BaseResponse<Void> createPlaceVote(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @PathVariable("meetingId") long meetingId) {
+            @PathVariable("meetingId") long meetingId,
+            @RequestBody PlaceVoteReqDto placeVoteReqDto
+    ) {
+        placeVoteService.vote(meetingId, userPrincipal.getId(), placeVoteReqDto);
+
         return BaseResponse.ok();
     }
 
