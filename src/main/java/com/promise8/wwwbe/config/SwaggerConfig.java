@@ -29,16 +29,18 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .host("api.whenwheres.com")
                 .consumes(getConsumeContentTypes())
                 .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .produces(getProduceContentTypes())
                 .apiInfo(getApiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.promise8.wwwbe.controller"))
-                .paths(PathSelectors.ant("/**"))
+                .paths(PathSelectors.any())
                 .build()
                 .securityContexts(newArrayList(securityContext()))
-                .securitySchemes(newArrayList(apiKey()));
+                .securitySchemes(newArrayList(apiKey()))
+                .useDefaultResponseMessages(false);
     }
 
     private ApiKey apiKey() {
