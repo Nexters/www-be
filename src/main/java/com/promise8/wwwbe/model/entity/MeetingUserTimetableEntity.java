@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
-@Entity
+@Entity(name = "meeting_user_timetable")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
