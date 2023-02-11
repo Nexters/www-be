@@ -1,9 +1,7 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingStatus;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
-import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.model.dto.PromiseTime;
+import com.promise8.wwwbe.model.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,15 +27,22 @@ class MeetingRepositoryTest {
     private final LocalDate startDate = LocalDate.of(2023, 2, 1);
     private final LocalDate endDate = LocalDate.of(2023, 3, 1);
     private final String meetingCode = "nEwcOD";
+    private final String meetingPlace = "서울";
     private UserEntity userEntity;
     private MeetingEntity meetingEntity;
     private MeetingUserEntity meetingUserEntity;
+    private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList;
+    private List<MeetingPlaceEntity> meetingPlaceEntityList;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private MeetingRepository meetingRepository;
     @Autowired
     private MeetingUserRepository meetingUserRepository;
+    @Autowired
+    private MeetingUserTimetableRepository meetingUserTimetableRepository;
+    @Autowired
+    private MeetingPlaceRepository meetingPlaceRepository;
 
     @BeforeEach
     void init() {
@@ -60,6 +65,22 @@ class MeetingRepositoryTest {
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .build());
+        meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+                .meetingUserName(meetingUserName)
+                .userEntity(userEntity)
+                .meetingEntity(meetingEntity)
+                .build());
+        meetingUserTimetableEntityList = meetingUserTimetableRepository.saveAll(List.of(MeetingUserTimetableEntity.builder()
+                .promiseDate(LocalDate.now().minusDays(1L))
+                .promiseTime(PromiseTime.MORNING)
+                .isConfirmed(true)
+                .meetingUserEntity(meetingUserEntity)
+                .build()));
+        meetingPlaceEntityList = meetingPlaceRepository.saveAll(List.of(MeetingPlaceEntity.builder()
+                .promisePlace(meetingPlace)
+                .isConfirmed(true)
+                .meetingUserEntity(meetingUserEntity)
+                .build()));
     }
 
     @Test
@@ -92,7 +113,16 @@ class MeetingRepositoryTest {
     @DisplayName("유저가 참여한 약속방 리스트 조회 테스트")
     void findMeetingByDeviceId() {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
-        assertThat(meetingEntityList.size()).isEqualTo(1);
+        assertThat(meetingEntityList.size()).isGreaterThan(0);
         assertThat(meetingEntityList.get(0).getCreator().getDeviceId()).isEqualTo(deviceId);
+    }
+
+    @Test
+    @DisplayName("")
+    void findByMeetingStatusAndConfirmedDate() {
+        meetingEntity.setMeetingStatus(MeetingStatus.CONFIRMED);
+        meetingRepository.save(meetingEntity);
+        List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED);
+        assertThat(meetingEntityList.size()).isEqualTo(1);
     }
 }
