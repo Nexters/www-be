@@ -263,7 +263,7 @@ public class MeetingService {
 
     @Scheduled(cron = "2 0 0 * * ?", zone = "Asia/Seoul")
     public void promiseDone() {
-        List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED.name());
+        List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED);
         for (MeetingEntity meeting : meetingEntityList) {
             meeting.setMeetingStatus(MeetingStatus.DONE);
         }
