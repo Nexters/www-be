@@ -1,8 +1,10 @@
 package com.promise8.wwwbe.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -21,15 +23,27 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @Configuration
 @EnableSwagger2
+@RequiredArgsConstructor
 public class SwaggerConfig {
     public static final String AUTHORIZATION_SCOPE_GLOBAL = "global";
     public static final String AUTHORIZATION_SCOPE_GLOBAL_DESC = "accessEverything";
     private static final String SECURITY_SCHEMA_NAME = "JWT";
 
+    private final Environment environment;
+
     @Bean
     public Docket api() {
+        String[] activeProfiles = environment.getActiveProfiles();
+
+        String host = null;
+        if (activeProfiles.length == 0) {
+            host = "localhost:8080";
+        } else {
+            host = "api.whenwheres.com";
+        }
+
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("api.whenwheres.com")
+                .host(host)
                 .consumes(getConsumeContentTypes())
                 .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .produces(getProduceContentTypes())
