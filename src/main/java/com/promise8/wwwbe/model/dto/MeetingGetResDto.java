@@ -2,6 +2,8 @@ package com.promise8.wwwbe.model.dto;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,22 +14,39 @@ import java.util.*;
 @Setter
 @Getter
 @Builder
+@ApiModel(value = "MeetingDetail", description = "약속 방 내의 필요한 정보를 모두 담는다.")
 public class MeetingGetResDto {
+    @ApiModelProperty(value = "meetingId", notes = "약속 방 id")
     private long meetingId;
+    @ApiModelProperty(value = "meetingName", notes = "약속 방 이름")
     private String meetingName;
+    @ApiModelProperty(value = "conditionCount", notes = "약속 방의 알림 최소 인원")
     private Long conditionCount;
+    @ApiModelProperty(value = "hostName", notes = "약속 방의 방장 이름")
     private String hostName;
+    @ApiModelProperty(value = "isHost", notes = "약속 방에서 내가 방장인지 여부")
     private Boolean isHost;
+    @ApiModelProperty(value = "joinedUserCount", notes = "약속 방에 참여한 인원 수")
     private Integer joinedUserCount;
+    @ApiModelProperty(value = "meetingCode", notes = "약속 방의 공유 코드")
     private String meetingCode;
+    @ApiModelProperty(value = "shortLink", notes = "약속 방의 공유 링크")
     private String shortLink;
-    private LocalDate promiseDate;
-    private PromiseTime promiseTime;
-    private String promisePlace;
+    @ApiModelProperty(value = "confirmedDate", notes = "확정된 날짜")
+    private LocalDate confirmedDate;
+    @ApiModelProperty(value = "confirmedTime", notes = "확정된 시간대")
+    private PromiseTime confirmedTime;
+    @ApiModelProperty(value = "confirmedPlace", notes = "확정된 장소")
+    private String confirmedPlace;
+    @ApiModelProperty(value = "isJoined", notes = "이미 방에 참여했는지 여부")
     private Boolean isJoined;
-    private List<UserPromiseTimeResDto> userPromiseTimeResDtoList;
-    private List<UserPromisePlaceResDto> userPromisePlaceResDtoList;
+    @ApiModelProperty(value = "userPromiseDateTimeList", notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
+    private List<UserPromiseTimeResDto> userPromiseDateTimeList;
+    @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
+    private List<UserPromisePlaceResDto> userPromisePlaceList;
+    @ApiModelProperty(value = "meetingStatus", notes = "약속 방 상태")
     private MeetingStatus meetingStatus;
+    @ApiModelProperty(value = "userVoteList", notes = "약속 방 내 유저들의 투표 내역")
     private List<Map.Entry<String, List<String>>> userVoteList;
 
     public static MeetingGetResDto of(
@@ -57,12 +76,12 @@ public class MeetingGetResDto {
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .meetingCode(meetingEntity.getMeetingCode())
                 .shortLink(meetingEntity.getShortLink())
-                .promiseDate(confirmedPromiseDto.getPromiseDate())
-                .promiseTime(confirmedPromiseDto.getPromiseTime())
-                .promisePlace(confirmedPromiseDto.getPromisePlace())
+                .confirmedDate(confirmedPromiseDto.getPromiseDate())
+                .confirmedTime(confirmedPromiseDto.getPromiseTime())
+                .confirmedPlace(confirmedPromiseDto.getPromisePlace())
                 .isJoined(isJoined)
-                .userPromiseTimeResDtoList(userPromiseTimeResDtoList)
-                .userPromisePlaceResDtoList(userPromisePlaceResDtoList)
+                .userPromiseDateTimeList(userPromiseTimeResDtoList)
+                .userPromisePlaceList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())
                 .userVoteList(userVoteList)
                 .build();
