@@ -5,9 +5,7 @@ import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +13,8 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(value = "MeetingCreateRequest", description = "약속방 생성에 필요한 정보를 요청한다.")
 public class MeetingCreateReqDto {
     @ApiModelProperty(value = "meetingName", required = true, notes = "약속 방 이름")
