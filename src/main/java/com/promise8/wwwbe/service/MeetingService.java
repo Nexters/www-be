@@ -51,9 +51,9 @@ public class MeetingService {
 
         // TODO Refactoring
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-        for (PromiseDateAndTimeReqDto promiseDateAndTimeReqDto : meetingCreateReqDto.getPromiseDateAndTimeReqDtoList()) {
-            LocalDate promiseDate = promiseDateAndTimeReqDto.getPromiseDate();
-            List<PromiseTime> promiseTimeList = promiseDateAndTimeReqDto.getPromiseTimeList();
+        for (PromiseDateTimeReqDto promiseDateTimeReqDto : meetingCreateReqDto.getPromiseDateTimeList()) {
+            LocalDate promiseDate = promiseDateTimeReqDto.getPromiseDate();
+            List<PromiseTime> promiseTimeList = promiseDateTimeReqDto.getPromiseTimeList();
             if (promiseTimeList == null || promiseTimeList.size() == 0) {
                 // TODO Check promiseTime is possible null
                 meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
