@@ -3,6 +3,8 @@ package com.promise8.wwwbe.model.dto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.service.MeetingServiceHelper;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +17,12 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
+@ApiModel(value = "MeetingMainList", description = "본인이 참여한 MeetingList이며, 메인 Home 화면에 보여진다.")
 public class MeetingMainGetResDtoWrapper {
-    private List<MeetingMainGetResDto> meetingMainIngGetResDtoList;
-    private List<MeetingMainGetResDto> meetingMainEndGetResDtoList;
+    @ApiModelProperty(value = "meetingIngList", notes = "약속이 진행중인 MeetingList")
+    private List<MeetingMainGetResDto> meetingIngList;
+    @ApiModelProperty(value = "meetingEndList", notes = "약속이 종료된 MeetingList")
+    private List<MeetingMainGetResDto> meetingEndList;
 
     public static MeetingMainGetResDtoWrapper of(List<MeetingEntity> meetingEntityList) {
         List<MeetingMainGetResDto> meetingMainIngGetResDtoList = new ArrayList<>();
@@ -41,14 +46,14 @@ public class MeetingMainGetResDtoWrapper {
             public int compare(MeetingMainGetResDto o1, MeetingMainGetResDto o2) {
                 if (o1.getMeetingStatus().equals(o2.getMeetingStatus())) {
                     if (MeetingStatus.CONFIRMED.equals(o1.getMeetingStatus())) {
-                        if (o1.getPromiseDate().equals(o2.getPromiseDate())) {
-                            if (o1.getPromiseTime().equals(o2.getPromiseTime())) {
+                        if (o1.getConfirmedDate().equals(o2.getConfirmedDate())) {
+                            if (o1.getConfirmedTime().equals(o2.getConfirmedTime())) {
                                 return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
                             } else {
-                                return o1.getPromiseTime().getPriority() - o2.getPromiseTime().getPriority();
+                                return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
                             }
                         } else {
-                            return o1.getPromiseTime().getPriority() - o2.getPromiseTime().getPriority();
+                            return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
                         }
                     } else {
                         return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
@@ -60,8 +65,8 @@ public class MeetingMainGetResDtoWrapper {
         });
 
         return MeetingMainGetResDtoWrapper.builder()
-                .meetingMainIngGetResDtoList(meetingMainIngGetResDtoList)
-                .meetingMainEndGetResDtoList(meetingMainEndGetResDtoList)
+                .meetingIngList(meetingMainIngGetResDtoList)
+                .meetingEndList(meetingMainEndGetResDtoList)
                 .build();
     }
 }

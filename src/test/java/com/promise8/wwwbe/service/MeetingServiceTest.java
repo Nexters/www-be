@@ -62,12 +62,12 @@ class MeetingServiceTest {
     @BeforeEach
     public void init() {
 
-        List<PromiseDateAndTimeReqDto> promiseDateAndTimeReqDtoList = new ArrayList<>();
+        List<PromiseDateTimeReqDto> promiseDateTimeReqDtoList = new ArrayList<>();
         List<String> promisePlaceList = new ArrayList<>();
         LocalDate promiseDate = LocalDate.now();
         PromiseTime promiseTime = PromiseTime.MORNING;
         List<PromiseTime> promiseTimeList = List.of(promiseTime);
-        promiseDateAndTimeReqDtoList.add(new PromiseDateAndTimeReqDto(promiseDate, promiseTimeList));
+        promiseDateTimeReqDtoList.add(new PromiseDateTimeReqDto(promiseDate, promiseTimeList));
         promisePlaceList.add(meetingPlace);
 
         userEntity = UserEntity.builder()
@@ -112,7 +112,7 @@ class MeetingServiceTest {
                 .conditionCount(conditionCount)
                 .startDate(startDate)
                 .endDate(endDate)
-                .promiseDateAndTimeReqDtoList(promiseDateAndTimeReqDtoList)
+                .promiseDateTimeList(promiseDateTimeReqDtoList)
                 .promisePlaceList(promisePlaceList)
                 .platformType(PlatformType.ANDROID)
                 .build();
