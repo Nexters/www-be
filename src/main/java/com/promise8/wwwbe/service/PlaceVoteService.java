@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.PlaceVoteReqDto;
+import com.promise8.wwwbe.model.dto.req.PlaceVoteReqDto;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;

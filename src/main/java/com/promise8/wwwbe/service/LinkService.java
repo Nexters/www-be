@@ -1,8 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.DynamicLinkReqDto;
-import com.promise8.wwwbe.model.dto.DynamicLinkResDto;
-import com.promise8.wwwbe.model.dto.PlatformType;
+import com.promise8.wwwbe.model.dto.req.DynamicLinkReqDto;
+import com.promise8.wwwbe.model.dto.res.DynamicLinkResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +30,12 @@ public class LinkService {
     private static final String IOS_PACKAGE = "com.promise8.www";
     // TODO Fix link
     private static final String DOMAIN_URL = "https://whenwheres.page.link";
+    private static final String ENDPOINT_URL = "https://naver.com";
 
-    public DynamicLinkResDto createLink(PlatformType platformType, String endpointUrl) {
-        String shortlinkApiUrl = createShortlinkApiUrl(platformType);
+    public DynamicLinkResDto createLink(String meetingCode) {
+        String shortlinkApiUrl = createShortlinkApiUrl();
 
-        DynamicLinkReqDto dynamicLinkReqDto = createDynamicLinkReq(platformType, endpointUrl);
+        DynamicLinkReqDto dynamicLinkReqDto = createDynamicLinkReq(meetingCode);
         HttpEntity<DynamicLinkReqDto> dynamicLinkReq = createDynamicLinkReq(dynamicLinkReqDto);
         DynamicLinkResDto result = restTemplate.exchange(shortlinkApiUrl, HttpMethod.POST, dynamicLinkReq, DynamicLinkResDto.class).getBody();
         return result;
@@ -48,22 +48,22 @@ public class LinkService {
         return dynamicLinkReq;
     }
 
-    private String createShortlinkApiUrl(PlatformType platformType) {
-        String apiKey = PlatformType.ANDROID.equals(platformType) ? androidApiKey : iosApiKey;
+    private String createShortlinkApiUrl() {
+        String apiKey = androidApiKey;
         UriComponentsBuilder shortlinkApiUrlBuilder = UriComponentsBuilder.fromHttpUrl(FIREBASE_SHORTLINK_API_URL);
         shortlinkApiUrlBuilder.queryParam("key", apiKey);
         return shortlinkApiUrlBuilder.toUriString();
     }
 
-    private DynamicLinkReqDto createDynamicLinkReq(PlatformType platformType, String endpointUrl) {
-        UriComponentsBuilder dynamicLinkBuilder = UriComponentsBuilder.fromHttpUrl(DOMAIN_URL);
-        dynamicLinkBuilder.queryParam("link", endpointUrl);
+    private DynamicLinkReqDto createDynamicLinkReq(String meetingCode) {
+        UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromHttpUrl(ENDPOINT_URL)
+                .queryParam("meetingCode", meetingCode);
 
-        if(PlatformType.ANDROID.equals(platformType)) {
-            dynamicLinkBuilder.queryParam("apn", ANDROID_PACKAGE);
-        } else {
-            dynamicLinkBuilder.queryParam("ibi", IOS_PACKAGE);
-        }
+        UriComponentsBuilder dynamicLinkBuilder = UriComponentsBuilder.fromHttpUrl(DOMAIN_URL);
+        dynamicLinkBuilder.queryParam("link", componentsBuilder.toUriString());
+        dynamicLinkBuilder.queryParam("apn", ANDROID_PACKAGE);
+        dynamicLinkBuilder.queryParam("ibi", IOS_PACKAGE);
+
         DynamicLinkReqDto dynamicLinkReqDto = DynamicLinkReqDto.of(dynamicLinkBuilder.toUriString());
         return dynamicLinkReqDto;
     }

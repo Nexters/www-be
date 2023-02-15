@@ -2,8 +2,8 @@ package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.TokenProvider;
 import com.promise8.wwwbe.config.security.UserPrincipal;
-import com.promise8.wwwbe.model.dto.AlarmReqDto;
-import com.promise8.wwwbe.model.dto.LoginReqDto;
+import com.promise8.wwwbe.model.dto.req.AlarmReqDto;
+import com.promise8.wwwbe.model.dto.req.LoginReqDto;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.UserService;
 import lombok.RequiredArgsConstructor;

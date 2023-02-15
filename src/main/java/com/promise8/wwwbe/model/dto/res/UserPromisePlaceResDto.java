@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
 import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
 import io.swagger.annotations.ApiModel;

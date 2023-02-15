@@ -1,5 +1,6 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import io.swagger.annotations.ApiModel;
@@ -20,8 +21,9 @@ public class MeetingGetResDto {
     private long meetingId;
     @ApiModelProperty(value = "meetingName", required = true, notes = "약속 방 이름")
     private String meetingName;
-    @ApiModelProperty(value = "conditionCount", required = true, notes = "약속 방의 알림 최소 인원")
-    private Long conditionCount;
+
+    @ApiModelProperty(value = "minimumAlertMembers", required = true, notes = "약속 방의 알림 최소 인원")
+    private Long minimumAlertMembers;
     @ApiModelProperty(value = "hostName", required = true, notes = "약속 방의 방장 이름")
     private String hostName;
     @ApiModelProperty(value = "isHost", required = true, notes = "약속 방에서 내가 방장인지 여부")
@@ -54,7 +56,7 @@ public class MeetingGetResDto {
             List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
-            ConfirmedPromiseDto confirmedPromiseDto,
+            ConfirmedPromiseResDto confirmedPromiseResDto,
             Long currentUserId,
             Boolean isJoined) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
@@ -70,15 +72,15 @@ public class MeetingGetResDto {
         return MeetingGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
-                .conditionCount(meetingEntity.getConditionCount())
-                .hostName(confirmedPromiseDto.getHostName())
+                .minimumAlertMembers(meetingEntity.getConditionCount())
+                .hostName(confirmedPromiseResDto.getHostName())
                 .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .meetingCode(meetingEntity.getMeetingCode())
                 .shortLink(meetingEntity.getShortLink())
-                .confirmedDate(confirmedPromiseDto.getPromiseDate())
-                .confirmedTime(confirmedPromiseDto.getPromiseTime())
-                .confirmedPlace(confirmedPromiseDto.getPromisePlace())
+                .confirmedDate(confirmedPromiseResDto.getPromiseDate())
+                .confirmedTime(confirmedPromiseResDto.getPromiseTime())
+                .confirmedPlace(confirmedPromiseResDto.getPromisePlace())
                 .isJoined(isJoined)
                 .userPromiseDateTimeList(userPromiseTimeResDtoList)
                 .userPromisePlaceList(userPromisePlaceResDtoList)

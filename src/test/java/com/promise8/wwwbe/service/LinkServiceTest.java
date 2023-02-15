@@ -1,12 +1,10 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.PlatformType;
+import com.promise8.wwwbe.model.dto.res.DynamicLinkResDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("alpha")
@@ -17,6 +15,7 @@ class LinkServiceTest {
 
     @Test
     void createLink() {
-        linkService.createLink(PlatformType.IOS, "https://naver.com");
+        DynamicLinkResDto dynamicLink = linkService.createLink("abcde");
+        System.out.println(dynamicLink);
     }
 }

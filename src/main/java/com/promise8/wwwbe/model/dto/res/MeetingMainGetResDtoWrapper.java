@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
@@ -28,16 +28,16 @@ public class MeetingMainGetResDtoWrapper {
         List<MeetingMainGetResDto> meetingMainIngGetResDtoList = new ArrayList<>();
         List<MeetingMainGetResDto> meetingMainEndGetResDtoList = new ArrayList<>();
         for (MeetingEntity meeting : meetingEntityList) {
-            ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
+            ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
             if (MeetingStatus.DONE.equals(meeting.getMeetingStatus())) {
-                confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
+                confirmedPromiseResDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainEndGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseResDto));
             } else if (MeetingStatus.CONFIRMED.equals(meeting.getMeetingStatus())) {
-                confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
+                confirmedPromiseResDto = MeetingServiceHelper.getConfirmedPromise(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseResDto));
             } else {
-                confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
-                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseDto));
+                confirmedPromiseResDto = MeetingServiceHelper.getHostAndVotingCnt(meeting.getMeetingUserEntityList(), meeting.getCreator().getUserId());
+                meetingMainIngGetResDtoList.add(MeetingMainGetResDto.of(meeting, confirmedPromiseResDto));
             }
         }
 

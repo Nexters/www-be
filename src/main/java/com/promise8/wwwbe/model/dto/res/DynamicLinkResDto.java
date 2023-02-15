@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
