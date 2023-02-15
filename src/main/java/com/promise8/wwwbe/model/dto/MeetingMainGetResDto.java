@@ -17,17 +17,17 @@ import java.time.LocalDateTime;
 @Builder
 @ApiModel(value = "MeetingMain", description = "본인이 참여한 하나의 Meeting 정보, 메인 Home 화면에 보여진다.")
 public class MeetingMainGetResDto {
-    @ApiModelProperty(value = "meetingId", notes = "약속 방 id")
+    @ApiModelProperty(value = "meetingId", required = true, notes = "약속 방 id")
     private long meetingId;
-    @ApiModelProperty(value = "meetingName", notes = "약속 방 이름")
+    @ApiModelProperty(value = "meetingName", required = true, notes = "약속 방 이름")
     private String meetingName;
-    @ApiModelProperty(value = "hostName", notes = "약속 방의 방장 이름")
+    @ApiModelProperty(value = "hostName", required = true, notes = "약속 방의 방장 이름")
     private String hostName;
-    @ApiModelProperty(value = "conditionCount", notes = "약속 방의 알림 최소 인원")
+    @ApiModelProperty(value = "conditionCount", required = true, notes = "약속 방의 알림 최소 인원")
     private Long conditionCount;
-    @ApiModelProperty(value = "joinedUserCount", notes = "약속 방에 참여한 인원 수")
+    @ApiModelProperty(value = "joinedUserCount", required = true, notes = "약속 방에 참여한 인원 수")
     private Integer joinedUserCount;
-    @ApiModelProperty(value = "votingUserCount", notes = "약속 방 내 투표한 인원 수")
+    @ApiModelProperty(value = "votingUserCount", required = true, notes = "약속 방 내 투표한 인원 수")
     private Integer votingUserCount;
     @ApiModelProperty(value = "confirmedDate", notes = "확정된 날짜")
     private LocalDate confirmedDate;
@@ -35,7 +35,7 @@ public class MeetingMainGetResDto {
     private PromiseTime confirmedTime;
     @ApiModelProperty(value = "confirmedPlace", notes = "확정된 장소")
     private String confirmedPlace;
-    @ApiModelProperty(value = "meetingStatus", notes = "약속 방 상태")
+    @ApiModelProperty(value = "meetingStatus", required = true, notes = "약속 방 상태")
     private MeetingStatus meetingStatus;
     @JsonIgnore
     private LocalDateTime createdDatetime;

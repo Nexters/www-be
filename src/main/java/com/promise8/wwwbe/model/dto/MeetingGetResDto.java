@@ -16,21 +16,21 @@ import java.util.*;
 @Builder
 @ApiModel(value = "MeetingDetail", description = "약속 방 내의 필요한 정보를 모두 담는다.")
 public class MeetingGetResDto {
-    @ApiModelProperty(value = "meetingId", notes = "약속 방 id")
+    @ApiModelProperty(value = "meetingId", required = true, notes = "약속 방 id")
     private long meetingId;
-    @ApiModelProperty(value = "meetingName", notes = "약속 방 이름")
+    @ApiModelProperty(value = "meetingName", required = true, notes = "약속 방 이름")
     private String meetingName;
-    @ApiModelProperty(value = "conditionCount", notes = "약속 방의 알림 최소 인원")
+    @ApiModelProperty(value = "conditionCount", required = true, notes = "약속 방의 알림 최소 인원")
     private Long conditionCount;
-    @ApiModelProperty(value = "hostName", notes = "약속 방의 방장 이름")
+    @ApiModelProperty(value = "hostName", required = true, notes = "약속 방의 방장 이름")
     private String hostName;
-    @ApiModelProperty(value = "isHost", notes = "약속 방에서 내가 방장인지 여부")
+    @ApiModelProperty(value = "isHost", required = true, notes = "약속 방에서 내가 방장인지 여부")
     private Boolean isHost;
-    @ApiModelProperty(value = "joinedUserCount", notes = "약속 방에 참여한 인원 수")
+    @ApiModelProperty(value = "joinedUserCount", required = true, notes = "약속 방에 참여한 인원 수")
     private Integer joinedUserCount;
-    @ApiModelProperty(value = "meetingCode", notes = "약속 방의 공유 코드")
+    @ApiModelProperty(value = "meetingCode", required = true, notes = "약속 방의 공유 코드")
     private String meetingCode;
-    @ApiModelProperty(value = "shortLink", notes = "약속 방의 공유 링크")
+    @ApiModelProperty(value = "shortLink", required = true, notes = "약속 방의 공유 링크")
     private String shortLink;
     @ApiModelProperty(value = "confirmedDate", notes = "확정된 날짜")
     private LocalDate confirmedDate;
@@ -38,13 +38,13 @@ public class MeetingGetResDto {
     private PromiseTime confirmedTime;
     @ApiModelProperty(value = "confirmedPlace", notes = "확정된 장소")
     private String confirmedPlace;
-    @ApiModelProperty(value = "isJoined", notes = "이미 방에 참여했는지 여부")
+    @ApiModelProperty(value = "isJoined", required = true, notes = "이미 방에 참여했는지 여부")
     private Boolean isJoined;
-    @ApiModelProperty(value = "userPromiseDateTimeList", notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
+    @ApiModelProperty(value = "userPromiseDateTimeList", required = true, notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
     private List<UserPromiseTimeResDto> userPromiseDateTimeList;
     @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
     private List<UserPromisePlaceResDto> userPromisePlaceList;
-    @ApiModelProperty(value = "meetingStatus", notes = "약속 방 상태")
+    @ApiModelProperty(value = "meetingStatus", required = true, notes = "약속 방 상태")
     private MeetingStatus meetingStatus;
     @ApiModelProperty(value = "userVoteList", notes = "약속 방 내 유저들의 투표 내역")
     private List<Map.Entry<String, List<String>>> userVoteList;
