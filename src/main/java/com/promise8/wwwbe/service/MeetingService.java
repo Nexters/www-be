@@ -1,6 +1,10 @@
 package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.*;
+import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
+import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
+import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.model.dto.res.*;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
@@ -21,21 +25,18 @@ import java.util.stream.Collectors;
 public class MeetingService {
     private static final int MEETING_CODE_LENGTH = 6;
     // TODO FIX ENDPOINT
-    private static final String TMP_ENDPOINT = "https://naver.com";
-    private final PushService pushService;
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final MeetingUserRepository meetingUserRepository;
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
-    private final PlaceVoteRepository placeVoteRepository;
     private final LinkService linkService;
 
     @Transactional
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto, String deviceId) {
         String meetingCode = getMeetingCode();
         UserEntity userEntity = getUser(deviceId, meetingCreateReqDto.getUserName());
-        DynamicLinkResDto dynamicLinkResDto = linkService.createLink(meetingCreateReqDto.getPlatformType(), TMP_ENDPOINT);
+        DynamicLinkResDto dynamicLinkResDto = linkService.createLink(meetingCode);
         String shortLink = null;
         if (dynamicLinkResDto != null) {
             shortLink = dynamicLinkResDto.getShortLink();
@@ -51,27 +52,17 @@ public class MeetingService {
 
         // TODO Refactoring
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-        for (PromiseDateTimeReqDto promiseDateTimeReqDto : meetingCreateReqDto.getPromiseDateTimeList()) {
-            LocalDate promiseDate = promiseDateTimeReqDto.getPromiseDate();
-            List<PromiseTime> promiseTimeList = promiseDateTimeReqDto.getPromiseTimeList();
-            if (promiseTimeList == null || promiseTimeList.size() == 0) {
-                // TODO Check promiseTime is possible null
-                meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
-                        .promiseDate(promiseDate)
-                        .promiseTime(null)
-                        .meetingUserEntity(meetingUserEntity)
-                        .build()
-                );
-            } else {
-                for (PromiseTime promiseTime : promiseTimeList) {
-                    meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
-                            .promiseDate(promiseDate)
-                            .promiseTime(promiseTime)
-                            .meetingUserEntity(meetingUserEntity)
-                            .build()
-                    );
-                }
-            }
+
+        for (UserPromiseTimeReqDto userPromiseTimeReqDto : meetingCreateReqDto.getPromiseDateTimeList()) {
+            LocalDate promiseDate = userPromiseTimeReqDto.getPromiseDate();
+            PromiseTime promiseTime = userPromiseTimeReqDto.getPromiseTime();
+
+            MeetingUserTimetableEntity meetingUserTimetableEntity = MeetingUserTimetableEntity.builder()
+                    .promiseDate(promiseDate)
+                    .promiseTime(promiseTime)
+                    .meetingUserEntity(meetingUserEntity)
+                    .build();
+            meetingUserTimetableEntityList.add(meetingUserTimetableEntity);
         }
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
@@ -151,11 +142,11 @@ public class MeetingService {
             throw new BizException(BaseErrorCode.ALREADY_VOTING_MEETING, "Voting already start.");
         }
 
-        ConfirmedPromiseDto confirmedPromiseDto = null;
+        ConfirmedPromiseResDto confirmedPromiseResDto = null;
         if (MeetingStatus.DONE.equals(meetingEntity.getMeetingStatus()) || MeetingStatus.CONFIRMED.equals(meetingEntity.getMeetingStatus())) {
-            confirmedPromiseDto = MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+            confirmedPromiseResDto = MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
         } else {
-            confirmedPromiseDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
+            confirmedPromiseResDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
         }
 
         return MeetingGetResDto.of(
@@ -163,7 +154,7 @@ public class MeetingService {
                 getUserPromisePlaceResDtoList(meetingEntity),
                 getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
-                confirmedPromiseDto,
+                confirmedPromiseResDto,
                 currentUserId,
                 isJoined
         );

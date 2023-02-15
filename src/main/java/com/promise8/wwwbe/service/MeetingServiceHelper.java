@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.ConfirmedPromiseDto;
+import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
 import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
 import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
@@ -10,56 +10,56 @@ import java.util.List;
 
 @Component
 public class MeetingServiceHelper {
-    public static ConfirmedPromiseDto getConfirmedPromise(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
-        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseDto;
+    public static ConfirmedPromiseResDto getConfirmedPromise(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
+        ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
+        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseResDto;
 
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
-            if (confirmedPromiseDto.getPromiseDate() == null) {
+            if (confirmedPromiseResDto.getPromiseDate() == null) {
                 for (MeetingUserTimetableEntity meetingUserTimetable : meetingUser.getMeetingUserTimetableEntityList()) {
                     if (meetingUserTimetable.getIsConfirmed()) {
-                        confirmedPromiseDto.setPromiseDate(meetingUserTimetable.getPromiseDate());
-                        confirmedPromiseDto.setPromiseTime(meetingUserTimetable.getPromiseTime());
+                        confirmedPromiseResDto.setPromiseDate(meetingUserTimetable.getPromiseDate());
+                        confirmedPromiseResDto.setPromiseTime(meetingUserTimetable.getPromiseTime());
                         break;
                     }
                 }
             }
 
-            if (confirmedPromiseDto.getPromisePlace() == null) {
+            if (confirmedPromiseResDto.getPromisePlace() == null) {
                 for (MeetingPlaceEntity meetingPlace : meetingUser.getMeetingPlaceEntityList()) {
                     if (meetingPlace.getIsConfirmed()) {
-                        confirmedPromiseDto.setPromisePlace(meetingPlace.getPromisePlace());
+                        confirmedPromiseResDto.setPromisePlace(meetingPlace.getPromisePlace());
                         break;
                     }
                 }
             }
 
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
+                confirmedPromiseResDto.setVotingUserCount(confirmedPromiseResDto.getVotingUserCount() + 1);
             }
 
             if (meetingUser.getUserEntity().getUserId() == hostId) {
-                confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
+                confirmedPromiseResDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
 
-        return confirmedPromiseDto;
+        return confirmedPromiseResDto;
     }
 
-    public static ConfirmedPromiseDto getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
-        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseDto;
+    public static ConfirmedPromiseResDto getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
+        ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
+        if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseResDto;
 
         for (MeetingUserEntity meetingUser : meetingUserEntityList) {
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
-                confirmedPromiseDto.setVotingUserCount(confirmedPromiseDto.getVotingUserCount() + 1);
+                confirmedPromiseResDto.setVotingUserCount(confirmedPromiseResDto.getVotingUserCount() + 1);
             }
 
             if (meetingUser.getUserEntity().getUserId() == hostId) {
-                confirmedPromiseDto.setHostName(meetingUser.getMeetingUserName());
+                confirmedPromiseResDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
 
-        return confirmedPromiseDto;
+        return confirmedPromiseResDto;
     }
 }

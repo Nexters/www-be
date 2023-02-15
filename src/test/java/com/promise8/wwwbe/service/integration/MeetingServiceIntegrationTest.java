@@ -1,8 +1,8 @@
 package com.promise8.wwwbe.service.integration;
 
-import com.promise8.wwwbe.model.dto.JoinMeetingReqDto;
+import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
 import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.dto.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.repository.*;
 import com.promise8.wwwbe.service.MeetingService;

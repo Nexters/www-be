@@ -1,6 +1,7 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import io.swagger.annotations.ApiModel;
@@ -23,8 +24,8 @@ public class MeetingMainGetResDto {
     private String meetingName;
     @ApiModelProperty(value = "hostName", required = true, notes = "약속 방의 방장 이름")
     private String hostName;
-    @ApiModelProperty(value = "conditionCount", required = true, notes = "약속 방의 알림 최소 인원")
-    private Long conditionCount;
+    @ApiModelProperty(value = "minimumAlertMembers", required = true, notes = "약속 방의 알림 최소 인원")
+    private Long minimumAlertMembers;
     @ApiModelProperty(value = "joinedUserCount", required = true, notes = "약속 방에 참여한 인원 수")
     private Integer joinedUserCount;
     @ApiModelProperty(value = "votingUserCount", required = true, notes = "약속 방 내 투표한 인원 수")
@@ -42,18 +43,18 @@ public class MeetingMainGetResDto {
 
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
-            ConfirmedPromiseDto confirmedPromiseDto) {
+            ConfirmedPromiseResDto confirmedPromiseResDto) {
         boolean isNoMeetingUser = meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty();
         return MeetingMainGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
-                .hostName(confirmedPromiseDto.getHostName())
-                .conditionCount(meetingEntity.getConditionCount())
+                .hostName(confirmedPromiseResDto.getHostName())
+                .minimumAlertMembers(meetingEntity.getConditionCount())
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
-                .votingUserCount(confirmedPromiseDto.getVotingUserCount())
-                .confirmedDate(confirmedPromiseDto.getPromiseDate())
-                .confirmedTime(confirmedPromiseDto.getPromiseTime())
-                .confirmedPlace(confirmedPromiseDto.getPromisePlace())
+                .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
+                .confirmedDate(confirmedPromiseResDto.getPromiseDate())
+                .confirmedTime(confirmedPromiseResDto.getPromiseTime())
+                .confirmedPlace(confirmedPromiseResDto.getPromisePlace())
                 .meetingStatus(meetingEntity.getMeetingStatus())
                 .createdDatetime(meetingEntity.getCreatedDatetime())
                 .build();

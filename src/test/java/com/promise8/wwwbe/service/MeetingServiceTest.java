@@ -1,6 +1,10 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.*;
+import com.promise8.wwwbe.model.dto.PromiseTime;
+import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
+import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
+import com.promise8.wwwbe.model.dto.res.DynamicLinkResDto;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.repository.*;
 import org.junit.jupiter.api.*;
@@ -57,17 +61,16 @@ class MeetingServiceTest {
     private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
     private MeetingCreateReqDto meetingCreateReqDto;
     private DynamicLinkResDto dynamicLinkResDto = new DynamicLinkResDto();
-    private ConfirmedPromiseDto confirmedPromiseDto = new ConfirmedPromiseDto();
+    private ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
 
     @BeforeEach
     public void init() {
 
-        List<PromiseDateTimeReqDto> promiseDateTimeReqDtoList = new ArrayList<>();
+        List<UserPromiseTimeReqDto> promiseDateTimeReqDtoList = new ArrayList<>();
         List<String> promisePlaceList = new ArrayList<>();
         LocalDate promiseDate = LocalDate.now();
         PromiseTime promiseTime = PromiseTime.MORNING;
-        List<PromiseTime> promiseTimeList = List.of(promiseTime);
-        promiseDateTimeReqDtoList.add(new PromiseDateTimeReqDto(promiseDate, promiseTimeList));
+        promiseDateTimeReqDtoList.add(new UserPromiseTimeReqDto(promiseDate, promiseTime));
         promisePlaceList.add(meetingPlace);
 
         userEntity = UserEntity.builder()
@@ -109,12 +112,11 @@ class MeetingServiceTest {
         meetingCreateReqDto = MeetingCreateReqDto.builder()
                 .meetingName(meetingName)
                 .userName(userName)
-                .conditionCount(conditionCount)
+                .minimumAlertMembers(conditionCount)
                 .startDate(startDate)
                 .endDate(endDate)
                 .promiseDateTimeList(promiseDateTimeReqDtoList)
                 .promisePlaceList(promisePlaceList)
-                .platformType(PlatformType.ANDROID)
                 .build();
 
         placeVoteEntityList = List.of(PlaceVoteEntity.builder()
@@ -155,18 +157,18 @@ class MeetingServiceTest {
         given(meetingUserRepository.save(any())).willReturn(meetingUserEntity);
         given(meetingUserTimetableRepository.saveAll(any())).willReturn(meetingUserTimetableEntityList);
         given(meetingPlaceRepository.saveAll(any())).willReturn(meetingPlaceEntityList);
-        when(linkService.createLink(PlatformType.ANDROID, TMP_ENDPOINT)).thenReturn(dynamicLinkResDto);
+        when(linkService.createLink(any())).thenReturn(dynamicLinkResDto);
         meetingService.createMeeting(meetingCreateReqDto, deviceId);
 
-        verify(linkService).createLink(PlatformType.ANDROID, TMP_ENDPOINT);
+        verify(linkService).createLink(any());
     }
 
     @Test
     @DisplayName("getMeetingById 테스트")
     void getMeetingById() {
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
 
         meetingService.getMeetingById(meetingEntity.getMeetingId(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
@@ -181,8 +183,8 @@ class MeetingServiceTest {
     @DisplayName("getMeetingByMeetingCode 테스트")
     void getMeetingByMeetingCode() {
         when(meetingRepository.findByMeetingCode(anyString())).thenReturn(Optional.of(meetingEntity));
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
 
         meetingService.getMeetingByCode(anyString(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
@@ -197,8 +199,8 @@ class MeetingServiceTest {
     @DisplayName("getMeetingList 테스트")
     void getMeetingListByDeviceId() {
         when(meetingRepository.findByUserEntity_DeviceId(anyString())).thenReturn(List.of(meetingEntity));
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
-        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
 
         meetingService.getMeetingListByDeviceId(deviceId);
 

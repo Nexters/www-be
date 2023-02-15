@@ -1,5 +1,7 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
+import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;

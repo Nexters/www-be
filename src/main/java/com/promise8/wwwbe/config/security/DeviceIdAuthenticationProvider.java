@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.config.security;
 
-import com.promise8.wwwbe.model.dto.LoginReqDto;
+import com.promise8.wwwbe.model.dto.req.LoginReqDto;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import com.promise8.wwwbe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

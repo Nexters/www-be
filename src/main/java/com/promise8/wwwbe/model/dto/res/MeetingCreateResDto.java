@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.model.dto;
+package com.promise8.wwwbe.model.dto.res;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,13 +13,14 @@ import lombok.Setter;
 public class MeetingCreateResDto {
     @ApiModelProperty(value = "meetingCode", required = true, notes = "공유 코드")
     private String meetingCode;
-    @ApiModelProperty(value = "meetingLink", required = true, notes = "공유 링크")
-    private String meetingLink;
 
-    public static MeetingCreateResDto of(String meetingCode, String meetingLink) {
+    @ApiModelProperty(value = "shortLink", required = true, notes = "공유 링크")
+    private String shortLink;
+
+    public static MeetingCreateResDto of(String meetingCode, String shortLink) {
         return MeetingCreateResDto.builder()
                 .meetingCode(meetingCode)
-                .meetingLink(meetingLink)
+                .shortLink(shortLink)
                 .build();
     }
 }
