@@ -14,12 +14,12 @@ import java.util.List;
 @Builder
 @ApiModel(value = "UserPromiseTime", description = "유저들이 선택한 날짜, 시간대")
 public class UserPromiseTimeResDto {
-    @ApiModelProperty(value = "promiseDate", notes = "날짜")
+    @ApiModelProperty(value = "promiseDate", required = true, notes = "날짜")
     private LocalDate promiseDate;
-    @ApiModelProperty(value = "promiseDate", notes = "시간대")
+    @ApiModelProperty(value = "promiseDate", required = true, notes = "시간대")
     private PromiseTime promiseTime;
-    @ApiModelProperty(value = "promiseDate", notes = "요일")
+    @ApiModelProperty(value = "promiseDate", required = true, notes = "요일")
     private PromiseDayOfWeek promiseDayOfWeek;
-    @ApiModelProperty(value = "promiseDate", notes = "해당 날짜, 시간대를 선택한 유저 list")
+    @ApiModelProperty(value = "promiseDate", required = true, notes = "해당 날짜, 시간대를 선택한 유저 list")
     private List<String> userNameList;
 }
