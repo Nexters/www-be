@@ -11,6 +11,10 @@ import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.MeetingService;
 import com.promise8.wwwbe.service.PlaceVoteService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/meetings")
 @RequiredArgsConstructor
+@Api(value = "MeetingController", tags = "MeetingController", description = "약속 방과 관련된 모든 api를 제공한다.")
 public class MeetingController {
     private final MeetingService meetingService;
     private final PlaceVoteService placeVoteService;
@@ -29,6 +34,12 @@ public class MeetingController {
      * @param userPrincipal
      * @return
      */
+    @ApiOperation(value = "참여중인 약속방 리스트 조회", notes = "사용자가 참여중인 모든 상태의 약속방 리스트를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "조회 성공"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생")
+    })
     @GetMapping
     public BaseResponse<MeetingMainGetResDtoWrapper> getMeetingList(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return BaseResponse.ok(meetingService.getMeetingListByDeviceId(userPrincipal.getDeviceId()));
@@ -42,6 +53,12 @@ public class MeetingController {
      * @param meetingCreateReqDto
      * @return
      */
+    @ApiOperation(value = "약속방 생성", notes = "약속방을 생성한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "생성 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생")
+    })
     @PostMapping
     public BaseResponse<MeetingCreateResDto> createMeeting(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -57,6 +74,14 @@ public class MeetingController {
      * @param meetingId
      * @return
      */
+    @ApiOperation(value = "약속방 조회 by meetingId", notes = "meetingId로 참여되어있는 약속방에 입장한다.\n방 내에서 필요한 정보를 모두 받는다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "입장 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4000, message = "존재하지 않는 방"),
+            @ApiResponse(code = 5000, message = "이미 투표가 시작된 방")
+    })
     @GetMapping("/{meetingId}")
     public BaseResponse<MeetingGetResDto> getMeetingById(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -71,6 +96,14 @@ public class MeetingController {
      * @param meetingCode
      * @return
      */
+    @ApiOperation(value = "약속방 Code 확인", notes = "meetingCode로 약속방에 등록된 Code와 일치한지 확인한다.\n일치하면 방 내에 언제, 어디서 정보를 입력하기 위한 정보를 받는다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "Code 일치"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4000, message = "존재하지 않는 방"),
+            @ApiResponse(code = 5000, message = "이미 투표가 시작된 방")
+    })
     @GetMapping("/code/{meetingCode}")
     public BaseResponse<MeetingGetResDto> getMeetingByCode(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -84,6 +117,14 @@ public class MeetingController {
      * @param meetingId
      * @return
      */
+    @ApiOperation(value = "약속방 참여", notes = "meetingId로 약속방에 참여를 요청한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "참여 성공"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 3001, message = "이미 참여된 약속방"),
+            @ApiResponse(code = 9000, message = "잘못된 요청")
+    })
     @PostMapping("/{meetingId}")
     public BaseResponse<Void> joinMeeting(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -102,7 +143,14 @@ public class MeetingController {
      * @param meetingId
      * @return
      */
-    @PostMapping("/meetings/{meetingId}/votes")
+    @ApiOperation(value = "장소 투표", notes = "장소를 투표한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "투표 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 9000, message = "잘못된 요청")
+    })
+    @PostMapping("/{meetingId}/votes")
     public BaseResponse<Void> createPlaceVote(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable("meetingId") long meetingId,
@@ -121,7 +169,14 @@ public class MeetingController {
      * @param meetingStatus
      * @return
      */
-    @PutMapping("/meetings/{meetingId}/meetingStatus/{meetingStatus}")
+    @ApiOperation(value = "약속방 상태 변경", notes = "약속방의 상태를 변경한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "변경 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 9000, message = "잘못된 요청")
+    })
+    @PutMapping("/{meetingId}/meetingStatus/{meetingStatus}")
     @PreAuthorize("@meetingAuthorizer.isCreator(#userPrincipal, #meetingId)")
     public BaseResponse<Void> putMeetingAction(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
