@@ -1,6 +1,8 @@
 package com.promise8.wwwbe.config.security;
 
 import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.model.exception.BizException;
+import com.promise8.wwwbe.model.http.BaseErrorCode;
 import com.promise8.wwwbe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String deviceId) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByDeviceId(deviceId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with deviceId : " + deviceId));
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
 
         return UserPrincipal.create(user);
     }

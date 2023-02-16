@@ -82,7 +82,7 @@ public class MeetingService {
     @Transactional
     public void putMeetingStatus(long meetingId, MeetingStatus meetingStatus) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
+            throw new BizException(BaseErrorCode.NOT_EXIST_MEETING, "not exist meeting");
         });
 
         if (MeetingStatus.WAITING.equals(meetingStatus) || MeetingStatus.DONE.equals(meetingStatus)) {
@@ -172,9 +172,9 @@ public class MeetingService {
             throw new BizException(BaseErrorCode.ALREADY_PARTICIPATED_MEETING);
         }
         MeetingEntity meetingEntity =
-                meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting"));
+                meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
         UserEntity userEntity =
-                userRepository.findById(userId).orElseThrow(() -> new BizException(BaseErrorCode.INVALID_REQUEST, "not exist user"));
+                userRepository.findById(userId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
 
 
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()

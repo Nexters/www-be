@@ -10,6 +10,8 @@ public enum BaseErrorCode {
     FCM_SEND_ERROR(2000, "FCM Push Error"),
     ALREADY_PARTICIPATED_MEETING(3001, "Already Participated Meeting"),
     NOT_EXIST_MEETING(4000, "Not Exist Meeting"),
+    NOT_EXIST_USER(4001, "Not Exist User"),
+    NOT_EXIST_MEETING_USER(4002, "Not Exist Meeting User"),
     ALREADY_VOTING_MEETING(5000, "Already Voting Meeting"),
     INVALID_REQUEST(9000, "Invalid Request");
 

@@ -3,18 +3,14 @@ package com.promise8.wwwbe.model.mobile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 public class PushMessage {
-    private PushType pushType;
-    private String body;
-    private LocalDateTime createdAt;
+    private ContentType contentType;
+    private Long contentId;
+    private String text;
 
-    public enum PushType {
-        DEFAULT,
-        NOTI,
-        EVENT
+    public enum ContentType {
+        MEETING;
     }
 }

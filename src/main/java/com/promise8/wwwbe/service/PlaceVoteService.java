@@ -43,17 +43,14 @@ public class PlaceVoteService {
     }
 
     private MeetingUserEntity getMeetingUserEntity(MeetingEntity meetingEntity, UserEntity userEntity) {
-        MeetingUserEntity meetingUserEntity = meetingUserRepository.findByMeetingEntityAndUserEntity(meetingEntity,
-                userEntity).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting user");
+        MeetingUserEntity meetingUserEntity = meetingUserRepository.findByMeetingEntityAndUserEntity(meetingEntity, userEntity).orElseThrow(() -> {
+            throw new BizException(BaseErrorCode.NOT_EXIST_MEETING_USER);
         });
         return meetingUserEntity;
     }
 
     private UserEntity getUserEntity(long userId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist user");
-        });
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
         return userEntity;
     }
 

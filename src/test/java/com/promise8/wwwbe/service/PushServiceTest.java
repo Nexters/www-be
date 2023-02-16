@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
+import com.promise8.wwwbe.model.mobile.PushMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class PushServiceTest {
         when(fcm.send(any(Message.class))).thenReturn("1");
 
         // when
-        String id = pushService.send("token", "testBody");
+        String id = pushService.send("token", new PushMessage(PushMessage.ContentType.MEETING, 1L, "testBody"));
 
         // then
         Assertions.assertEquals("1", id);
