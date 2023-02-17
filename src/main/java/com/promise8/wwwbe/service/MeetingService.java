@@ -244,13 +244,7 @@ public class MeetingService {
             });
         });
 
-        Collections.sort(userPromiseTimeResDtoList, new Comparator<UserPromiseTimeResDto>() {
-            @Override
-            public int compare(UserPromiseTimeResDto o1, UserPromiseTimeResDto o2) {
-                return o2.getUserNameList().size() - o1.getUserNameList().size();
-            }
-        });
-
+        userPromiseTimeResDtoList.sort((o1, o2) -> o2.getUserNameList().size() - o1.getUserNameList().size());
         return userPromiseTimeResDtoList;
     }
 

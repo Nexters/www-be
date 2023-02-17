@@ -41,32 +41,30 @@ public class MeetingMainGetResDtoWrapper {
             }
         }
 
-        Collections.sort(meetingMainIngGetResDtoList, new Comparator<MeetingMainGetResDto>() {
-            @Override
-            public int compare(MeetingMainGetResDto o1, MeetingMainGetResDto o2) {
-                if (o1.getMeetingStatus().equals(o2.getMeetingStatus())) {
-                    if (MeetingStatus.CONFIRMED.equals(o1.getMeetingStatus())) {
-                        if (o1.getConfirmedDate().equals(o2.getConfirmedDate())) {
-                            if (o1.getConfirmedTime().equals(o2.getConfirmedTime())) {
-                                return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
-                            } else {
-                                return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
-                            }
-                        } else {
-                            return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
-                        }
-                    } else {
-                        return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
-                    }
-                } else {
-                    return o2.getMeetingStatus().getPriority() - o1.getMeetingStatus().getPriority();
-                }
-            }
-        });
-
+        meetingMainIngGetResDtoList.sort(MeetingMainGetResDtoWrapper::sorting);
         return MeetingMainGetResDtoWrapper.builder()
                 .meetingIngList(meetingMainIngGetResDtoList)
                 .meetingEndList(meetingMainEndGetResDtoList)
                 .build();
+    }
+
+    private static int sorting(MeetingMainGetResDto o1, MeetingMainGetResDto o2) {
+        if (o1.getMeetingStatus().equals(o2.getMeetingStatus())) {
+            if (MeetingStatus.CONFIRMED.equals(o1.getMeetingStatus())) {
+                if (o1.getConfirmedDate().equals(o2.getConfirmedDate())) {
+                    if (o1.getConfirmedTime().equals(o2.getConfirmedTime())) {
+                        return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
+                    } else {
+                        return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
+                    }
+                } else {
+                    return o1.getConfirmedTime().getPriority() - o2.getConfirmedTime().getPriority();
+                }
+            } else {
+                return o2.getCreatedDatetime().compareTo(o1.getCreatedDatetime());
+            }
+        } else {
+            return o2.getMeetingStatus().getPriority() - o1.getMeetingStatus().getPriority();
+        }
     }
 }

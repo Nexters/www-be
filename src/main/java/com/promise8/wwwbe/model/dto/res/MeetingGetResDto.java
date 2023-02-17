@@ -60,13 +60,7 @@ public class MeetingGetResDto {
             Long currentUserId,
             Boolean isJoined) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
-
-        Collections.sort(userVoteList, new Comparator<Map.Entry<String, List<String>>>() {
-            @Override
-            public int compare(Map.Entry<String, List<String>> o1, Map.Entry<String, List<String>> o2) {
-                return o2.getValue().size() - o1.getValue().size();
-            }
-        });
+        userVoteList.sort((o1, o2) -> o2.getValue().size() - o1.getValue().size());
 
         boolean isNoMeetingUser = meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty();
         return MeetingGetResDto.builder()
