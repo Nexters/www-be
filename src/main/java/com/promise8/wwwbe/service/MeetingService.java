@@ -60,6 +60,7 @@ public class MeetingService {
             MeetingUserTimetableEntity meetingUserTimetableEntity = MeetingUserTimetableEntity.builder()
                     .promiseDate(promiseDate)
                     .promiseTime(promiseTime)
+                    .isConfirmed(false)
                     .meetingUserEntity(meetingUserEntity)
                     .build();
             meetingUserTimetableEntityList.add(meetingUserTimetableEntity);
@@ -71,6 +72,7 @@ public class MeetingService {
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
             meetingPlaceEntityList.add(MeetingPlaceEntity.builder()
                     .promisePlace(promisePlace)
+                    .isConfirmed(false)
                     .meetingUserEntity(meetingUserEntity)
                     .build());
         }
