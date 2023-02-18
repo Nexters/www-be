@@ -30,6 +30,8 @@ public class MeetingGetResDto {
     private Boolean isHost;
     @ApiModelProperty(value = "joinedUserCount", required = true, notes = "약속 방에 참여한 인원 수")
     private Integer joinedUserCount;
+    @ApiModelProperty(value = "votingUserCount", required = true, notes = "약속 방 내 투표한 인원 수")
+    private Integer votingUserCount;
     @ApiModelProperty(value = "meetingCode", required = true, notes = "약속 방의 공유 코드")
     private String meetingCode;
     @ApiModelProperty(value = "shortLink", required = true, notes = "약속 방의 공유 링크")
@@ -70,6 +72,7 @@ public class MeetingGetResDto {
                 .hostName(confirmedPromiseResDto.getHostName())
                 .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
+                .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
                 .meetingCode(meetingEntity.getMeetingCode())
                 .shortLink(meetingEntity.getShortLink())
                 .confirmedDate(confirmedPromiseResDto.getPromiseDate())
