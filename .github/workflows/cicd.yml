@@ -22,7 +22,7 @@ jobs:
         if: contains(github.ref, 'develop') || contains(github.ref, 'master')
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t www-be ./infra
+          docker build -t www-be -f ./infra/Dockerfile .
           docker tag www-be:latest ${{ secrets.DOCKER_USER }}/www-be:latest
           docker push ${{ secrets.DOCKER_USER }}/www-be:latest
 
