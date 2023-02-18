@@ -5,7 +5,7 @@ FROM adoptopenjdk/openjdk11:alpine-jre
 WORKDIR /app
 
 # copy the pom.xml and the source code to the container
-COPY ../target/www-be-0.0.1-SNAPSHOT.jar app.jar
+COPY ./target/www-be-0.0.1-SNAPSHOT.jar app.jar
 
 # expose container port 8080
 EXPOSE 8080
