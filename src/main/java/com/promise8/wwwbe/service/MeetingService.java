@@ -207,9 +207,11 @@ public class MeetingService {
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
         HashSet<String> existPromisePlaceHashSet = new HashSet<>();
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            existPromisePlaceHashSet.addAll(meetingPlaceRepository.getExistMeetingPlaceList(meetingUser));
-        });
+        if (meetingEntity.getMeetingUserEntityList() != null) {
+            meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+                existPromisePlaceHashSet.addAll(meetingPlaceRepository.getExistMeetingPlaceList(meetingUser));
+            });
+        }
 
         List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         joinMeetingReqDto.getPromisePlaceList().forEach(req -> {
