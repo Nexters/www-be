@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.HashSet;
 import java.util.List;
 
 public interface MeetingPlaceRepository extends JpaRepository<MeetingPlaceEntity, Long> {
@@ -18,4 +19,8 @@ public interface MeetingPlaceRepository extends JpaRepository<MeetingPlaceEntity
             @Param("meetingUserEntity") MeetingUserEntity meetingUserEntity,
             @Param("placeVoteEntityIds") List<Long> placeVoteEntityIds);
     List<MeetingPlaceEntity> findByMeetingUserEntity(MeetingUserEntity meetingUserEntity);
+
+    @Query(value = "select mp.promisePlace from meeting_place mp " +
+            "where mp.meetingUserEntity = :meetingUserEntity")
+    public HashSet<String> getExistMeetingPlaceList(MeetingUserEntity meetingUserEntity);
 }
