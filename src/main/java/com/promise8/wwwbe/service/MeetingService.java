@@ -184,7 +184,8 @@ public class MeetingService {
                 meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
         UserEntity userEntity =
                 userRepository.findById(userId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
-
+        userEntity.setUserName(joinMeetingReqDto.getNickname());
+        userRepository.save(userEntity);
 
         MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
                 .userEntity(userEntity)

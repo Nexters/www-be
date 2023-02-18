@@ -21,11 +21,12 @@ public class MeetingGetResDto {
     private long meetingId;
     @ApiModelProperty(value = "meetingName", required = true, notes = "약속 방 이름")
     private String meetingName;
-
     @ApiModelProperty(value = "minimumAlertMembers", required = true, notes = "약속 방의 알림 최소 인원")
     private Long minimumAlertMembers;
     @ApiModelProperty(value = "hostName", required = true, notes = "약속 방의 방장 이름")
     private String hostName;
+    @ApiModelProperty(value = "currentUserName", notes = "최근에 사용한 본인의 이름")
+    private String currentUserName;
     @ApiModelProperty(value = "isHost", required = true, notes = "약속 방에서 내가 방장인지 여부")
     private Boolean isHost;
     @ApiModelProperty(value = "joinedUserCount", required = true, notes = "약속 방에 참여한 인원 수")
@@ -70,6 +71,7 @@ public class MeetingGetResDto {
                 .meetingName(meetingEntity.getMeetingName())
                 .minimumAlertMembers(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseResDto.getHostName())
+                .currentUserName(meetingEntity.getCreator().getUserName())
                 .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
