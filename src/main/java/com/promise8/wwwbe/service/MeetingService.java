@@ -68,8 +68,15 @@ public class MeetingService {
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
         // TODO Refactoring
+        HashSet<String> isExistPlaceHashSet = new HashSet<>();
         List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
+            if (isExistPlaceHashSet.contains(promisePlace)) {
+                continue;
+            } else {
+                isExistPlaceHashSet.add(promisePlace);
+            }
+
             meetingPlaceEntityList.add(MeetingPlaceEntity.builder()
                     .promisePlace(promisePlace)
                     .isConfirmed(false)
@@ -199,13 +206,27 @@ public class MeetingService {
 
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
-        List<MeetingPlaceEntity> meetingPlaceEntityList = joinMeetingReqDto.getPromisePlaceList().stream()
-                .map(place -> meetingPlaceRepository.save(MeetingPlaceEntity.builder()
-                        .meetingUserEntity(meetingUserEntity)
-                        .promisePlace(place)
-                        .isConfirmed(false)
-                        .build()))
-                .collect(Collectors.toList());
+        HashSet<String> existPromisePlaceHashSet = new HashSet<>();
+        if (meetingEntity.getMeetingUserEntityList() != null) {
+            meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+                existPromisePlaceHashSet.addAll(meetingPlaceRepository.getExistMeetingPlaceList(meetingUser));
+            });
+        }
+
+        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+        joinMeetingReqDto.getPromisePlaceList().forEach(req -> {
+            if (existPromisePlaceHashSet.contains(req)) {
+                return;
+            } else {
+                existPromisePlaceHashSet.add(req);
+            }
+
+            meetingPlaceEntityList.add(meetingPlaceRepository.save(MeetingPlaceEntity.builder()
+                    .meetingUserEntity(meetingUserEntity)
+                    .promisePlace(req)
+                    .isConfirmed(false)
+                    .build()));
+        });
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
