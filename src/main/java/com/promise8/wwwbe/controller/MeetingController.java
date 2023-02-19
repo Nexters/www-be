@@ -99,7 +99,7 @@ public class MeetingController {
      * @param meetingCode
      * @return
      */
-    @ApiOperation(value = "약속방 Code 확인", notes = "meetingCode로 약속방에 등록된 Code와 일치한지 확인한다.\n일치하면 방 내에 언제, 어디서 정보를 입력하기 위한 정보를 받는다.")
+    @ApiOperation(value = "약속방 Code 확인", notes = "1. (방장만 해당) meetingCode로 참여되어있는 약속방에 입장하여 방 내에서 필요한 정보를 모두 받는다.\n2. (참여자만 해당) meetingCode로 약속방에 등록된 Code와 일치한지 확인하여 방 내에 언제, 어디서 정보를 입력하기 위한 정보를 받는다.")
     @ApiResponses({
             @ApiResponse(code = 0, message = "Code 일치"),
             @ApiResponse(code = 403, message = "접근 거부"),
