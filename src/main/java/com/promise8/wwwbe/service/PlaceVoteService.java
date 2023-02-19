@@ -56,7 +56,7 @@ public class PlaceVoteService {
 
     private MeetingEntity getMeetingEntity(long meetingId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.INVALID_REQUEST, "not exist meeting");
+            throw new BizException(BaseErrorCode.NOT_EXIST_MEETING, "not exist meeting");
         });
         return meetingEntity;
     }

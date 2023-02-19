@@ -38,6 +38,7 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "조회 성공"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생")
     })
     @GetMapping
@@ -57,6 +58,7 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "생성 완료"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생")
     })
     @PostMapping
@@ -78,9 +80,10 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "입장 완료"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
-            @ApiResponse(code = 4000, message = "존재하지 않는 방"),
-            @ApiResponse(code = 5000, message = "이미 투표가 시작된 방")
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/{meetingId}")
     public BaseResponse<MeetingGetResDto> getMeetingById(
@@ -100,9 +103,10 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "Code 일치"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
-            @ApiResponse(code = 4000, message = "존재하지 않는 방"),
-            @ApiResponse(code = 5000, message = "이미 투표가 시작된 방")
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/code/{meetingCode}")
     public BaseResponse<MeetingGetResDto> getMeetingByCode(
@@ -121,9 +125,11 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "참여 성공"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 3001, message = "이미 참여된 약속방"),
-            @ApiResponse(code = 9000, message = "잘못된 요청")
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저")
     })
     @PostMapping("/{meetingId}")
     public BaseResponse<Void> joinMeeting(
@@ -147,8 +153,11 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "투표 완료"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
-            @ApiResponse(code = 9000, message = "잘못된 요청")
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
+            @ApiResponse(code = 4002, message = "해당 약속방에 참여하지 않은 유저")
     })
     @PostMapping("/{meetingId}/votes")
     public BaseResponse<Void> createPlaceVote(
@@ -173,7 +182,9 @@ public class MeetingController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "변경 완료"),
             @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
             @ApiResponse(code = 9000, message = "잘못된 요청")
     })
     @PutMapping("/{meetingId}/meetingStatus/{meetingStatus}")
