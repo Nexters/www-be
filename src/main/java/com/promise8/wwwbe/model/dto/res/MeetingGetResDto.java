@@ -45,6 +45,10 @@ public class MeetingGetResDto {
     private String confirmedPlace;
     @ApiModelProperty(value = "isJoined", required = true, notes = "이미 방에 참여했는지 여부")
     private Boolean isJoined;
+    @ApiModelProperty(value = "startDate", required = true, notes = "약속 방 시간(시작)")
+    private LocalDate startDate;
+    @ApiModelProperty(value = "endDate", required = true, notes = "약속 방 시간(끝)")
+    private LocalDate endDate;
     @ApiModelProperty(value = "userPromiseDateTimeList", required = true, notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
     private List<UserPromiseTimeResDto> userPromiseDateTimeList;
     @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
@@ -81,6 +85,8 @@ public class MeetingGetResDto {
                 .confirmedTime(confirmedPromiseResDto.getPromiseTime())
                 .confirmedPlace(confirmedPromiseResDto.getPromisePlace())
                 .isJoined(isJoined)
+                .startDate(meetingEntity.getStartDate())
+                .endDate(meetingEntity.getEndDate())
                 .userPromiseDateTimeList(userPromiseTimeResDtoList)
                 .userPromisePlaceList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())
