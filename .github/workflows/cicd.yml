@@ -39,4 +39,6 @@ jobs:
             docker stop www-be
             docker rm www-be
             docker run -d --network www --name www-be -p 8080:8080 ${{ secrets.DOCKER_USER }}/www-be
-#            docker rmi $(docker images -f "dangling=true" -q)
+            if docker images -f "dangling=true" -q | grep . > /dev/null; then
+              docker rmi $(docker images -f "dangling=true" -q)
+            fi
