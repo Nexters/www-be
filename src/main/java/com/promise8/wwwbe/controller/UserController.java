@@ -52,7 +52,9 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "변경 완료"),
             @ApiResponse(code = 403, message = "접근 거부"),
-            @ApiResponse(code = 1000, message = "서버 에러 발생")
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저")
     })
     @PostMapping("/alarm")
     public BaseResponse<Void> updateAlarm(
