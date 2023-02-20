@@ -20,7 +20,7 @@ public class MeetingAuthorizer {
 
     public boolean isCreator(UserPrincipal userPrincipal, long meetingId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new BizException(BaseErrorCode.NOT_EXIST_MEETING, "not exist meeting");
+            throw new BizException(BaseErrorCode.NOT_EXIST_MEETING);
         });
         UserEntity creator = meetingEntity.getCreator();
         return creator.getUserId() == userPrincipal.getId();
