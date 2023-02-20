@@ -15,12 +15,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {BizException.class})
     public BaseResponse<String> handleBizException(BizException e) {
         log.error("biz exception", e);
-        return BaseResponse.error(e.getCode(), e.getMessage());
+        return BaseResponse.error(e.getCode());
     }
 
     @ExceptionHandler(value = {Exception.class})
     public BaseResponse<String> handleException(Exception e) {
         log.error("handle exception", e);
-        return BaseResponse.error(BaseErrorCode.SERVER_ERROR, e.getMessage());
+        return BaseResponse.error(BaseErrorCode.SERVER_ERROR);
     }
 }
