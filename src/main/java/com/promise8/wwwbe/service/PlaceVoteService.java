@@ -40,6 +40,11 @@ public class PlaceVoteService {
                 .map(meetingPlaceEntity -> makePlaceVoteEntity(meetingUserEntity, meetingPlaceEntity))
                 .collect(Collectors.toList());
         placeVoteRepository.saveAll(placeVoteEntityList);
+
+        // FIXME: 여기 마저해야해요 ㅠ
+        int meetingUserSize = meetingEntity.getMeetingUserEntityList().size(); // 방에 참여한 인원
+        meetingUserEntity.getPlaceVoteEntityList().size(); // 현재 투표 갯수
+
     }
 
     private MeetingUserEntity getMeetingUserEntity(MeetingEntity meetingEntity, UserEntity userEntity) {

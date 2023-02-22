@@ -8,6 +8,7 @@ import com.promise8.wwwbe.model.dto.res.*;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.mobile.PushMessage;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -19,6 +20,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class MeetingService {
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
     private final LinkService linkService;
+    private final PushService pushService;
 
     @Transactional
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto, String deviceId) {
@@ -99,6 +102,24 @@ public class MeetingService {
         }
 
         meetingEntity.setMeetingStatus(meetingStatus);
+        meetingRepository.save(meetingEntity);
+
+        List<String> userTokenList = meetingEntity.getMeetingUserEntityList().stream()
+                .map(meetingUserEntity -> meetingUserEntity.getUserEntity().getFcmToken())
+                .collect(Collectors.toList());
+
+        if (MeetingStatus.VOTING.equals(meetingStatus)) {
+            for (String token : userTokenList) {
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "투표를 시작해주세요"));
+            }
+        }
+
+        // 투표 종료 시 (방장이 투표 종료)
+        if (MeetingStatus.VOTED.equals(meetingStatus)) {
+            for (String token : userTokenList) {
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "투표가 완료되었습니다"));
+            }
+        }
     }
 
     private String getMeetingCode() {
@@ -187,12 +208,13 @@ public class MeetingService {
         userEntity.setUserName(joinMeetingReqDto.getNickname());
         userRepository.save(userEntity);
 
-        MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+        MeetingUserEntity newMeetingUserEntity = MeetingUserEntity.builder()
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .meetingUserName(joinMeetingReqDto.getNickname())
-                .build());
+                .build();
 
+        MeetingUserEntity meetingUserEntity = meetingEntity.addMeetingUser(newMeetingUserEntity);
 
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList =
                 joinMeetingReqDto.getUserPromiseTimeList().stream()
@@ -228,6 +250,14 @@ public class MeetingService {
                     .isConfirmed(false)
                     .build()));
         });
+
+        int currentUserCount = meetingEntity.getMeetingUserEntityList().size();
+
+        if (currentUserCount == meetingEntity.getConditionCount()) {
+            pushService.send(
+                    meetingEntity.getCreator().getFcmToken(),
+                    new PushMessage(PushMessage.ContentType.MEETING, meetingId, "최소 인원이 참여했습니다😚\n 투표시작을 눌러주세요"));
+        }
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();

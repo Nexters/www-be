@@ -51,4 +51,10 @@ public class MeetingEntity extends BaseTimeEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL)
     private List<MeetingUserEntity> meetingUserEntityList = new ArrayList<>();
+
+    public MeetingUserEntity addMeetingUser(MeetingUserEntity meetingUserEntity) {
+        this.meetingUserEntityList.add(meetingUserEntity);
+        meetingUserEntity.setMeetingEntity(this);
+        return meetingUserEntity;
+    }
 }
