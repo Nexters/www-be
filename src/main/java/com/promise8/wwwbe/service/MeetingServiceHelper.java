@@ -8,6 +8,7 @@ import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
 import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
+import io.jsonwebtoken.lang.Collections;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -136,5 +137,18 @@ public class MeetingServiceHelper {
         });
 
         return userVoteHashMap;
+    }
+
+    public static List<String> getMeetingUserNameList(MeetingEntity meetingEntity) {
+        List<String> userNameList = new ArrayList<>();
+        if (Collections.isEmpty(meetingEntity.getMeetingUserEntityList())) {
+            return null;
+        }
+
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            userNameList.add(meetingUser.getMeetingUserName());
+        });
+
+        return userNameList;
     }
 }
