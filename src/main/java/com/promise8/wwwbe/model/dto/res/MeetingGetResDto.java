@@ -3,6 +3,7 @@ package com.promise8.wwwbe.model.dto.res;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.model.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -67,7 +68,7 @@ public class MeetingGetResDto {
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
             ConfirmedPromiseResDto confirmedPromiseResDto,
-            Long currentUserId,
+            UserEntity userEntity,
             Boolean isJoined) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
         userVoteList.sort((o1, o2) -> o2.getValue().size() - o1.getValue().size());
@@ -78,8 +79,8 @@ public class MeetingGetResDto {
                 .meetingName(meetingEntity.getMeetingName())
                 .minimumAlertMembers(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseResDto.getHostName())
-                .currentUserName(meetingEntity.getCreator().getUserName())
-                .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
+                .currentUserName(userEntity.getUserName())
+                .isHost(meetingEntity.getCreator().getUserId() == userEntity.getUserId())
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
                 .meetingCode(meetingEntity.getMeetingCode())
