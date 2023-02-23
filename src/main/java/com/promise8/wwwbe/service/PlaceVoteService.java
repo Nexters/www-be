@@ -53,6 +53,8 @@ public class PlaceVoteService {
             for (String token : userTokenList) {
                 pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
+            meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
+            meetingRepository.save(meetingEntity);
         }
     }
 
