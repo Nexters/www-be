@@ -44,6 +44,8 @@ class MeetingServiceTest {
     @Mock
     private LinkService linkService;
     @Mock
+    private PushService pushService;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private MeetingRepository meetingRepository;
@@ -144,6 +146,7 @@ class MeetingServiceTest {
     void putMeetingStatusWhenActionEndVote() {
         // when
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
+        when(pushService.send(any(), any())).thenReturn(anyString());
         meetingService.putMeetingStatus(1L, MeetingStatus.VOTED);
 
         // then
