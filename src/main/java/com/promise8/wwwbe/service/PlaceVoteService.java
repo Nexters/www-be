@@ -43,10 +43,16 @@ public class PlaceVoteService {
                 .collect(Collectors.toList());
         placeVoteRepository.saveAll(placeVoteEntityList);
 
-        int meetingUserSize = meetingEntity.getMeetingUserEntityList().size(); // 방에 참여한 인원
+        List<String> userTokenList = meetingEntity.getMeetingUserEntityList().stream()
+                .map(meetingUser -> meetingUser.getUserEntity().getFcmToken())
+                .collect(Collectors.toList());
+
+        int meetingUserSize = meetingEntity.getMeetingUserEntityList().size();
         int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
         if (meetingUserSize == votedUserCount) {
-            pushService.send(meetingEntity.getCreator().getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "모든 인원의 투표가 완료되었습니다.\n약속을 확정해주세요."));
+            for (String token : userTokenList) {
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
+            }
         }
     }
 

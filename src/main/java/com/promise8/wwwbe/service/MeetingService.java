@@ -110,14 +110,13 @@ public class MeetingService {
 
         if (MeetingStatus.VOTING.equals(meetingStatus)) {
             for (String token : userTokenList) {
-                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "투표를 시작해주세요"));
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"));
             }
         }
 
-        // 투표 종료 시 (방장이 투표 종료)
         if (MeetingStatus.VOTED.equals(meetingStatus)) {
             for (String token : userTokenList) {
-                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "투표가 완료되었습니다"));
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
         }
     }
@@ -256,7 +255,7 @@ public class MeetingService {
         if (currentUserCount == meetingEntity.getConditionCount()) {
             pushService.send(
                     meetingEntity.getCreator().getFcmToken(),
-                    new PushMessage(PushMessage.ContentType.MEETING, meetingId, "최소 인원이 참여했습니다😚\n 투표시작을 눌러주세요"));
+                    new PushMessage(PushMessage.ContentType.MEETING, meetingId, "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"));
         }
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
