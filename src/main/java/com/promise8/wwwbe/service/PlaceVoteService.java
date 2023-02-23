@@ -4,6 +4,7 @@ import com.promise8.wwwbe.model.dto.req.PlaceVoteReqDto;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.mobile.PushMessage;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlaceVoteService {
+    private final PushService pushService;
     private final MeetingRepository meetingRepository;
     private final MeetingUserRepository meetingUserRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
@@ -41,10 +43,11 @@ public class PlaceVoteService {
                 .collect(Collectors.toList());
         placeVoteRepository.saveAll(placeVoteEntityList);
 
-        // FIXME: 여기 마저해야해요 ㅠ
         int meetingUserSize = meetingEntity.getMeetingUserEntityList().size(); // 방에 참여한 인원
-        meetingUserEntity.getPlaceVoteEntityList().size(); // 현재 투표 갯수
-
+        int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
+        if (meetingUserSize == votedUserCount) {
+            pushService.send(meetingEntity.getCreator().getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "모든 인원의 투표가 완료되었습니다.\n약속을 확정해주세요."));
+        }
     }
 
     private MeetingUserEntity getMeetingUserEntity(MeetingEntity meetingEntity, UserEntity userEntity) {

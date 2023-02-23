@@ -2,8 +2,10 @@ package com.promise8.wwwbe.model.mobile;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class PushMessage {
     private ContentType contentType;

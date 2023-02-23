@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.*;
+import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
 import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
@@ -20,7 +21,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
