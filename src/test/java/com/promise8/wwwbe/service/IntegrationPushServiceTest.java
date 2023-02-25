@@ -18,6 +18,6 @@ class IntegrationPushServiceTest {
     @Disabled
     void testSend() throws Exception {
         String token = "cORc8O22SDmqneB0GJxlOE:APA91bHHd0pyh0ogt65JDrOZI8HNyc08UXeL93wOTs1PbDeAzz2vTo-md8JevYwZEHsPJ5p3qqt21LooGZ5PMmzh06AVh1hEavTojNwHZ9OTKVu23L_p1QCmHaLd4qSQebeHqsV-2Opy";
-        pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, 2L, "test"));
+        pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, 2L, "test", "test"));
     }
 }

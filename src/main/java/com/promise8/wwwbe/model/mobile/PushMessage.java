@@ -8,11 +8,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PushMessage {
+    private Long id;
     private ContentType contentType;
     private Long contentId;
+    private String title;
     private String text;
 
     public enum ContentType {
         MEETING;
+    }
+
+    public PushMessage(ContentType contentType, Long contentId, String title, String text) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.title = title;
+        this.text = text;
     }
 }
