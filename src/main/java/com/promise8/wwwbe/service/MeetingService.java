@@ -307,34 +307,16 @@ public class MeetingService {
                     continue;
                 }
 
-                String[] confirmedTimeAndPlace = getConfirmedPromiseTimeAndPlace(meetingUserEntity);
+                String confirmedTime = meetingUserTimetableRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
+                String confirmedPlace = meetingPlaceRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
                 pushService.send(
                         meetingUserEntity.getUserEntity().getFcmToken(),
                         new PushMessage(
                                 PushMessage.ContentType.MEETING,
                                 meetingEntity.getMeetingId(),
-                                "내일은 " + confirmedTimeAndPlace[0] + "에 " + confirmedTimeAndPlace[1] + "에서 약속이 있어요!")
+                                "내일은 " + confirmedTime + "에 " + confirmedPlace + "에서 약속이 있어요!")
                 );
             }
         }
-    }
-
-    private String[] getConfirmedPromiseTimeAndPlace(MeetingUserEntity meetingUserEntity) {
-        String[] ret = new String[2];
-        for (MeetingUserTimetableEntity meetingUserTimetableEntity : meetingUserEntity.getMeetingUserTimetableEntityList()) {
-            if (meetingUserTimetableEntity.getIsConfirmed()) {
-                ret[0] = meetingUserTimetableEntity.getPromiseTime().getKrName();
-                break;
-            }
-        }
-
-        for (MeetingPlaceEntity meetingPlaceEntity : meetingUserEntity.getMeetingPlaceEntityList()) {
-            if (meetingPlaceEntity.getIsConfirmed()) {
-                ret[1] = meetingPlaceEntity.getPromisePlace();
-                break;
-            }
-        }
-
-        return ret;
     }
 }
