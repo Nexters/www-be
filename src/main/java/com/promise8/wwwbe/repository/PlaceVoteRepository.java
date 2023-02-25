@@ -11,4 +11,11 @@ public interface PlaceVoteRepository extends JpaRepository<PlaceVoteEntity, Long
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "delete from place_vote pv where pv.meetingUserEntity = :meetingUserEntity")
     void deleteByMeetingUserEntity(@Param("meetingUserEntity") MeetingUserEntity meetingUserEntity);
+
+    @Query(value = "select count(distinct pv.meetingUserEntity.meetingUserId) " +
+            "from meeting_user mu " +
+            "join fetch place_vote pv on mu.meetingUserId = pv.meetingUserEntity.meetingUserId " +
+            "where mu.meetingEntity.meetingId = :meetingId")
+    int getVotedUserCount(@Param("meetingId") long meetingId);
+
 }
