@@ -115,7 +115,7 @@ public class MeetingService {
                 if (!user.getIsAlarmOn()) {
                     continue;
                 }
-                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"));
+                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"));
             }
         }
 
@@ -124,7 +124,7 @@ public class MeetingService {
                 if (!user.getIsAlarmOn()) {
                     continue;
                 }
-                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
+                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
             MeetingEntity votedMeeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
             votedMeeting.setVoteFinishDateTime(LocalDateTime.now());
@@ -283,7 +283,7 @@ public class MeetingService {
             if (meetingEntity.getCreator().getIsAlarmOn()) {
                 pushService.send(
                         meetingEntity.getCreator().getFcmToken(),
-                        new PushMessage(PushMessage.ContentType.MEETING, meetingId, "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"));
+                        new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"));
             }
         }
 
@@ -335,6 +335,7 @@ public class MeetingService {
                         new PushMessage(
                                 PushMessage.ContentType.MEETING,
                                 meetingEntity.getMeetingId(),
+                                meetingEntity.getMeetingName(),
                                 "내일은 " + confirmedTime + "에 " + confirmedPlace + "에서 약속이 있어요!")
                 );
             }
@@ -347,7 +348,7 @@ public class MeetingService {
         for (MeetingEntity meetingEntity : meetingEntityList) {
             UserEntity creator = meetingEntity.getCreator();
             if (creator.getIsAlarmOn()) {
-                pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
+                pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), meetingEntity.getMeetingName(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
             }
         }
     }
