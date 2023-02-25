@@ -346,7 +346,9 @@ public class MeetingService {
 
         for (MeetingEntity meetingEntity : meetingEntityList) {
             UserEntity creator = meetingEntity.getCreator();
-            pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
+            if (creator.getIsAlarmOn()) {
+                pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
+            }
         }
     }
 }
