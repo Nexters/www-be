@@ -34,7 +34,7 @@ public class MeetingEntity extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
     @Basic
-    @Column(name = "meeting_code")
+    @Column(name = "meeting_code", columnDefinition = "VARCHAR(255) COLLATE utf8_bin")
     private String meetingCode;
     @Basic
     @Column(name = "short_link")
