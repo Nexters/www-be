@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.model.dto.res;
 
 import com.promise8.wwwbe.model.dto.PromiseTime;
+import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.UserEntity;
@@ -50,8 +51,10 @@ public class MeetingGetResDto {
     private LocalDate startDate;
     @ApiModelProperty(value = "endDate", required = true, notes = "약속 방 시간(끝)")
     private LocalDate endDate;
-    @ApiModelProperty(value = "joinedUserList", required = true, notes = "약속 방 내 이미 참여한 유저닉네임 리스트")
-    private List<String> joinedUserList;
+
+    @ApiModelProperty(value = "joinedUserInfoList", required = true, notes = "약속 방 내 이미 참여한 유저닉네임 리스트(캐릭터 타입 포함)")
+    private List<UserInfoDto> joinedUserInfoList;
+
     @ApiModelProperty(value = "userPromiseDateTimeList", required = true, notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
     private List<UserPromiseTimeResDto> userPromiseDateTimeList;
     @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
@@ -63,7 +66,7 @@ public class MeetingGetResDto {
 
     public static MeetingGetResDto of(
             MeetingEntity meetingEntity,
-            List<String> joinedUserList,
+            List<UserInfoDto> userInfoDtoList,
             List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
@@ -91,7 +94,7 @@ public class MeetingGetResDto {
                 .isJoined(isJoined)
                 .startDate(meetingEntity.getStartDate())
                 .endDate(meetingEntity.getEndDate())
-                .joinedUserList(joinedUserList)
+                .joinedUserInfoList(userInfoDtoList)
                 .userPromiseDateTimeList(userPromiseTimeResDtoList)
                 .userPromisePlaceList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())

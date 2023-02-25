@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.service.ThumbnailHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -40,7 +41,7 @@ public class MeetingMainGetResDto {
     private MeetingStatus meetingStatus;
     @JsonIgnore
     private LocalDateTime createdDatetime;
-
+    private ThumbnailHelper.YaksokiType yaksokiType;
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
             ConfirmedPromiseResDto confirmedPromiseResDto) {
@@ -57,6 +58,7 @@ public class MeetingMainGetResDto {
                 .confirmedPlace(confirmedPromiseResDto.getPromisePlace())
                 .meetingStatus(meetingEntity.getMeetingStatus())
                 .createdDatetime(meetingEntity.getCreatedDatetime())
+                .yaksokiType(ThumbnailHelper.getYaksoki(meetingEntity.getMeetingId()))
                 .build();
     }
 }
