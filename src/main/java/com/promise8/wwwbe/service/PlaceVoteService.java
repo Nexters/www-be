@@ -47,15 +47,18 @@ public class PlaceVoteService {
                 .collect(Collectors.toList());
         placeVoteRepository.saveAll(placeVoteEntityList);
 
-        List<String> userTokenList = meetingEntity.getMeetingUserEntityList().stream()
-                .map(meetingUser -> meetingUser.getUserEntity().getFcmToken())
+        List<UserEntity> userEntityList = meetingEntity.getMeetingUserEntityList().stream()
+                .map(MeetingUserEntity::getUserEntity)
                 .collect(Collectors.toList());
 
         int meetingUserSize = meetingEntity.getMeetingUserEntityList().size();
         int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
         if (meetingUserSize == votedUserCount) {
-            for (String token : userTokenList) {
-                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
+            for (UserEntity user : userEntityList) {
+                if (!user.getIsAlarmOn()) {
+                    continue;
+                }
+                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
             meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
             meetingRepository.save(meetingEntity);
@@ -105,9 +108,9 @@ public class PlaceVoteService {
 
     private List<String> getMyVoteList(HashMap<String, List<String>> userVoteHashMap, String myName) {
         List<String> myVoteList = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry: userVoteHashMap.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : userVoteHashMap.entrySet()) {
             String place = entry.getKey();
-            for (String userName: entry.getValue()) {
+            for (String userName : entry.getValue()) {
                 if (myName.equals(userName)) {
                     myVoteList.add(place);
                 }
