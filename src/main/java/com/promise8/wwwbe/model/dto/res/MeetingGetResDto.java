@@ -3,6 +3,7 @@ package com.promise8.wwwbe.model.dto.res;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.model.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -49,6 +50,8 @@ public class MeetingGetResDto {
     private LocalDate startDate;
     @ApiModelProperty(value = "endDate", required = true, notes = "약속 방 시간(끝)")
     private LocalDate endDate;
+    @ApiModelProperty(value = "joinedUserList", required = true, notes = "약속 방 내 이미 참여한 유저닉네임 리스트")
+    private List<String> joinedUserList;
     @ApiModelProperty(value = "userPromiseDateTimeList", required = true, notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
     private List<UserPromiseTimeResDto> userPromiseDateTimeList;
     @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
@@ -60,11 +63,12 @@ public class MeetingGetResDto {
 
     public static MeetingGetResDto of(
             MeetingEntity meetingEntity,
+            List<String> joinedUserList,
             List<UserPromisePlaceResDto> userPromisePlaceResDtoList,
             List<UserPromiseTimeResDto> userPromiseTimeResDtoList,
             HashMap<String, List<String>> userVoteHashMap,
             ConfirmedPromiseResDto confirmedPromiseResDto,
-            Long currentUserId,
+            UserEntity userEntity,
             Boolean isJoined) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
         userVoteList.sort((o1, o2) -> o2.getValue().size() - o1.getValue().size());
@@ -75,8 +79,8 @@ public class MeetingGetResDto {
                 .meetingName(meetingEntity.getMeetingName())
                 .minimumAlertMembers(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseResDto.getHostName())
-                .currentUserName(meetingEntity.getCreator().getUserName())
-                .isHost(meetingEntity.getCreator().getUserId() == currentUserId)
+                .currentUserName(userEntity.getUserName())
+                .isHost(meetingEntity.getCreator().getUserId() == userEntity.getUserId())
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
                 .meetingCode(meetingEntity.getMeetingCode())
@@ -87,6 +91,7 @@ public class MeetingGetResDto {
                 .isJoined(isJoined)
                 .startDate(meetingEntity.getStartDate())
                 .endDate(meetingEntity.getEndDate())
+                .joinedUserList(joinedUserList)
                 .userPromiseDateTimeList(userPromiseTimeResDtoList)
                 .userPromisePlaceList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())

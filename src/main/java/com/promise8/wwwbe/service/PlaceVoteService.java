@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.req.PlaceVoteReqDto;
+import com.promise8.wwwbe.model.dto.res.PromisePlaceResDtoWrapper;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
@@ -11,7 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -83,5 +87,33 @@ public class PlaceVoteService {
                 .meetingUserEntity(meetingUserEntity)
                 .build();
         return placeVoteEntity;
+    }
+
+    public PromisePlaceResDtoWrapper getMeetingPlaceList(Long userId, Long meetingId) {
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
+        MeetingUserEntity meetingUser = meetingUserRepository.findByMeetingEntityAndUserEntity(meetingEntity, userEntity)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING_USER));
+
+        HashMap<String, List<String>> userVoteHashMap = MeetingServiceHelper.getUserVoteHashMap(meetingEntity);
+        List<String> myVoteList = getMyVoteList(userVoteHashMap, meetingUser.getMeetingUserName());
+
+        return PromisePlaceResDtoWrapper.of(userVoteHashMap, myVoteList);
+    }
+
+    private List<String> getMyVoteList(HashMap<String, List<String>> userVoteHashMap, String myName) {
+        List<String> myVoteList = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry: userVoteHashMap.entrySet()) {
+            String place = entry.getKey();
+            for (String userName: entry.getValue()) {
+                if (myName.equals(userName)) {
+                    myVoteList.add(place);
+                }
+            }
+        }
+
+        return myVoteList;
     }
 }
