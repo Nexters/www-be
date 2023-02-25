@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,8 @@ public class MeetingServiceIntegrationTest {
         // meeting
         MeetingEntity meeting = meetingRepository.save(MeetingEntity.builder()
                 .creator(host)
+                .meetingUserEntityList(new ArrayList<>())
+                .conditionCount(2L)
                 .build());
 
         // 참여자
