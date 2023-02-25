@@ -83,6 +83,7 @@ public class MeetingController {
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
             @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/{meetingId}")
@@ -106,6 +107,7 @@ public class MeetingController {
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
             @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/code/{meetingCode}")

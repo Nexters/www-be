@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.*;
+import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
+import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
 import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
@@ -8,6 +9,7 @@ import com.promise8.wwwbe.model.dto.res.*;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.mobile.PushMessage;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -31,6 +33,7 @@ public class MeetingService {
     private final MeetingUserTimetableRepository meetingUserTimetableRepository;
     private final MeetingPlaceRepository meetingPlaceRepository;
     private final LinkService linkService;
+    private final PushService pushService;
 
     @Transactional
     public MeetingCreateResDto createMeeting(MeetingCreateReqDto meetingCreateReqDto, String deviceId) {
@@ -99,6 +102,23 @@ public class MeetingService {
         }
 
         meetingEntity.setMeetingStatus(meetingStatus);
+        meetingRepository.save(meetingEntity);
+
+        List<String> userTokenList = meetingEntity.getMeetingUserEntityList().stream()
+                .map(meetingUserEntity -> meetingUserEntity.getUserEntity().getFcmToken())
+                .collect(Collectors.toList());
+
+        if (MeetingStatus.VOTING.equals(meetingStatus)) {
+            for (String token : userTokenList) {
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"));
+            }
+        }
+
+        if (MeetingStatus.VOTED.equals(meetingStatus)) {
+            for (String token : userTokenList) {
+                pushService.send(token, new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
+            }
+        }
     }
 
     private String getMeetingCode() {
@@ -158,13 +178,17 @@ public class MeetingService {
             confirmedPromiseResDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
         }
 
+        UserEntity userEntity = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
+
         return MeetingGetResDto.of(
                 meetingEntity,
+                MeetingServiceHelper.getMeetingUserNameList(meetingEntity),
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeList(meetingEntity),
-                getUserVoteHashMap(meetingEntity),
+                MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
+                MeetingServiceHelper.getUserVoteHashMap(meetingEntity),
                 confirmedPromiseResDto,
-                currentUserId,
+                userEntity,
                 isJoined
         );
     }
@@ -187,12 +211,13 @@ public class MeetingService {
         userEntity.setUserName(joinMeetingReqDto.getNickname());
         userRepository.save(userEntity);
 
-        MeetingUserEntity meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+        MeetingUserEntity newMeetingUserEntity = MeetingUserEntity.builder()
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .meetingUserName(joinMeetingReqDto.getNickname())
-                .build());
+                .build();
 
+        MeetingUserEntity meetingUserEntity = meetingEntity.addMeetingUser(newMeetingUserEntity);
 
         List<MeetingUserTimetableEntity> meetingUserTimetableEntityList =
                 joinMeetingReqDto.getUserPromiseTimeList().stream()
@@ -229,75 +254,16 @@ public class MeetingService {
                     .build()));
         });
 
+        int currentUserCount = meetingEntity.getMeetingUserEntityList().size();
+
+        if (currentUserCount == meetingEntity.getConditionCount()) {
+            pushService.send(
+                    meetingEntity.getCreator().getFcmToken(),
+                    new PushMessage(PushMessage.ContentType.MEETING, meetingId, "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"));
+        }
+
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
-    }
-
-    private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
-        List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
-        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
-            return userPromiseTimeResDtoList;
-        }
-
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
-                LocalDate promiseDate = res.getPromiseDate();
-                PromiseTime promiseTime = res.getPromiseTime();
-
-                boolean isAdd = false;
-                for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
-                    if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
-                        userPromiseTime.getUserNameList().add(meetingUser.getMeetingUserName());
-                        isAdd = true;
-                        break;
-                    }
-                }
-
-                if (!isAdd) {
-                    List<String> userNameList = new ArrayList<>();
-                    userNameList.add(meetingUser.getMeetingUserName());
-                    userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
-                            .promiseDate(promiseDate)
-                            .promiseTime(promiseTime)
-                            .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
-                            .userNameList(userNameList)
-                            .build());
-                }
-            });
-        });
-
-        userPromiseTimeResDtoList.sort((o1, o2) -> o2.getUserNameList().size() - o1.getUserNameList().size());
-        return userPromiseTimeResDtoList;
-    }
-
-    private PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
-        DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
-        int idx = dayOfWeek.getValue();
-        return PromiseDayOfWeek.values()[idx - 1];
-    }
-
-    private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
-        HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
-        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
-            return userVoteHashMap;
-        }
-
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            meetingUser.getMeetingPlaceEntityList().forEach(meetingPlace -> {
-                meetingPlace.getPlaceVoteEntityList().forEach(res -> {
-                    String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
-                    if (userVoteHashMap.containsKey(promisePlace)) {
-                        userVoteHashMap.get(promisePlace).add(res.getMeetingUserEntity().getMeetingUserName());
-                    } else {
-                        List<String> userNameList = new ArrayList<>();
-                        userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
-                        userVoteHashMap.put(promisePlace, userNameList);
-                    }
-                });
-            });
-        });
-
-        return userVoteHashMap;
     }
 
     private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {

@@ -34,6 +34,7 @@ public class DeviceIdAuthenticationProvider implements AuthenticationProvider {
                     .userName(loginReqDto.getUserName())
                     .deviceId(loginReqDto.getDeviceId())
                     .fcmToken(loginReqDto.getFcmToken())
+                    .isAlarmOn(true)
                     .build();
             UserEntity newUser = userRepository.save(user);
             return new UsernamePasswordAuthenticationToken(UserPrincipal.create(newUser), newUser.getDeviceId(), new ArrayList<>());
