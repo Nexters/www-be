@@ -40,7 +40,7 @@ class PushServiceTest {
         when(fcm.send(any(Message.class))).thenReturn("1");
 
         // when
-        String id = pushService.send("token", new PushMessage(PushMessage.ContentType.MEETING, 1L, "testBody"));
+        String id = pushService.send("token", new PushMessage(PushMessage.ContentType.MEETING, 1L, "test", "testBody"));
 
         // then
         Assertions.assertEquals("1", id);
