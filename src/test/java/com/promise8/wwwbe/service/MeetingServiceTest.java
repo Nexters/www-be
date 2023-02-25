@@ -79,6 +79,7 @@ class MeetingServiceTest {
                 .userId(55L)
                 .deviceId(deviceId)
                 .userName(userName)
+                .isAlarmOn(true)
                 .build();
 
         meetingEntity = MeetingEntity.builder()
