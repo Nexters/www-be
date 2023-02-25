@@ -208,6 +208,8 @@ public class MeetingController {
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4003, message = "존재하지 않는 약속장소"),
+            @ApiResponse(code = 4004, message = "존재하지 않는 약속시간"),
             @ApiResponse(code = 9000, message = "잘못된 요청")
     })
     @PutMapping("/{meetingId}/confirmed")
