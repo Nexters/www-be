@@ -158,13 +158,17 @@ public class MeetingService {
             confirmedPromiseResDto = MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), meetingEntity.getCreator().getUserId());
         }
 
+        UserEntity userEntity = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
+
         return MeetingGetResDto.of(
                 meetingEntity,
+                MeetingServiceHelper.getMeetingUserNameList(meetingEntity),
                 getUserPromisePlaceResDtoList(meetingEntity),
                 MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
                 MeetingServiceHelper.getUserVoteHashMap(meetingEntity),
                 confirmedPromiseResDto,
-                currentUserId,
+                userEntity,
                 isJoined
         );
     }

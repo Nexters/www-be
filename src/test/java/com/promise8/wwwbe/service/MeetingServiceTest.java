@@ -169,6 +169,7 @@ class MeetingServiceTest {
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
         meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
         meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingById(meetingEntity.getMeetingId(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
@@ -185,6 +186,7 @@ class MeetingServiceTest {
         when(meetingRepository.findByMeetingCode(anyString())).thenReturn(Optional.of(meetingEntity));
         meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
         meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingByCode(anyString(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
