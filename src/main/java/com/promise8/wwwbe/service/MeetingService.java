@@ -161,7 +161,7 @@ public class MeetingService {
         return MeetingGetResDto.of(
                 meetingEntity,
                 getUserPromisePlaceResDtoList(meetingEntity),
-                getUserPromiseTimeList(meetingEntity),
+                MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
                 getUserVoteHashMap(meetingEntity),
                 confirmedPromiseResDto,
                 currentUserId,
@@ -231,49 +231,6 @@ public class MeetingService {
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
-    }
-
-    private List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
-        List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
-        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
-            return userPromiseTimeResDtoList;
-        }
-
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            meetingUser.getMeetingUserTimetableEntityList().forEach(res -> {
-                LocalDate promiseDate = res.getPromiseDate();
-                PromiseTime promiseTime = res.getPromiseTime();
-
-                boolean isAdd = false;
-                for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
-                    if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
-                        userPromiseTime.getUserNameList().add(meetingUser.getMeetingUserName());
-                        isAdd = true;
-                        break;
-                    }
-                }
-
-                if (!isAdd) {
-                    List<String> userNameList = new ArrayList<>();
-                    userNameList.add(meetingUser.getMeetingUserName());
-                    userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
-                            .promiseDate(promiseDate)
-                            .promiseTime(promiseTime)
-                            .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
-                            .userNameList(userNameList)
-                            .build());
-                }
-            });
-        });
-
-        userPromiseTimeResDtoList.sort((o1, o2) -> o2.getUserNameList().size() - o1.getUserNameList().size());
-        return userPromiseTimeResDtoList;
-    }
-
-    private PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
-        DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
-        int idx = dayOfWeek.getValue();
-        return PromiseDayOfWeek.values()[idx - 1];
     }
 
     private HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
