@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -111,5 +112,29 @@ public class MeetingServiceHelper {
         DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
         int idx = dayOfWeek.getValue();
         return PromiseDayOfWeek.values()[idx - 1];
+    }
+
+    public static HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
+        HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            return userVoteHashMap;
+        }
+
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingUser.getMeetingPlaceEntityList().forEach(meetingPlace -> {
+                meetingPlace.getPlaceVoteEntityList().forEach(res -> {
+                    String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
+                    if (userVoteHashMap.containsKey(promisePlace)) {
+                        userVoteHashMap.get(promisePlace).add(res.getMeetingUserEntity().getMeetingUserName());
+                    } else {
+                        List<String> userNameList = new ArrayList<>();
+                        userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
+                        userVoteHashMap.put(promisePlace, userNameList);
+                    }
+                });
+            });
+        });
+
+        return userVoteHashMap;
     }
 }
