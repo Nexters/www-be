@@ -201,6 +201,15 @@ public class MeetingController {
         return BaseResponse.ok();
     }
 
+    @ApiOperation(value = "약속방 시간, 장소 확정", notes = "약속방의 시간/장소를 확정한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "변경 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 9000, message = "잘못된 요청")
+    })
     @PutMapping("/{meetingId}/confirmed")
     @PreAuthorize("@meetingAuthorizer.isCreator(#userPrincipal, #meetingId)")
     public BaseResponse<Void> confirmMeeting(
