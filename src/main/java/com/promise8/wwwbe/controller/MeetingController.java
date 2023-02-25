@@ -2,6 +2,7 @@ package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.UserPrincipal;
 import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
+import com.promise8.wwwbe.model.dto.req.MeetingConfirmDto;
 import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.req.PlaceVoteReqDto;
 import com.promise8.wwwbe.model.dto.res.MeetingCreateResDto;
@@ -83,6 +84,7 @@ public class MeetingController {
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
             @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/{meetingId}")
@@ -99,13 +101,14 @@ public class MeetingController {
      * @param meetingCode
      * @return
      */
-    @ApiOperation(value = "약속방 Code 확인", notes = "1. (방장만 해당) meetingCode로 참여되어있는 약속방에 입장하여 방 내에서 필요한 정보를 모두 받는다.\n2. (참여자만 해당) meetingCode로 약속방에 등록된 Code와 일치한지 확인하여 방 내에 언제, 어디서 정보를 입력하기 위한 정보를 받는다.")
+    @ApiOperation(value = "약속방 Code 확인 및 참여 요청", notes = "1. (방장만 해당) meetingCode로 참여되어있는 약속방에 입장하여 방 내에서 필요한 정보를 모두 받는다.\n2. (참여자만 해당) meetingCode로 약속방에 등록된 Code와 일치한지 확인하여 방 내에 언제, 어디서 정보를 입력하기 위한 정보를 받는다.")
     @ApiResponses({
             @ApiResponse(code = 0, message = "Code 일치"),
             @ApiResponse(code = 403, message = "접근 거부"),
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
             @ApiResponse(code = 5000, message = "이미 투표가 시작된 약속방")
     })
     @GetMapping("/code/{meetingCode}")
@@ -195,6 +198,29 @@ public class MeetingController {
             @PathVariable("meetingStatus") MeetingStatus meetingStatus
     ) {
         meetingService.putMeetingStatus(meetingId, meetingStatus);
+        return BaseResponse.ok();
+    }
+
+    @ApiOperation(value = "약속방 시간, 장소 확정", notes = "약속방의 시간/장소를 확정한다.")
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "변경 완료"),
+            @ApiResponse(code = 403, message = "접근 거부"),
+            @ApiResponse(code = 500, message = "서버 에러 발생"),
+            @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
+            @ApiResponse(code = 4003, message = "존재하지 않는 약속장소"),
+            @ApiResponse(code = 4004, message = "존재하지 않는 약속시간"),
+            @ApiResponse(code = 9000, message = "잘못된 요청")
+    })
+    @PutMapping("/{meetingId}/confirmed")
+    @PreAuthorize("@meetingAuthorizer.isCreator(#userPrincipal, #meetingId)")
+    public BaseResponse<Void> confirmMeeting(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("meetingId") long meetingId,
+            @RequestBody MeetingConfirmDto meetingConfirmDto
+
+    ) {
+        meetingService.confirmMeeting(meetingConfirmDto);
         return BaseResponse.ok();
     }
 }

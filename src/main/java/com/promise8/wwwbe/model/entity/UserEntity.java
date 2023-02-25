@@ -20,14 +20,14 @@ public class UserEntity extends BaseTimeEntity {
     @Column(name = "user_id")
     private long userId;
     @Basic
-    @Column(name = "device_id")
+    @Column(name = "device_id", columnDefinition = "VARCHAR(255) COLLATE utf8_bin")
     private String deviceId;
     @Basic
     @Column(name = "user_name")
     private String userName;
 
     @Basic
-    @Column(name = "fcm_token")
+    @Column(name = "fcm_token", columnDefinition = "VARCHAR(255) COLLATE utf8_bin")
     private String fcmToken;
     private Boolean isAlarmOn = true;
 }

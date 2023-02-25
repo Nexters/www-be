@@ -18,9 +18,15 @@ public interface MeetingPlaceRepository extends JpaRepository<MeetingPlaceEntity
     List<MeetingPlaceEntity> findMeetingPlaceListByPlaceVoteIds(
             @Param("meetingUserEntity") MeetingUserEntity meetingUserEntity,
             @Param("placeVoteEntityIds") List<Long> placeVoteEntityIds);
+
     List<MeetingPlaceEntity> findByMeetingUserEntity(MeetingUserEntity meetingUserEntity);
 
     @Query(value = "select mp.promisePlace from meeting_place mp " +
             "where mp.meetingUserEntity = :meetingUserEntity")
     public HashSet<String> getExistMeetingPlaceList(MeetingUserEntity meetingUserEntity);
+
+    @Query(value = "select mp.promisePlace " +
+            "from meeting_place mp " +
+            "where mp.meetingUserEntity.meetingUserId = :meetingUserId")
+    String findConfirmedPromiseTime(Long meetingUserId);
 }

@@ -2,10 +2,12 @@ package com.promise8.wwwbe.repository;
 
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +31,23 @@ public interface MeetingRepository extends JpaRepository<MeetingEntity, Long> {
             "and mut.isConfirmed = :isConfirmed " +
             "and m.meetingStatus = :meetingStatus")
     public List<MeetingEntity> findByMeetingStatusAndConfirmedDate(LocalDate nowDate, boolean isConfirmed, MeetingStatus meetingStatus);
+
+
+    @Query(value = "select m from meeting m " +
+            "join meeting_user mu on mu.meetingEntity.meetingId = m.meetingId " +
+            "join meeting_user_timetable mut on mut.meetingUserEntity.meetingUserId = mu.meetingUserId " +
+            "where mut.promiseDate = :prevDate " +
+            "and mut.isConfirmed = :isConfirmed " +
+            "and m.meetingStatus = :meetingStatus")
+    public List<MeetingEntity> getMeetingOneDayLater(LocalDate prevDate, boolean isConfirmed, MeetingStatus meetingStatus);
+
+    /**
+     * VOTED 된 meeting 재촉 알림 용도 쿼리
+     * @return
+     */
+    @Query(value = "select m from meeting m " +
+            "where m.voteFinishDateTime <= CURRENT_TIME " +
+            "and m.voteFinishDateTime >= :dateTime " +
+            "and m.meetingStatus = 'VOTED'")
+    public List<MeetingEntity> findVotedMeetingByDateTime(LocalDateTime dateTime);
 }

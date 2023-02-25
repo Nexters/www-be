@@ -44,6 +44,8 @@ class MeetingServiceTest {
     @Mock
     private LinkService linkService;
     @Mock
+    private PushService pushService;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private MeetingRepository meetingRepository;
@@ -77,6 +79,7 @@ class MeetingServiceTest {
                 .userId(55L)
                 .deviceId(deviceId)
                 .userName(userName)
+                .isAlarmOn(true)
                 .build();
 
         meetingEntity = MeetingEntity.builder()
@@ -144,6 +147,7 @@ class MeetingServiceTest {
     void putMeetingStatusWhenActionEndVote() {
         // when
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
+        when(pushService.send(any(), any())).thenReturn(anyString());
         meetingService.putMeetingStatus(1L, MeetingStatus.VOTED);
 
         // then
@@ -169,6 +173,7 @@ class MeetingServiceTest {
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
         meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
         meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingById(meetingEntity.getMeetingId(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
@@ -185,6 +190,7 @@ class MeetingServiceTest {
         when(meetingRepository.findByMeetingCode(anyString())).thenReturn(Optional.of(meetingEntity));
         meetingServiceHelper.when(() -> MeetingServiceHelper.getConfirmedPromise(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
         meetingServiceHelper.when(() -> MeetingServiceHelper.getHostAndVotingCnt(meetingEntity.getMeetingUserEntityList(), userEntity.getUserId())).thenReturn(confirmedPromiseResDto);
+        given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingByCode(anyString(), meetingEntity.getCreator().getUserId());
         meetingEntity.setMeetingStatus(MeetingStatus.DONE);
