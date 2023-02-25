@@ -2,6 +2,7 @@ package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
+import com.promise8.wwwbe.model.dto.req.MeetingConfirmDto;
 import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
 import com.promise8.wwwbe.model.dto.res.*;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -124,7 +126,22 @@ public class MeetingService {
                 }
                 pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
+            MeetingEntity votedMeeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
+            votedMeeting.setVoteFinishDateTime(LocalDateTime.now());
         }
+    }
+
+    @Transactional
+    public void confirmMeeting(MeetingConfirmDto meetingConfirmDto) {
+        long meetingPlaceId = meetingConfirmDto.getMeetingPlaceId();
+
+        MeetingPlaceEntity meetingPlaceEntity = meetingPlaceRepository.findById(meetingPlaceId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING_PLACE));
+        MeetingUserTimetableEntity meetingUserTimetableEntity = meetingUserTimetableRepository.findById(meetingConfirmDto.getMeetingUserTimetableId()).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING_TIMETABLE));
+        meetingPlaceEntity.setIsConfirmed(true);
+        meetingUserTimetableEntity.setIsConfirmed(true);
+
+        meetingPlaceRepository.save(meetingPlaceEntity);
+        meetingUserTimetableRepository.save(meetingUserTimetableEntity);
     }
 
     private String getMeetingCode() {
@@ -288,6 +305,10 @@ public class MeetingService {
         return userPromisePlaceResDtoList;
     }
 
+    public List<MeetingEntity> getVoteNotiNeedMeetingList() {
+        return meetingRepository.findVotedMeetingByDateTime(LocalDate.now().minusDays(1).atStartOfDay());
+    }
+
     @Scheduled(cron = "2 0 0 * * ?", zone = "Asia/Seoul")
     public void promiseDone() {
         List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED);
@@ -317,6 +338,15 @@ public class MeetingService {
                                 "내일은 " + confirmedTime + "에 " + confirmedPlace + "에서 약속이 있어요!")
                 );
             }
+        }
+    }
+
+    public void confirmRequestNoti() {
+        List<MeetingEntity> meetingEntityList = getVoteNotiNeedMeetingList();
+
+        for (MeetingEntity meetingEntity : meetingEntityList) {
+            UserEntity creator = meetingEntity.getCreator();
+            pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
         }
     }
 }

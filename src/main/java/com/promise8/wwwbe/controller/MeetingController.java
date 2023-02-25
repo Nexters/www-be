@@ -2,6 +2,7 @@ package com.promise8.wwwbe.controller;
 
 import com.promise8.wwwbe.config.security.UserPrincipal;
 import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
+import com.promise8.wwwbe.model.dto.req.MeetingConfirmDto;
 import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
 import com.promise8.wwwbe.model.dto.req.PlaceVoteReqDto;
 import com.promise8.wwwbe.model.dto.res.MeetingCreateResDto;
@@ -197,6 +198,18 @@ public class MeetingController {
             @PathVariable("meetingStatus") MeetingStatus meetingStatus
     ) {
         meetingService.putMeetingStatus(meetingId, meetingStatus);
+        return BaseResponse.ok();
+    }
+
+    @PutMapping("/{meetingId}/confirmed")
+    @PreAuthorize("@meetingAuthorizer.isCreator(#userPrincipal, #meetingId)")
+    public BaseResponse<Void> confirmMeeting(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("meetingId") long meetingId,
+            @RequestBody MeetingConfirmDto meetingConfirmDto
+
+    ) {
+        meetingService.confirmMeeting(meetingConfirmDto);
         return BaseResponse.ok();
     }
 }

@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,8 @@ public class MeetingEntity extends BaseTimeEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "meetingEntity", cascade = CascadeType.ALL)
     private List<MeetingUserEntity> meetingUserEntityList = new ArrayList<>();
+
+    private LocalDateTime voteFinishDateTime;
 
     public MeetingUserEntity addMeetingUser(MeetingUserEntity meetingUserEntity) {
         this.meetingUserEntityList.add(meetingUserEntity);
