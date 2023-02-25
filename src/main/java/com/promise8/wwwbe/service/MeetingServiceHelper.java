@@ -3,11 +3,9 @@ package com.promise8.wwwbe.service;
 import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
+import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.dto.res.UserPromiseTimeResDto;
-import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
+import com.promise8.wwwbe.model.entity.*;
 import io.jsonwebtoken.lang.Collections;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MeetingServiceHelper {
@@ -86,26 +85,27 @@ public class MeetingServiceHelper {
                 boolean isAdd = false;
                 for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
                     if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
-                        userPromiseTime.getUserNameList().add(meetingUser.getMeetingUserName());
+                        userPromiseTime.getUserInfoList().add(new UserInfoDto(meetingUser.getMeetingUserName(), ThumbnailHelper.getCharacter(meetingUser.getMeetingUserId())));
                         isAdd = true;
                         break;
                     }
                 }
 
                 if (!isAdd) {
-                    List<String> userNameList = new ArrayList<>();
-                    userNameList.add(meetingUser.getMeetingUserName());
+                    List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+                    userInfoDtoList.add(new UserInfoDto(meetingUser.getMeetingUserName(),
+                            ThumbnailHelper.getCharacter(meetingUser.getMeetingUserId())));
                     userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
                             .promiseDate(promiseDate)
                             .promiseTime(promiseTime)
                             .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
-                            .userNameList(userNameList)
+                            .userInfoList(userInfoDtoList)
                             .build());
                 }
             });
         });
 
-        userPromiseTimeResDtoList.sort((o1, o2) -> o2.getUserNameList().size() - o1.getUserNameList().size());
+        userPromiseTimeResDtoList.sort((o1, o2) -> o2.getUserInfoList().size() - o1.getUserInfoList().size());
         return userPromiseTimeResDtoList;
     }
 
@@ -150,5 +150,25 @@ public class MeetingServiceHelper {
         });
 
         return userNameList;
+    }
+
+    public static List<UserInfoDto> getMeetingUserInfoDtoList(MeetingEntity meetingEntity) {
+        List<UserInfoDto> userNameList = new ArrayList<>();
+        if (Collections.isEmpty(meetingEntity.getMeetingUserEntityList())) {
+            return null;
+        }
+
+        List<MeetingUserEntity> meetingUserEntityList = meetingEntity.getMeetingUserEntityList();
+
+        List<UserInfoDto> userInfoDtoList = meetingUserEntityList.stream()
+                .map(meetingUserEntity -> {
+                    UserEntity userEntity = meetingUserEntity.getUserEntity();
+                    String userName = userEntity.getUserName();
+                    ThumbnailHelper.CharacterType character = ThumbnailHelper.getCharacter(userEntity.getUserId());
+                    return new UserInfoDto(userName, character);
+                })
+                .collect(Collectors.toList());
+
+        return userInfoDtoList;
     }
 }

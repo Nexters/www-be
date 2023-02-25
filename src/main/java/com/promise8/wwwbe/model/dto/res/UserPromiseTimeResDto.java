@@ -2,6 +2,7 @@ package com.promise8.wwwbe.model.dto.res;
 
 import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.dto.PromiseTime;
+import com.promise8.wwwbe.model.dto.UserInfoDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -18,10 +19,11 @@ import java.util.List;
 public class UserPromiseTimeResDto {
     @ApiModelProperty(value = "promiseDate", required = true, notes = "날짜")
     private LocalDate promiseDate;
-    @ApiModelProperty(value = "promiseDate", required = true, notes = "시간대")
+    @ApiModelProperty(value = "promiseTime", required = true, notes = "시간대")
     private PromiseTime promiseTime;
-    @ApiModelProperty(value = "promiseDate", required = true, notes = "요일")
+    @ApiModelProperty(value = "promiseDayOfWeek", required = true, notes = "요일")
     private PromiseDayOfWeek promiseDayOfWeek;
-    @ApiModelProperty(value = "promiseDate", required = true, notes = "해당 날짜, 시간대를 선택한 유저 list")
-    private List<String> userNameList;
+    @ApiModelProperty(value = "userInfoList", required = true, notes = "해당 날짜, 시간대를 선택한 유저 list")
+    private List<UserInfoDto> userInfoList;
+
 }

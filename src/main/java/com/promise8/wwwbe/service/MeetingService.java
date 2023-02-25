@@ -206,7 +206,7 @@ public class MeetingService {
 
         return MeetingGetResDto.of(
                 meetingEntity,
-                MeetingServiceHelper.getMeetingUserNameList(meetingEntity),
+                MeetingServiceHelper.getMeetingUserInfoDtoList(meetingEntity),
                 getUserPromisePlaceResDtoList(meetingEntity),
                 MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
                 MeetingServiceHelper.getUserVoteHashMap(meetingEntity),

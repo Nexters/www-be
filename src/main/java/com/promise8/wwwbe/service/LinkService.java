@@ -30,7 +30,7 @@ public class LinkService {
     private static final String IOS_PACKAGE = "com.promise8.www";
     // TODO Fix link
     private static final String DOMAIN_URL = "https://whenwheres.page.link";
-    private static final String ENDPOINT_URL = "https://naver.com";
+    private static final String ENDPOINT_URL = "https://whenwheres.com";
 
     public DynamicLinkResDto createLink(String meetingCode) {
         String shortlinkApiUrl = createShortlinkApiUrl();
