@@ -17,4 +17,11 @@ public class PushMessage {
     public enum ContentType {
         MEETING;
     }
+
+    public PushMessage(ContentType contentType, Long contentId, String title, String text) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.title = title;
+        this.text = text;
+    }
 }
