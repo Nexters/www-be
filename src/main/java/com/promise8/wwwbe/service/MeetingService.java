@@ -241,17 +241,17 @@ public class MeetingService {
                 .build();
 
         MeetingUserEntity meetingUserEntity = meetingEntity.addMeetingUser(newMeetingUserEntity);
+        meetingUserRepository.save(meetingUserEntity);
 
-        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList =
-                joinMeetingReqDto.getUserPromiseTimeList().stream()
-                        .map(meetingReq -> MeetingUserTimetableEntity.builder()
-                                .meetingUserEntity(meetingUserEntity)
-                                .promiseDate(meetingReq.getPromiseDate())
-                                .promiseTime(meetingReq.getPromiseTime())
-                                .isConfirmed(false)
-                                .build()
-                        )
-                        .collect(Collectors.toList());
+        List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
+        for (UserPromiseTimeReqDto userPromiseTimeReq : joinMeetingReqDto.getUserPromiseTimeList()) {
+            meetingUserTimetableEntityList.add(MeetingUserTimetableEntity.builder()
+                    .meetingUserEntity(meetingUserEntity)
+                    .promiseDate(userPromiseTimeReq.getPromiseDate())
+                    .promiseTime(userPromiseTimeReq.getPromiseTime())
+                    .isConfirmed(false)
+                    .build());
+        }
 
         meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
 
@@ -342,13 +342,20 @@ public class MeetingService {
         }
     }
 
+    @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
     public void confirmRequestNoti() {
         List<MeetingEntity> meetingEntityList = getVoteNotiNeedMeetingList();
 
         for (MeetingEntity meetingEntity : meetingEntityList) {
             UserEntity creator = meetingEntity.getCreator();
             if (creator.getIsAlarmOn()) {
-                pushService.send(creator.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingEntity.getMeetingId(), meetingEntity.getMeetingName(), "투표가 완료되었습니다. 약속을 확정해주세요!😚"));
+                pushService.send(
+                        creator.getFcmToken(),
+                        new PushMessage(
+                                PushMessage.ContentType.MEETING,
+                                meetingEntity.getMeetingId(),
+                                meetingEntity.getMeetingName(),
+                                "약속장소와 시간이 확정되었나요?\n약속정보를 확정해주세요!"));
             }
         }
     }

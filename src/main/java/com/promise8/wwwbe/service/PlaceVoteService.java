@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,7 @@ public class PlaceVoteService {
                 }
                 pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
             }
+            meetingEntity.setVoteFinishDateTime(LocalDateTime.now());
             meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
             meetingRepository.save(meetingEntity);
         }
