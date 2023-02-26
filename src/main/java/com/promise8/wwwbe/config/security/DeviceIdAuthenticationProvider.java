@@ -27,6 +27,8 @@ public class DeviceIdAuthenticationProvider implements AuthenticationProvider {
 
         if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
+            user.setFcmToken(loginReqDto.getFcmToken());
+            user = userRepository.save(user);
 
             return new UsernamePasswordAuthenticationToken(UserPrincipal.create(user), user.getDeviceId(), new ArrayList<>());
         } else {

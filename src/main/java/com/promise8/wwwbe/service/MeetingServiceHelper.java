@@ -2,8 +2,8 @@ package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
 import com.promise8.wwwbe.model.dto.UserInfoDto;
+import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
 import com.promise8.wwwbe.model.dto.res.UserPromiseTimeResDto;
 import com.promise8.wwwbe.model.entity.*;
 import io.jsonwebtoken.lang.Collections;
@@ -126,7 +126,9 @@ public class MeetingServiceHelper {
                 meetingPlace.getPlaceVoteEntityList().forEach(res -> {
                     String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
                     if (userVoteHashMap.containsKey(promisePlace)) {
-                        userVoteHashMap.get(promisePlace).add(res.getMeetingUserEntity().getMeetingUserName());
+                        List<String> userNameList = new ArrayList<>();
+                        userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
+                        userVoteHashMap.put(promisePlace, userNameList);
                     } else {
                         List<String> userNameList = new ArrayList<>();
                         userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
