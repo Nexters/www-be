@@ -355,7 +355,7 @@ public class MeetingService {
                                 PushMessage.ContentType.MEETING,
                                 meetingEntity.getMeetingId(),
                                 meetingEntity.getMeetingName(),
-                                "약속장소와 시간이 확정되었나요? 약속정보를 확정해주세요!"));
+                                "약속장소와 시간이 확정되었나요?\n약속정보를 확정해주세요!"));
             }
         }
     }
