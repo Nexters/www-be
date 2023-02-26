@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PromiseTime {
     MORNING("MORNING", "아침", 0),
-    LUNCH("LUNCH", "점심", 1),
+    LUNCH("LUNCH", "낮", 1),
     DINNER("DINNER", "저녁", 2),
     NIGHT("NIGHT", "밤", 3);
 
