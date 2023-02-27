@@ -6,7 +6,7 @@ public class ThumbnailHelper {
         if (isHost) {
             return CharacterType.CREATOR;
         }
-        
+
         CharacterType[] characterTypes = CharacterType.values();
         long size = characterTypes.length - 1;
         int index = (int) (id % size);
@@ -24,7 +24,6 @@ public class ThumbnailHelper {
         USER_1,
         USER_2,
         USER_3,
-        USER_4,
         CREATOR
     }
 
