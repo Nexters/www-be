@@ -25,7 +25,7 @@ public class UserPromisePlaceResDto {
         MeetingUserEntity meetingUserEntity = meetingPlaceEntity.getMeetingUserEntity();
         return UserPromisePlaceResDto.builder()
                 .userName(meetingUserEntity.getMeetingUserName())
-                .userCharacter(ThumbnailHelper.getCharacter(meetingUserEntity.getUserEntity().getUserId()))
+                .userCharacter(ThumbnailHelper.getCharacter(meetingUserEntity.getMeetingUserId()))
                 .promisePlace(meetingPlaceEntity.getPromisePlace())
                 .build();
     }
