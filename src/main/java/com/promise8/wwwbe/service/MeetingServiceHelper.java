@@ -111,6 +111,7 @@ public class MeetingServiceHelper {
                             )
                     ));
                     userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
+                            .timetableId(res.getMeetingUserTimetableId())
                             .promiseDate(promiseDate)
                             .promiseTime(promiseTime)
                             .promiseDayOfWeek(getPromiseDayOfWeek(promiseDate))
