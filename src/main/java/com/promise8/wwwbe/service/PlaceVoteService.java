@@ -38,7 +38,7 @@ public class PlaceVoteService {
         MeetingUserEntity meetingUserEntity = getMeetingUserEntity(meetingEntity, userEntity);
 
         List<MeetingPlaceEntity> meetingPlaceEntityList =
-                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(meetingUserEntity, placeVoteReqDto.getMeetingPlaceIdList());
+                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(placeVoteReqDto.getMeetingPlaceIdList());
 
         List<MeetingPlaceEntity> existMeetingPlaceList = meetingPlaceRepository.findByMeetingUserEntity(meetingUserEntity);
 
