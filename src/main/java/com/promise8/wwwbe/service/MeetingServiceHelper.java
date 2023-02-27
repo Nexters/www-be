@@ -88,7 +88,15 @@ public class MeetingServiceHelper {
                 boolean isAdd = false;
                 for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
                     if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
-                        userPromiseTime.getUserInfoList().add(new UserInfoDto(meetingUser.getMeetingUserName(), ThumbnailHelper.getCharacter(meetingUser.getUserEntity().getUserId())));
+                        userPromiseTime.getUserInfoList().add(
+                                new UserInfoDto(
+                                        meetingUser.getMeetingUserName(),
+                                        ThumbnailHelper.getCharacter(
+                                                meetingUser.getUserEntity().getUserId(),
+                                                meetingUser.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                                        )
+                                )
+                        );
                         isAdd = true;
                         break;
                     }
@@ -97,7 +105,11 @@ public class MeetingServiceHelper {
                 if (!isAdd) {
                     List<UserInfoDto> userInfoDtoList = new ArrayList<>();
                     userInfoDtoList.add(new UserInfoDto(meetingUser.getMeetingUserName(),
-                            ThumbnailHelper.getCharacter(meetingUser.getUserEntity().getUserId())));
+                            ThumbnailHelper.getCharacter(
+                                    meetingUser.getUserEntity().getUserId(),
+                                    meetingUser.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                            )
+                    ));
                     userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
                             .promiseDate(promiseDate)
                             .promiseTime(promiseTime)
@@ -166,7 +178,11 @@ public class MeetingServiceHelper {
 
         List<UserInfoDto> userInfoDtoList = meetingUserEntityList.stream()
                 .map(meetingUserEntity -> {
-                    ThumbnailHelper.CharacterType character = ThumbnailHelper.getCharacter(meetingUserEntity.getUserEntity().getUserId());
+                    ThumbnailHelper.CharacterType character =
+                            ThumbnailHelper.getCharacter(
+                                    meetingUserEntity.getUserEntity().getUserId(),
+                                    meetingUserEntity.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                            );
                     return new UserInfoDto(meetingUserEntity.getMeetingUserName(), character);
                 })
                 .collect(Collectors.toList());
