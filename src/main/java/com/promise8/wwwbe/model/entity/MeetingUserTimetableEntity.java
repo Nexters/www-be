@@ -18,7 +18,7 @@ public class MeetingUserTimetableEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_user_timetable_id")
-    private long meetingUserTimetableId;
+    private Long meetingUserTimetableId;
     @Basic
     @Column(name = "promise_date")
     private LocalDate promiseDate;

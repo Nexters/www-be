@@ -18,7 +18,7 @@ public class UserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "user_id")
-    private long userId;
+    private Long userId;
     @Basic
     @Column(name = "device_id", columnDefinition = "VARCHAR(255) COLLATE utf8_bin")
     private String deviceId;
