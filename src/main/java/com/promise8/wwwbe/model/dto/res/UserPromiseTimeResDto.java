@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 @ApiModel(value = "UserPromiseTime", description = "유저들이 선택한 날짜, 시간대")
 public class UserPromiseTimeResDto {
+    @ApiModelProperty(value = "timetableId", required = true, notes = "시간 id")
+    private Long timetableId;
     @ApiModelProperty(value = "promiseDate", required = true, notes = "날짜")
     private LocalDate promiseDate;
     @ApiModelProperty(value = "promiseTime", required = true, notes = "시간대")
@@ -25,5 +27,4 @@ public class UserPromiseTimeResDto {
     private PromiseDayOfWeek promiseDayOfWeek;
     @ApiModelProperty(value = "userInfoList", required = true, notes = "해당 날짜, 시간대를 선택한 유저 list")
     private List<UserInfoDto> userInfoList;
-
 }

@@ -10,6 +10,7 @@ import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -30,13 +31,14 @@ public class PlaceVoteService {
     private final UserRepository userRepository;
     private final PlaceVoteRepository placeVoteRepository;
 
+    @Transactional
     public void vote(long meetingId, long userId, PlaceVoteReqDto placeVoteReqDto) {
         MeetingEntity meetingEntity = getMeetingEntity(meetingId);
         UserEntity userEntity = getUserEntity(userId);
         MeetingUserEntity meetingUserEntity = getMeetingUserEntity(meetingEntity, userEntity);
 
         List<MeetingPlaceEntity> meetingPlaceEntityList =
-                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(meetingUserEntity, placeVoteReqDto.getMeetingPlaceIdList());
+                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(placeVoteReqDto.getMeetingPlaceIdList());
 
         List<MeetingPlaceEntity> existMeetingPlaceList = meetingPlaceRepository.findByMeetingUserEntity(meetingUserEntity);
 

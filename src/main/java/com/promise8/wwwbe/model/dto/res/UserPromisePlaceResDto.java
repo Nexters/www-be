@@ -14,6 +14,8 @@ import lombok.Setter;
 @Builder
 @ApiModel(value = "UserPromisePlace", description = "유저들이 선택한 장소")
 public class UserPromisePlaceResDto {
+    @ApiModelProperty(value = "placeId", required = true, notes = "장소 id")
+    private Long placeId;
     @ApiModelProperty(value = "userName", required = true, notes = "해당 장소를 선택한 유저")
     private String userName;
     @ApiModelProperty(value = "userCharacter", notes = "유저 캐릭터")
@@ -24,6 +26,7 @@ public class UserPromisePlaceResDto {
     public static UserPromisePlaceResDto of(MeetingPlaceEntity meetingPlaceEntity) {
         MeetingUserEntity meetingUserEntity = meetingPlaceEntity.getMeetingUserEntity();
         return UserPromisePlaceResDto.builder()
+                .placeId(meetingPlaceEntity.getMeetingPlaceId())
                 .userName(meetingUserEntity.getMeetingUserName())
                 .userCharacter(ThumbnailHelper.getCharacter(
                         meetingUserEntity.getUserEntity().getUserId(),
