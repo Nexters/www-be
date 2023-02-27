@@ -11,8 +11,6 @@ import com.promise8.wwwbe.repository.PushMessageHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class PushService {
@@ -22,11 +20,11 @@ public class PushService {
 
     public String send(String token, PushMessage pushMessage) {
         try {
-            PushMessageHistoryEntity pushMessageHistoryEntity = PushMessageHistoryEntity.builder()
+            PushMessageHistoryEntity pushMessageHistoryEntity = pushMessageHistoryRepository.save(PushMessageHistoryEntity.builder()
                     .title(pushMessage.getTitle())
                     .text(pushMessage.getText())
                     .meetingId(pushMessage.getContentId())
-                    .build();
+                    .build());
 
             pushMessage.setId(pushMessageHistoryEntity.getPushMessageHistoryId());
             String jsonStr = objectMapper.writeValueAsString(pushMessage);
@@ -34,7 +32,6 @@ public class PushService {
                     .setToken(token)
                     .putData("data", jsonStr)
                     .build();
-            pushMessageHistoryRepository.save(pushMessageHistoryEntity);
             return fcm.send(message);
 
         } catch (Exception e) {
