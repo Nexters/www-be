@@ -141,7 +141,7 @@ public class MeetingServiceHelper {
                 meetingPlace.getPlaceVoteEntityList().forEach(res -> {
                     String promisePlace = res.getMeetingPlaceEntity().getPromisePlace();
                     if (userVoteHashMap.containsKey(promisePlace)) {
-                        List<String> userNameList = new ArrayList<>();
+                        List<String> userNameList = userVoteHashMap.get(promisePlace);
                         userNameList.add(res.getMeetingUserEntity().getMeetingUserName());
                         userVoteHashMap.put(promisePlace, userNameList);
                     } else {
