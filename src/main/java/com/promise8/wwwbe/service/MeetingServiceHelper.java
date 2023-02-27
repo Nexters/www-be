@@ -5,7 +5,10 @@ import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
 import com.promise8.wwwbe.model.dto.res.UserPromiseTimeResDto;
-import com.promise8.wwwbe.model.entity.*;
+import com.promise8.wwwbe.model.entity.MeetingEntity;
+import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
+import com.promise8.wwwbe.model.entity.MeetingUserEntity;
+import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
 import io.jsonwebtoken.lang.Collections;
 import org.springframework.stereotype.Component;
 
@@ -85,7 +88,7 @@ public class MeetingServiceHelper {
                 boolean isAdd = false;
                 for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
                     if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
-                        userPromiseTime.getUserInfoList().add(new UserInfoDto(meetingUser.getMeetingUserName(), ThumbnailHelper.getCharacter(meetingUser.getMeetingUserId())));
+                        userPromiseTime.getUserInfoList().add(new UserInfoDto(meetingUser.getMeetingUserName(), ThumbnailHelper.getCharacter(meetingUser.getUserEntity().getUserId())));
                         isAdd = true;
                         break;
                     }
@@ -94,7 +97,7 @@ public class MeetingServiceHelper {
                 if (!isAdd) {
                     List<UserInfoDto> userInfoDtoList = new ArrayList<>();
                     userInfoDtoList.add(new UserInfoDto(meetingUser.getMeetingUserName(),
-                            ThumbnailHelper.getCharacter(meetingUser.getMeetingUserId())));
+                            ThumbnailHelper.getCharacter(meetingUser.getUserEntity().getUserId())));
                     userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
                             .promiseDate(promiseDate)
                             .promiseTime(promiseTime)
@@ -155,7 +158,6 @@ public class MeetingServiceHelper {
     }
 
     public static List<UserInfoDto> getMeetingUserInfoDtoList(MeetingEntity meetingEntity) {
-        List<UserInfoDto> userNameList = new ArrayList<>();
         if (Collections.isEmpty(meetingEntity.getMeetingUserEntityList())) {
             return null;
         }
@@ -164,10 +166,8 @@ public class MeetingServiceHelper {
 
         List<UserInfoDto> userInfoDtoList = meetingUserEntityList.stream()
                 .map(meetingUserEntity -> {
-                    UserEntity userEntity = meetingUserEntity.getUserEntity();
-                    String userName = userEntity.getUserName();
-                    ThumbnailHelper.CharacterType character = ThumbnailHelper.getCharacter(userEntity.getUserId());
-                    return new UserInfoDto(userName, character);
+                    ThumbnailHelper.CharacterType character = ThumbnailHelper.getCharacter(meetingUserEntity.getUserEntity().getUserId());
+                    return new UserInfoDto(meetingUserEntity.getMeetingUserName(), character);
                 })
                 .collect(Collectors.toList());
 
