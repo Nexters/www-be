@@ -147,7 +147,7 @@ class MeetingServiceTest {
     void putMeetingStatusWhenActionEndVote() {
         // when
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
-        when(pushService.send(any(), any())).thenReturn(anyString());
+//        when(pushService.send(any(), any())).thenReturn(anyString());
         meetingService.putMeetingStatus(1L, MeetingStatus.VOTED);
 
         // then
