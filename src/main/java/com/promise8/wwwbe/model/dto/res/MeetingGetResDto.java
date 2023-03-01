@@ -1,11 +1,13 @@
 package com.promise8.wwwbe.model.dto.res;
 
+import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.service.MeetingServiceHelper;
 import com.promise8.wwwbe.service.ThumbnailHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -46,6 +48,8 @@ public class MeetingGetResDto {
     private String shortLink;
     @ApiModelProperty(value = "confirmedDate", notes = "확정된 날짜")
     private LocalDate confirmedDate;
+    @ApiModelProperty(value = "confirmedDayOfWeek", notes = "요일")
+    private PromiseDayOfWeek confirmedDayOfWeek;
     @ApiModelProperty(value = "confirmedTime", notes = "확정된 시간대")
     private PromiseTime confirmedTime;
     @ApiModelProperty(value = "confirmedPlace", notes = "확정된 장소")
@@ -105,6 +109,7 @@ public class MeetingGetResDto {
                 .meetingCode(meetingEntity.getMeetingCode())
                 .shortLink(meetingEntity.getShortLink())
                 .confirmedDate(confirmedPromiseResDto.getPromiseDate())
+                .confirmedDayOfWeek(MeetingServiceHelper.getPromiseDayOfWeek(confirmedPromiseResDto.getPromiseDate()))
                 .confirmedTime(confirmedPromiseResDto.getPromiseTime())
                 .confirmedPlace(confirmedPromiseResDto.getPromisePlace())
                 .isJoined(isJoined)

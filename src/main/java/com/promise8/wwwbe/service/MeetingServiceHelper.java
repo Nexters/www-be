@@ -126,7 +126,11 @@ public class MeetingServiceHelper {
         return userPromiseTimeResDtoList;
     }
 
-    private static PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
+    public static PromiseDayOfWeek getPromiseDayOfWeek(LocalDate promiseDate) {
+        if (promiseDate == null) {
+            return null;
+        }
+
         DayOfWeek dayOfWeek = promiseDate.getDayOfWeek();
         int idx = dayOfWeek.getValue();
         return PromiseDayOfWeek.values()[idx - 1];
