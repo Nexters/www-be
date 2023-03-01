@@ -110,7 +110,7 @@ public class MeetingServiceIntegrationTest {
                 .promiseTime(PromiseTime.NIGHT)
                 .build());
 
-        meetingService.confirmMeeting(new MeetingConfirmDto(
+        meetingService.confirmMeeting(savedMeeting.getMeetingId(), new MeetingConfirmDto(
                 savedMeetingPlace.getMeetingPlaceId(),
                 savedMeetingUserTimetable.getMeetingUserTimetableId()));
 
