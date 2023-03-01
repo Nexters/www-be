@@ -41,7 +41,9 @@ public class MeetingMainGetResDto {
     private MeetingStatus meetingStatus;
     @JsonIgnore
     private LocalDateTime createdDatetime;
+    @ApiModelProperty(value = "yaksokiType", required = true, notes = "캐릭터 이미지 타입")
     private ThumbnailHelper.YaksokiType yaksokiType;
+
     public static MeetingMainGetResDto of(
             MeetingEntity meetingEntity,
             ConfirmedPromiseResDto confirmedPromiseResDto) {
