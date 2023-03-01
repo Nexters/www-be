@@ -9,6 +9,7 @@ public enum BaseErrorCode {
     SERVER_ERROR(1000, "Server Error"),
     FCM_SEND_ERROR(2000, "FCM Push Error"),
     ALREADY_PARTICIPATED_MEETING(3001, "Already Participated Meeting"),
+    NOT_MEETING_STATUS_VOTING(3002, "Not Voting Status of Meeting"),
     NOT_EXIST_MEETING(4000, "Not Exist Meeting"),
     NOT_EXIST_USER(4001, "Not Exist User"),
     NOT_EXIST_MEETING_USER(4002, "Not Exist Meeting User"),
