@@ -300,12 +300,28 @@ public class MeetingService {
             return userPromisePlaceResDtoList;
         }
 
+        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            userPromisePlaceResDtoList.addAll(meetingUser.getMeetingPlaceEntityList().stream()
-                    .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
+            meetingPlaceEntityList.addAll(meetingUser.getMeetingPlaceEntityList());
         });
+        meetingPlaceEntityList.sort(this::sortingOfPlace);
+
+        userPromisePlaceResDtoList.addAll(meetingPlaceEntityList.stream()
+                .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
 
         return userPromisePlaceResDtoList;
+    }
+
+    private int sortingOfPlace(MeetingPlaceEntity o1, MeetingPlaceEntity o2) {
+        if (o1.getPlaceVoteEntityList() == null && o2.getPlaceVoteEntityList() == null) {
+            return 0;
+        } else if (o1.getPlaceVoteEntityList() == null) {
+            return 1;
+        } else if (o2.getPlaceVoteEntityList() == null) {
+            return -1;
+        } else {
+            return o2.getPlaceVoteEntityList().size() - o1.getPlaceVoteEntityList().size();
+        }
     }
 
     public List<MeetingEntity> getVoteNotiNeedMeetingList() {
