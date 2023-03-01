@@ -1,5 +1,6 @@
 package com.promise8.wwwbe.controller;
 
+import com.promise8.wwwbe.model.dto.res.UserPromisePlaceListResDto;
 import com.promise8.wwwbe.model.dto.res.UserPromisePlaceResDto;
 import com.promise8.wwwbe.model.http.BaseResponse;
 import com.promise8.wwwbe.service.MeetingPlaceService;
@@ -31,7 +32,7 @@ public class MeetingPlaceController {
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방")
     })
     @GetMapping("/{meetingId}")
-    public BaseResponse<List<UserPromisePlaceResDto>> getPromisePlaceList(@PathVariable("meetingId") Long meetingId) {
-        return BaseResponse.ok(meetingPlaceService.getMeetingPlaceList(meetingId));
+    public BaseResponse<UserPromisePlaceListResDto> getPromisePlaceList(@PathVariable("meetingId") Long meetingId) {
+        return BaseResponse.ok(new UserPromisePlaceListResDto(meetingPlaceService.getMeetingPlaceList(meetingId)));
     }
 }
