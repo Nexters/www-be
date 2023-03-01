@@ -6,6 +6,7 @@ import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
 import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.service.ThumbnailHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -55,10 +56,11 @@ public class MeetingGetResDto {
     private LocalDate startDate;
     @ApiModelProperty(value = "endDate", required = true, notes = "약속 방 시간(끝)")
     private LocalDate endDate;
+    @ApiModelProperty(value = "yaksokiType", required = true, notes = "캐릭터 이미지 타입")
+    private ThumbnailHelper.YaksokiType yaksokiType;
 
     @ApiModelProperty(value = "joinedUserInfoList", required = true, notes = "약속 방 내 이미 참여한 유저닉네임 리스트(캐릭터 타입 포함)")
     private List<UserInfoDto> joinedUserInfoList;
-
     @ApiModelProperty(value = "userPromiseDateTimeList", required = true, notes = "약속 방 내 유저들이 희망하는 날짜, 시간대")
     private List<UserPromiseTimeResDto> userPromiseDateTimeList;
     @ApiModelProperty(value = "userPromisePlaceList", notes = "약속 방 내 유저들이 희망하는 장소")
@@ -113,6 +115,7 @@ public class MeetingGetResDto {
                 .userPromisePlaceList(userPromisePlaceResDtoList)
                 .meetingStatus(meetingEntity.getMeetingStatus())
                 .userVoteList(userVoteList)
+                .yaksokiType(ThumbnailHelper.getYaksoki(meetingEntity.getMeetingId()))
                 .build();
     }
 }
