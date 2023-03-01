@@ -29,6 +29,8 @@ public class UserPromisePlaceResDto {
     private String promisePlace;
     @ApiModelProperty(value = "userInfoList", required = true, notes = "해당 장소를 선택한 유저 list")
     private List<UserInfoDto> userInfoList;
+    @ApiModelProperty(value = "votedUserCount", required = true, notes = "해당 장소를 투표한 사람 수")
+    private int votedUserCount = 0;
 
     public static UserPromisePlaceResDto of(MeetingPlaceEntity meetingPlaceEntity, Long userId) {
         MeetingUserEntity meetingUserEntity = meetingPlaceEntity.getMeetingUserEntity();
