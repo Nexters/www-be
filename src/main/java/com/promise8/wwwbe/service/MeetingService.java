@@ -131,7 +131,7 @@ public class MeetingService {
     }
 
     @Transactional
-    public void confirmMeeting(MeetingConfirmDto meetingConfirmDto) {
+    public void confirmMeeting(long meetingId, MeetingConfirmDto meetingConfirmDto) {
         long meetingPlaceId = meetingConfirmDto.getMeetingPlaceId();
 
         MeetingPlaceEntity meetingPlaceEntity = meetingPlaceRepository.findById(meetingPlaceId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING_PLACE));
@@ -141,6 +141,10 @@ public class MeetingService {
 
         meetingPlaceRepository.save(meetingPlaceEntity);
         meetingUserTimetableRepository.save(meetingUserTimetableEntity);
+
+        MeetingEntity meetingEntity = meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
+        meetingEntity.setMeetingStatus(MeetingStatus.CONFIRMED);
+        meetingRepository.save(meetingEntity);
     }
 
     private String getMeetingCode() {

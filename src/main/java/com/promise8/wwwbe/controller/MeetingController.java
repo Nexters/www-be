@@ -220,7 +220,7 @@ public class MeetingController {
             @RequestBody MeetingConfirmDto meetingConfirmDto
 
     ) {
-        meetingService.confirmMeeting(meetingConfirmDto);
+        meetingService.confirmMeeting(meetingId, meetingConfirmDto);
         return BaseResponse.ok();
     }
 }
