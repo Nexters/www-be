@@ -4,6 +4,7 @@ import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
+import com.promise8.wwwbe.model.dto.res.UserPromisePlaceResDto;
 import com.promise8.wwwbe.model.dto.res.UserPromiseTimeResDto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
@@ -189,5 +190,35 @@ public class MeetingServiceHelper {
                 .collect(Collectors.toList());
 
         return userInfoDtoList;
+    }
+
+    public static List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
+        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
+        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
+            return userPromisePlaceResDtoList;
+        }
+
+        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
+            meetingPlaceEntityList.addAll(meetingUser.getMeetingPlaceEntityList());
+        });
+        meetingPlaceEntityList.sort(MeetingServiceHelper::sortingOfPlace);
+
+        userPromisePlaceResDtoList.addAll(meetingPlaceEntityList.stream()
+                .map(place -> UserPromisePlaceResDto.of(place, meetingEntity.getCreator().getUserId())).collect(Collectors.toList()));
+
+        return userPromisePlaceResDtoList;
+    }
+
+    private static int sortingOfPlace(MeetingPlaceEntity o1, MeetingPlaceEntity o2) {
+        if (o1.getPlaceVoteEntityList() == null && o2.getPlaceVoteEntityList() == null) {
+            return 0;
+        } else if (o1.getPlaceVoteEntityList() == null) {
+            return 1;
+        } else if (o2.getPlaceVoteEntityList() == null) {
+            return -1;
+        } else {
+            return o2.getPlaceVoteEntityList().size() - o1.getPlaceVoteEntityList().size();
+        }
     }
 }
