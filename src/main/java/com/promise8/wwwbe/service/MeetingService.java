@@ -307,7 +307,7 @@ public class MeetingService {
         meetingPlaceEntityList.sort(this::sortingOfPlace);
 
         userPromisePlaceResDtoList.addAll(meetingPlaceEntityList.stream()
-                .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
+                .map(place -> UserPromisePlaceResDto.of(place, meetingEntity.getCreator().getUserId())).collect(Collectors.toList()));
 
         return userPromisePlaceResDtoList;
     }
