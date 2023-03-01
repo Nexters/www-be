@@ -15,8 +15,8 @@ public class PushMessageHistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "push_message_history_id")
-    private long pushMessageHistoryId;
-    private long meetingId;
+    private Long pushMessageHistoryId;
+    private Long meetingId;
     private String title;
 
     private String text;

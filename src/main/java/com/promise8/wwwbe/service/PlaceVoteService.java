@@ -5,11 +5,11 @@ import com.promise8.wwwbe.model.dto.res.PromisePlaceResDtoWrapper;
 import com.promise8.wwwbe.model.entity.*;
 import com.promise8.wwwbe.model.exception.BizException;
 import com.promise8.wwwbe.model.http.BaseErrorCode;
-import com.promise8.wwwbe.model.mobile.PushMessage;
 import com.promise8.wwwbe.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -30,13 +30,14 @@ public class PlaceVoteService {
     private final UserRepository userRepository;
     private final PlaceVoteRepository placeVoteRepository;
 
+    @Transactional
     public void vote(long meetingId, long userId, PlaceVoteReqDto placeVoteReqDto) {
         MeetingEntity meetingEntity = getMeetingEntity(meetingId);
         UserEntity userEntity = getUserEntity(userId);
         MeetingUserEntity meetingUserEntity = getMeetingUserEntity(meetingEntity, userEntity);
 
         List<MeetingPlaceEntity> meetingPlaceEntityList =
-                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(meetingUserEntity, placeVoteReqDto.getMeetingPlaceIdList());
+                meetingPlaceRepository.findMeetingPlaceListByPlaceVoteIds(placeVoteReqDto.getMeetingPlaceIdList());
 
         List<MeetingPlaceEntity> existMeetingPlaceList = meetingPlaceRepository.findByMeetingUserEntity(meetingUserEntity);
 
@@ -55,12 +56,12 @@ public class PlaceVoteService {
         int meetingUserSize = meetingEntity.getMeetingUserEntityList().size();
         int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
         if (meetingUserSize == votedUserCount) {
-            for (UserEntity user : userEntityList) {
-                if (!user.getIsAlarmOn()) {
-                    continue;
-                }
-                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
-            }
+//            for (UserEntity user : userEntityList) {
+//                if (!user.getIsAlarmOn()) {
+//                    continue;
+//                }
+//                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
+//            }
             meetingEntity.setVoteFinishDateTime(LocalDateTime.now());
             meetingEntity.setMeetingStatus(MeetingStatus.VOTED);
             meetingRepository.save(meetingEntity);

@@ -16,7 +16,7 @@ public class PlaceVoteEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "place_vote_id")
-    private long placeVoteId;
+    private Long placeVoteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meetingUserId")

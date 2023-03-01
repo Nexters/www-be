@@ -20,7 +20,7 @@ public class MeetingUserEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_user_id")
-    private long meetingUserId;
+    private Long meetingUserId;
     @Basic
     @Column(name = "meeting_user_name")
     private String meetingUserName;
