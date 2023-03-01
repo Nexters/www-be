@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MeetingPlaceService {
     private final MeetingRepository meetingRepository;
     private final PlaceVoteRepository placeVoteRepository;
-    MeetingPlaceRepository meetingPlaceRepository;
+    private final MeetingPlaceRepository meetingPlaceRepository;
 
     public List<UserPromisePlaceResDto> getMeetingPlaceList(Long meetingId) {
         MeetingEntity meetingEntity = meetingRepository.findById(meetingId)
