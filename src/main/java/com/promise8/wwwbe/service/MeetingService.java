@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -210,7 +209,7 @@ public class MeetingService {
         return MeetingGetResDto.of(
                 meetingEntity,
                 MeetingServiceHelper.getMeetingUserInfoDtoList(meetingEntity),
-                getUserPromisePlaceResDtoList(meetingEntity),
+                MeetingServiceHelper.getUserPromisePlaceResDtoList(meetingEntity),
                 MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
                 MeetingServiceHelper.getUserVoteHashMap(meetingEntity),
                 confirmedPromiseResDto,
@@ -292,36 +291,6 @@ public class MeetingService {
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
-    }
-
-    private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
-        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
-        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
-            return userPromisePlaceResDtoList;
-        }
-
-        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            meetingPlaceEntityList.addAll(meetingUser.getMeetingPlaceEntityList());
-        });
-        meetingPlaceEntityList.sort(this::sortingOfPlace);
-
-        userPromisePlaceResDtoList.addAll(meetingPlaceEntityList.stream()
-                .map(place -> UserPromisePlaceResDto.of(place, meetingEntity.getCreator().getUserId())).collect(Collectors.toList()));
-
-        return userPromisePlaceResDtoList;
-    }
-
-    private int sortingOfPlace(MeetingPlaceEntity o1, MeetingPlaceEntity o2) {
-        if (o1.getPlaceVoteEntityList() == null && o2.getPlaceVoteEntityList() == null) {
-            return 0;
-        } else if (o1.getPlaceVoteEntityList() == null) {
-            return 1;
-        } else if (o2.getPlaceVoteEntityList() == null) {
-            return -1;
-        } else {
-            return o2.getPlaceVoteEntityList().size() - o1.getPlaceVoteEntityList().size();
-        }
     }
 
     public List<MeetingEntity> getVoteNotiNeedMeetingList() {
