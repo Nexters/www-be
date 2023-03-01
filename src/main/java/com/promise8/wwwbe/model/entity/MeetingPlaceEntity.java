@@ -21,7 +21,7 @@ public class MeetingPlaceEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "meeting_place_id")
-    private long meetingPlaceId;
+    private Long meetingPlaceId;
     @Basic
     @Column(name = "promise_place")
     private String promisePlace;
