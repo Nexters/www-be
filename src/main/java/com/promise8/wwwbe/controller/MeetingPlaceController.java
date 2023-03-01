@@ -33,6 +33,6 @@ public class MeetingPlaceController {
     })
     @GetMapping("/{meetingId}")
     public BaseResponse<UserPromisePlaceListResDto> getPromisePlaceList(@PathVariable("meetingId") Long meetingId) {
-        return BaseResponse.ok(new UserPromisePlaceListResDto(meetingPlaceService.getMeetingPlaceList(meetingId)));
+        return BaseResponse.ok(meetingPlaceService.getMeetingPlaceList(meetingId));
     }
 }
