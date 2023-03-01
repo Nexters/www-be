@@ -21,15 +21,21 @@ public class PromisePlaceResDtoWrapper {
     @ApiModelProperty(value = "myVoteList", notes = "약속 방 내 본인의 투표 내역")
     private List<String> myVoteList;
 
+    @ApiModelProperty(value = "votedUserCount", notes = "현재 투표 참여 인원")
+    private int votedUserCount;
+
     public static PromisePlaceResDtoWrapper of(
             HashMap<String, List<String>> userVoteHashMap,
-            List<String> myVoteList) {
+            List<String> myVoteList,
+            int votedUserCount
+    ) {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
         userVoteList.sort((o1, o2) -> o2.getValue().size() - o1.getValue().size());
 
         return PromisePlaceResDtoWrapper.builder()
                 .userVoteList(userVoteList)
                 .myVoteList(myVoteList)
+                .votedUserCount(votedUserCount)
                 .build();
     }
 }
