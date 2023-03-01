@@ -4,6 +4,7 @@ import com.promise8.wwwbe.model.dto.PromiseTime;
 import com.promise8.wwwbe.model.dto.UserInfoDto;
 import com.promise8.wwwbe.model.entity.MeetingEntity;
 import com.promise8.wwwbe.model.entity.MeetingStatus;
+import com.promise8.wwwbe.model.entity.MeetingUserEntity;
 import com.promise8.wwwbe.model.entity.UserEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,7 +13,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -76,14 +80,24 @@ public class MeetingGetResDto {
         List<Map.Entry<String, List<String>>> userVoteList = new ArrayList<>(userVoteHashMap.entrySet());
         userVoteList.sort((o1, o2) -> o2.getValue().size() - o1.getValue().size());
 
+        String currentUserName = null;
+        if (meetingEntity.getMeetingUserEntityList() != null) {
+            for (MeetingUserEntity meetingUserEntity : meetingEntity.getMeetingUserEntityList()) {
+                if (userEntity.getUserId().equals(meetingUserEntity.getUserEntity().getUserId())) {
+                    currentUserName = meetingUserEntity.getMeetingUserName();
+                    break;
+                }
+            }
+        }
+
         boolean isNoMeetingUser = meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty();
         return MeetingGetResDto.builder()
                 .meetingId(meetingEntity.getMeetingId())
                 .meetingName(meetingEntity.getMeetingName())
                 .minimumAlertMembers(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseResDto.getHostName())
-                .currentUserName(userEntity.getUserName())
-                .isHost(meetingEntity.getCreator().getUserId() == userEntity.getUserId())
+                .currentUserName(currentUserName)
+                .isHost(userEntity.getUserId().equals(meetingEntity.getCreator().getUserId()))
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
                 .meetingCode(meetingEntity.getMeetingCode())
