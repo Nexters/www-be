@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,7 +51,7 @@ public class MeetingServiceHelper {
                 confirmedPromiseResDto.setVotingUserCount(confirmedPromiseResDto.getVotingUserCount() + 1);
             }
 
-            if (meetingUser.getUserEntity().getUserId() == hostId) {
+            if (Objects.equals(meetingUser.getUserEntity().getUserId(), hostId)) {
                 confirmedPromiseResDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
@@ -67,7 +68,7 @@ public class MeetingServiceHelper {
                 confirmedPromiseResDto.setVotingUserCount(confirmedPromiseResDto.getVotingUserCount() + 1);
             }
 
-            if (meetingUser.getUserEntity().getUserId() == hostId) {
+            if (Objects.equals(meetingUser.getUserEntity().getUserId(), hostId)) {
                 confirmedPromiseResDto.setHostName(meetingUser.getMeetingUserName());
             }
         }
@@ -94,7 +95,7 @@ public class MeetingServiceHelper {
                                         meetingUser.getMeetingUserName(),
                                         ThumbnailHelper.getCharacter(
                                                 meetingUser.getUserEntity().getUserId(),
-                                                meetingUser.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                                                meetingUser.getUserEntity().getUserId().equals(meetingEntity.getCreator().getUserId())
                                         )
                                 )
                         );
@@ -108,7 +109,7 @@ public class MeetingServiceHelper {
                     userInfoDtoList.add(new UserInfoDto(meetingUser.getMeetingUserName(),
                             ThumbnailHelper.getCharacter(
                                     meetingUser.getUserEntity().getUserId(),
-                                    meetingUser.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                                    meetingUser.getUserEntity().getUserId().equals(meetingEntity.getCreator().getUserId())
                             )
                     ));
                     userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
@@ -187,7 +188,7 @@ public class MeetingServiceHelper {
                     ThumbnailHelper.CharacterType character =
                             ThumbnailHelper.getCharacter(
                                     meetingUserEntity.getUserEntity().getUserId(),
-                                    meetingUserEntity.getUserEntity().getUserId() == meetingEntity.getCreator().getUserId()
+                                    meetingUserEntity.getUserEntity().getUserId().equals(meetingEntity.getCreator().getUserId())
                             );
                     return new UserInfoDto(meetingUserEntity.getMeetingUserName(), character);
                 })
