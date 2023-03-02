@@ -102,11 +102,12 @@ public class PlaceVoteService {
                 .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_USER));
         MeetingUserEntity meetingUser = meetingUserRepository.findByMeetingEntityAndUserEntity(meetingEntity, userEntity)
                 .orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING_USER));
+        int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
 
         HashMap<String, List<String>> userVoteHashMap = MeetingServiceHelper.getUserVoteHashMap(meetingEntity);
         List<String> myVoteList = getMyVoteList(userVoteHashMap, meetingUser.getMeetingUserName());
 
-        return PromisePlaceResDtoWrapper.of(userVoteHashMap, myVoteList);
+        return PromisePlaceResDtoWrapper.of(userVoteHashMap, myVoteList, votedUserCount);
     }
 
     private List<String> getMyVoteList(HashMap<String, List<String>> userVoteHashMap, String myName) {

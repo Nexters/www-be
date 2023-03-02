@@ -158,11 +158,13 @@ public class MeetingController {
             @ApiResponse(code = 403, message = "접근 거부"),
             @ApiResponse(code = 500, message = "서버 에러 발생"),
             @ApiResponse(code = 1000, message = "서버 에러 발생"),
+            @ApiResponse(code = 3002, message = "투표중이 아닌 방에서의 투표 요청"),
             @ApiResponse(code = 4000, message = "존재하지 않는 약속방"),
             @ApiResponse(code = 4001, message = "존재하지 않는 유저"),
             @ApiResponse(code = 4002, message = "해당 약속방에 참여하지 않은 유저")
     })
     @PostMapping("/{meetingId}/votes")
+    @PreAuthorize("@meetingAuthorizer.isMeetingVoting(#meetingId)")
     public BaseResponse<Void> createPlaceVote(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable("meetingId") long meetingId,

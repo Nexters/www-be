@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -210,7 +209,7 @@ public class MeetingService {
         return MeetingGetResDto.of(
                 meetingEntity,
                 MeetingServiceHelper.getMeetingUserInfoDtoList(meetingEntity),
-                getUserPromisePlaceResDtoList(meetingEntity),
+                MeetingServiceHelper.getUserPromisePlaceResDtoList(meetingEntity),
                 MeetingServiceHelper.getUserPromiseTimeList(meetingEntity),
                 MeetingServiceHelper.getUserVoteHashMap(meetingEntity),
                 confirmedPromiseResDto,
@@ -292,20 +291,6 @@ public class MeetingService {
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
-    }
-
-    private List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
-        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
-        if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
-            return userPromisePlaceResDtoList;
-        }
-
-        meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
-            userPromisePlaceResDtoList.addAll(meetingUser.getMeetingPlaceEntityList().stream()
-                    .map(UserPromisePlaceResDto::of).collect(Collectors.toList()));
-        });
-
-        return userPromisePlaceResDtoList;
     }
 
     public List<MeetingEntity> getVoteNotiNeedMeetingList() {
