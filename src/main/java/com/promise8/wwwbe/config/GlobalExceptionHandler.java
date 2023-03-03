@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.v1.controller;
+package com.promise8.wwwbe.config;
 
 import com.promise8.wwwbe.v1.model.exception.BizException;
 import com.promise8.wwwbe.v1.model.http.BaseErrorCode;

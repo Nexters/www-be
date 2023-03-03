@@ -1,4 +1,4 @@
-package com.promise8.wwwbe.v1.controller.converter;
+package com.promise8.wwwbe.config.converter;
 
 import com.promise8.wwwbe.v1.model.entity.MeetingStatusV1;
 import org.springframework.core.convert.converter.Converter;
