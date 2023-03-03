@@ -1,12 +1,16 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.dto.req.MeetingCreateReqDto;
-import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
-import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
-import com.promise8.wwwbe.model.dto.res.DynamicLinkResDto;
-import com.promise8.wwwbe.model.entity.*;
-import com.promise8.wwwbe.repository.*;
+import com.promise8.wwwbe.v1.model.dto.PromiseTime;
+import com.promise8.wwwbe.v1.model.dto.req.MeetingCreateReqDto;
+import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.v1.model.dto.res.ConfirmedPromiseResDto;
+import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDto;
+import com.promise8.wwwbe.v1.model.entity.*;
+import com.promise8.wwwbe.v1.repository.*;
+import com.promise8.wwwbe.v1.service.LinkService;
+import com.promise8.wwwbe.v1.service.MeetingService;
+import com.promise8.wwwbe.v1.service.MeetingServiceHelper;
+import com.promise8.wwwbe.v1.service.PushService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

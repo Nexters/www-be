@@ -1,6 +1,8 @@
 package com.promise8.wwwbe.config.security;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.config.security.TokenProvider;
+import com.promise8.wwwbe.v1.config.security.UserPrincipal;
+import com.promise8.wwwbe.v1.model.entity.UserEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

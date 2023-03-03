@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.mobile.PushMessage;
+import com.promise8.wwwbe.v1.model.mobile.PushMessage;
+import com.promise8.wwwbe.v1.service.PushService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

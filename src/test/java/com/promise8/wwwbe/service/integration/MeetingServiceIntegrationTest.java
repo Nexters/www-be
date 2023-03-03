@@ -1,12 +1,12 @@
 package com.promise8.wwwbe.service.integration;
 
-import com.promise8.wwwbe.model.dto.req.JoinMeetingReqDto;
-import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.dto.req.MeetingConfirmDto;
-import com.promise8.wwwbe.model.dto.req.UserPromiseTimeReqDto;
-import com.promise8.wwwbe.model.entity.*;
-import com.promise8.wwwbe.repository.*;
-import com.promise8.wwwbe.service.MeetingService;
+import com.promise8.wwwbe.v1.model.dto.PromiseTime;
+import com.promise8.wwwbe.v1.model.dto.req.JoinMeetingReqDto;
+import com.promise8.wwwbe.v1.model.dto.req.MeetingConfirmDto;
+import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.v1.model.entity.*;
+import com.promise8.wwwbe.v1.repository.*;
+import com.promise8.wwwbe.v1.service.MeetingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

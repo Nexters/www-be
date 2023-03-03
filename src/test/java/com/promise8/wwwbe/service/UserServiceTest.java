@@ -1,15 +1,14 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
-import com.promise8.wwwbe.repository.UserRepository;
+import com.promise8.wwwbe.v1.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.repository.UserRepository;
+import com.promise8.wwwbe.v1.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("alpha")
