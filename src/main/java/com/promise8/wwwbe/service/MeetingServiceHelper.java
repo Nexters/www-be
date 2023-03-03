@@ -1,15 +1,15 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.PromiseDayOfWeek;
-import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.dto.UserInfoDto;
-import com.promise8.wwwbe.model.dto.res.ConfirmedPromiseResDto;
-import com.promise8.wwwbe.model.dto.res.UserPromisePlaceResDto;
-import com.promise8.wwwbe.model.dto.res.UserPromiseTimeResDto;
-import com.promise8.wwwbe.model.entity.MeetingEntity;
-import com.promise8.wwwbe.model.entity.MeetingPlaceEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserEntity;
-import com.promise8.wwwbe.model.entity.MeetingUserTimetableEntity;
+import com.promise8.wwwbe.v1.model.dto.PromiseDayOfWeek;
+import com.promise8.wwwbe.v1.model.dto.PromiseTime;
+import com.promise8.wwwbe.v1.model.dto.res.ConfirmedPromiseResDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.UserInfoDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.UserPromisePlaceResDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.UserPromiseTimeResDtoV1;
+import com.promise8.wwwbe.v1.model.entity.MeetingEntityV1;
+import com.promise8.wwwbe.v1.model.entity.MeetingPlaceEntityV1;
+import com.promise8.wwwbe.v1.model.entity.MeetingUserEntityV1;
+import com.promise8.wwwbe.v1.model.entity.MeetingUserTimetableEntityV1;
 import io.jsonwebtoken.lang.Collections;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class MeetingServiceHelper {
-    public static ConfirmedPromiseResDto getConfirmedPromise(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
+    public static ConfirmedPromiseResDtoV1 getConfirmedPromise(List<MeetingUserEntityV1> meetingUserEntityList, Long hostId) {
+        ConfirmedPromiseResDtoV1 confirmedPromiseResDto = new ConfirmedPromiseResDtoV1();
         if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseResDto;
 
-        for (MeetingUserEntity meetingUser : meetingUserEntityList) {
+        for (MeetingUserEntityV1 meetingUser : meetingUserEntityList) {
             if (confirmedPromiseResDto.getPromiseDate() == null) {
-                for (MeetingUserTimetableEntity meetingUserTimetable : meetingUser.getMeetingUserTimetableEntityList()) {
+                for (MeetingUserTimetableEntityV1 meetingUserTimetable : meetingUser.getMeetingUserTimetableEntityList()) {
                     if (meetingUserTimetable.getIsConfirmed()) {
                         confirmedPromiseResDto.setPromiseDate(meetingUserTimetable.getPromiseDate());
                         confirmedPromiseResDto.setPromiseTime(meetingUserTimetable.getPromiseTime());
@@ -39,7 +39,7 @@ public class MeetingServiceHelper {
             }
 
             if (confirmedPromiseResDto.getPromisePlace() == null) {
-                for (MeetingPlaceEntity meetingPlace : meetingUser.getMeetingPlaceEntityList()) {
+                for (MeetingPlaceEntityV1 meetingPlace : meetingUser.getMeetingPlaceEntityList()) {
                     if (meetingPlace.getIsConfirmed()) {
                         confirmedPromiseResDto.setPromisePlace(meetingPlace.getPromisePlace());
                         break;
@@ -59,11 +59,11 @@ public class MeetingServiceHelper {
         return confirmedPromiseResDto;
     }
 
-    public static ConfirmedPromiseResDto getHostAndVotingCnt(List<MeetingUserEntity> meetingUserEntityList, Long hostId) {
-        ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
+    public static ConfirmedPromiseResDtoV1 getHostAndVotingCnt(List<MeetingUserEntityV1> meetingUserEntityList, Long hostId) {
+        ConfirmedPromiseResDtoV1 confirmedPromiseResDto = new ConfirmedPromiseResDtoV1();
         if (meetingUserEntityList == null || meetingUserEntityList.isEmpty()) return confirmedPromiseResDto;
 
-        for (MeetingUserEntity meetingUser : meetingUserEntityList) {
+        for (MeetingUserEntityV1 meetingUser : meetingUserEntityList) {
             if (!meetingUser.getPlaceVoteEntityList().isEmpty()) {
                 confirmedPromiseResDto.setVotingUserCount(confirmedPromiseResDto.getVotingUserCount() + 1);
             }
@@ -76,8 +76,8 @@ public class MeetingServiceHelper {
         return confirmedPromiseResDto;
     }
 
-    public static List<UserPromiseTimeResDto> getUserPromiseTimeList(MeetingEntity meetingEntity) {
-        List<UserPromiseTimeResDto> userPromiseTimeResDtoList = new ArrayList<>();
+    public static List<UserPromiseTimeResDtoV1> getUserPromiseTimeList(MeetingEntityV1 meetingEntity) {
+        List<UserPromiseTimeResDtoV1> userPromiseTimeResDtoList = new ArrayList<>();
         if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
             return userPromiseTimeResDtoList;
         }
@@ -88,10 +88,10 @@ public class MeetingServiceHelper {
                 PromiseTime promiseTime = res.getPromiseTime();
 
                 boolean isAdd = false;
-                for (UserPromiseTimeResDto userPromiseTime : userPromiseTimeResDtoList) {
+                for (UserPromiseTimeResDtoV1 userPromiseTime : userPromiseTimeResDtoList) {
                     if (userPromiseTime.getPromiseDate().equals(promiseDate) && userPromiseTime.getPromiseTime().equals(promiseTime)) {
                         userPromiseTime.getUserInfoList().add(
-                                new UserInfoDto(
+                                new UserInfoDtoV1(
                                         meetingUser.getMeetingUserName(),
                                         ThumbnailHelper.getCharacter(
                                                 meetingUser.getUserEntity().getUserId(),
@@ -105,14 +105,14 @@ public class MeetingServiceHelper {
                 }
 
                 if (!isAdd) {
-                    List<UserInfoDto> userInfoDtoList = new ArrayList<>();
-                    userInfoDtoList.add(new UserInfoDto(meetingUser.getMeetingUserName(),
+                    List<UserInfoDtoV1> userInfoDtoList = new ArrayList<>();
+                    userInfoDtoList.add(new UserInfoDtoV1(meetingUser.getMeetingUserName(),
                             ThumbnailHelper.getCharacter(
                                     meetingUser.getUserEntity().getUserId(),
                                     meetingUser.getUserEntity().getUserId().equals(meetingEntity.getCreator().getUserId())
                             )
                     ));
-                    userPromiseTimeResDtoList.add(UserPromiseTimeResDto.builder()
+                    userPromiseTimeResDtoList.add(UserPromiseTimeResDtoV1.builder()
                             .timetableId(res.getMeetingUserTimetableId())
                             .promiseDate(promiseDate)
                             .promiseTime(promiseTime)
@@ -137,7 +137,7 @@ public class MeetingServiceHelper {
         return PromiseDayOfWeek.values()[idx - 1];
     }
 
-    public static HashMap<String, List<String>> getUserVoteHashMap(MeetingEntity meetingEntity) {
+    public static HashMap<String, List<String>> getUserVoteHashMap(MeetingEntityV1 meetingEntity) {
         HashMap<String, List<String>> userVoteHashMap = new HashMap<>();
         if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
             return userVoteHashMap;
@@ -163,7 +163,7 @@ public class MeetingServiceHelper {
         return userVoteHashMap;
     }
 
-    public static List<String> getMeetingUserNameList(MeetingEntity meetingEntity) {
+    public static List<String> getMeetingUserNameList(MeetingEntityV1 meetingEntity) {
         List<String> userNameList = new ArrayList<>();
         if (Collections.isEmpty(meetingEntity.getMeetingUserEntityList())) {
             return null;
@@ -176,46 +176,46 @@ public class MeetingServiceHelper {
         return userNameList;
     }
 
-    public static List<UserInfoDto> getMeetingUserInfoDtoList(MeetingEntity meetingEntity) {
+    public static List<UserInfoDtoV1> getMeetingUserInfoDtoList(MeetingEntityV1 meetingEntity) {
         if (Collections.isEmpty(meetingEntity.getMeetingUserEntityList())) {
             return null;
         }
 
-        List<MeetingUserEntity> meetingUserEntityList = meetingEntity.getMeetingUserEntityList();
+        List<MeetingUserEntityV1> meetingUserEntityList = meetingEntity.getMeetingUserEntityList();
 
-        List<UserInfoDto> userInfoDtoList = meetingUserEntityList.stream()
+        List<UserInfoDtoV1> userInfoDtoList = meetingUserEntityList.stream()
                 .map(meetingUserEntity -> {
                     ThumbnailHelper.CharacterType character =
                             ThumbnailHelper.getCharacter(
                                     meetingUserEntity.getUserEntity().getUserId(),
                                     meetingUserEntity.getUserEntity().getUserId().equals(meetingEntity.getCreator().getUserId())
                             );
-                    return new UserInfoDto(meetingUserEntity.getMeetingUserName(), character);
+                    return new UserInfoDtoV1(meetingUserEntity.getMeetingUserName(), character);
                 })
                 .collect(Collectors.toList());
 
         return userInfoDtoList;
     }
 
-    public static List<UserPromisePlaceResDto> getUserPromisePlaceResDtoList(MeetingEntity meetingEntity) {
-        List<UserPromisePlaceResDto> userPromisePlaceResDtoList = new ArrayList<>();
+    public static List<UserPromisePlaceResDtoV1> getUserPromisePlaceResDtoList(MeetingEntityV1 meetingEntity) {
+        List<UserPromisePlaceResDtoV1> userPromisePlaceResDtoList = new ArrayList<>();
         if (meetingEntity.getMeetingUserEntityList() == null || meetingEntity.getMeetingUserEntityList().isEmpty()) {
             return userPromisePlaceResDtoList;
         }
 
-        List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
+        List<MeetingPlaceEntityV1> meetingPlaceEntityList = new ArrayList<>();
         meetingEntity.getMeetingUserEntityList().forEach(meetingUser -> {
             meetingPlaceEntityList.addAll(meetingUser.getMeetingPlaceEntityList());
         });
         meetingPlaceEntityList.sort(MeetingServiceHelper::sortingOfPlace);
 
         userPromisePlaceResDtoList.addAll(meetingPlaceEntityList.stream()
-                .map(place -> UserPromisePlaceResDto.of(place, meetingEntity.getCreator().getUserId())).collect(Collectors.toList()));
+                .map(place -> UserPromisePlaceResDtoV1.of(place, meetingEntity.getCreator().getUserId())).collect(Collectors.toList()));
 
         return userPromisePlaceResDtoList;
     }
 
-    private static int sortingOfPlace(MeetingPlaceEntity o1, MeetingPlaceEntity o2) {
+    private static int sortingOfPlace(MeetingPlaceEntityV1 o1, MeetingPlaceEntityV1 o2) {
         if (o1.getPlaceVoteEntityList() == null && o2.getPlaceVoteEntityList() == null) {
             return 0;
         } else if (o1.getPlaceVoteEntityList() == null) {

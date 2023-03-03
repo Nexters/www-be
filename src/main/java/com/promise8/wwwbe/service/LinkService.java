@@ -1,7 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.dto.req.DynamicLinkReqDto;
-import com.promise8.wwwbe.model.dto.res.DynamicLinkResDto;
+import com.promise8.wwwbe.v1.model.dto.req.DynamicLinkReqDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDtoV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,19 +32,19 @@ public class LinkService {
     private static final String DOMAIN_URL = "https://whenwheres.page.link";
     private static final String ENDPOINT_URL = "https://whenwheres.com";
 
-    public DynamicLinkResDto createLink(String meetingCode) {
+    public DynamicLinkResDtoV1 createLink(String meetingCode) {
         String shortlinkApiUrl = createShortlinkApiUrl();
 
-        DynamicLinkReqDto dynamicLinkReqDto = createDynamicLinkReq(meetingCode);
-        HttpEntity<DynamicLinkReqDto> dynamicLinkReq = createDynamicLinkReq(dynamicLinkReqDto);
-        DynamicLinkResDto result = restTemplate.exchange(shortlinkApiUrl, HttpMethod.POST, dynamicLinkReq, DynamicLinkResDto.class).getBody();
+        DynamicLinkReqDtoV1 dynamicLinkReqDto = createDynamicLinkReq(meetingCode);
+        HttpEntity<DynamicLinkReqDtoV1> dynamicLinkReq = createDynamicLinkReq(dynamicLinkReqDto);
+        DynamicLinkResDtoV1 result = restTemplate.exchange(shortlinkApiUrl, HttpMethod.POST, dynamicLinkReq, DynamicLinkResDtoV1.class).getBody();
         return result;
     }
 
-    private HttpEntity<DynamicLinkReqDto> createDynamicLinkReq(DynamicLinkReqDto dynamicLinkReqDto) {
+    private HttpEntity<DynamicLinkReqDtoV1> createDynamicLinkReq(DynamicLinkReqDtoV1 dynamicLinkReqDto) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        HttpEntity<DynamicLinkReqDto> dynamicLinkReq = new HttpEntity<>(dynamicLinkReqDto, httpHeaders);
+        HttpEntity<DynamicLinkReqDtoV1> dynamicLinkReq = new HttpEntity<>(dynamicLinkReqDto, httpHeaders);
         return dynamicLinkReq;
     }
 
@@ -55,7 +55,7 @@ public class LinkService {
         return shortlinkApiUrlBuilder.toUriString();
     }
 
-    private DynamicLinkReqDto createDynamicLinkReq(String meetingCode) {
+    private DynamicLinkReqDtoV1 createDynamicLinkReq(String meetingCode) {
         UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromHttpUrl(ENDPOINT_URL)
                 .queryParam("meetingCode", meetingCode);
 
@@ -64,7 +64,7 @@ public class LinkService {
         dynamicLinkBuilder.queryParam("apn", ANDROID_PACKAGE);
         dynamicLinkBuilder.queryParam("ibi", IOS_PACKAGE);
 
-        DynamicLinkReqDto dynamicLinkReqDto = DynamicLinkReqDto.of(dynamicLinkBuilder.toUriString());
+        DynamicLinkReqDtoV1 dynamicLinkReqDto = DynamicLinkReqDtoV1.of(dynamicLinkBuilder.toUriString());
         return dynamicLinkReqDto;
     }
 }
