@@ -1,16 +1,12 @@
 package com.promise8.wwwbe.service;
 
+import com.promise8.wwwbe.repository.*;
 import com.promise8.wwwbe.v1.model.dto.PromiseTime;
-import com.promise8.wwwbe.v1.model.dto.req.MeetingCreateReqDto;
-import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDto;
-import com.promise8.wwwbe.v1.model.dto.res.ConfirmedPromiseResDto;
-import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDto;
+import com.promise8.wwwbe.v1.model.dto.req.MeetingCreateReqDtoV1;
+import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.ConfirmedPromiseResDtoV1;
+import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDtoV1;
 import com.promise8.wwwbe.v1.model.entity.*;
-import com.promise8.wwwbe.v1.repository.*;
-import com.promise8.wwwbe.v1.service.LinkService;
-import com.promise8.wwwbe.v1.service.MeetingService;
-import com.promise8.wwwbe.v1.service.MeetingServiceHelper;
-import com.promise8.wwwbe.v1.service.PushService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,64 +55,64 @@ class MeetingServiceTest {
     private MeetingUserTimetableRepository meetingUserTimetableRepository;
     @Mock
     private MeetingPlaceRepository meetingPlaceRepository;
-    private UserEntity userEntity;
-    private MeetingEntity meetingEntity;
-    private MeetingUserEntity meetingUserEntity;
-    private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList = new ArrayList<>();
-    private List<MeetingPlaceEntity> meetingPlaceEntityList = new ArrayList<>();
-    private List<PlaceVoteEntity> placeVoteEntityList = new ArrayList<>();
-    private MeetingCreateReqDto meetingCreateReqDto;
-    private DynamicLinkResDto dynamicLinkResDto = new DynamicLinkResDto();
-    private ConfirmedPromiseResDto confirmedPromiseResDto = new ConfirmedPromiseResDto();
+    private UserEntityV1 userEntity;
+    private MeetingEntityV1 meetingEntity;
+    private MeetingUserEntityV1 meetingUserEntity;
+    private List<MeetingUserTimetableEntityV1> meetingUserTimetableEntityList = new ArrayList<>();
+    private List<MeetingPlaceEntityV1> meetingPlaceEntityList = new ArrayList<>();
+    private List<PlaceVoteEntityV1> placeVoteEntityList = new ArrayList<>();
+    private MeetingCreateReqDtoV1 meetingCreateReqDto;
+    private DynamicLinkResDtoV1 dynamicLinkResDto = new DynamicLinkResDtoV1();
+    private ConfirmedPromiseResDtoV1 confirmedPromiseResDto = new ConfirmedPromiseResDtoV1();
 
     @BeforeEach
     public void init() {
 
-        List<UserPromiseTimeReqDto> promiseDateTimeReqDtoList = new ArrayList<>();
+        List<UserPromiseTimeReqDtoV1> promiseDateTimeReqDtoList = new ArrayList<>();
         List<String> promisePlaceList = new ArrayList<>();
         LocalDate promiseDate = LocalDate.now();
         PromiseTime promiseTime = PromiseTime.MORNING;
-        promiseDateTimeReqDtoList.add(new UserPromiseTimeReqDto(promiseDate, promiseTime));
+        promiseDateTimeReqDtoList.add(new UserPromiseTimeReqDtoV1(promiseDate, promiseTime));
         promisePlaceList.add(meetingPlace);
 
-        userEntity = UserEntity.builder()
+        userEntity = UserEntityV1.builder()
                 .userId(55L)
                 .deviceId(deviceId)
                 .userName(userName)
                 .isAlarmOn(true)
                 .build();
 
-        meetingEntity = MeetingEntity.builder()
+        meetingEntity = MeetingEntityV1.builder()
                 .meetingId(55L)
                 .meetingName(meetingName)
                 .conditionCount(conditionCount)
                 .startDate(startDate)
                 .endDate(endDate)
                 .meetingCode(meetingCode)
-                .meetingStatus(MeetingStatus.WAITING)
+                .meetingStatus(MeetingStatusV1.WAITING)
                 .creator(userEntity)
                 .build();
 
-        meetingUserEntity = MeetingUserEntity.builder()
+        meetingUserEntity = MeetingUserEntityV1.builder()
                 .meetingUserName(meetingUserName)
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .build();
 
-        meetingPlaceEntityList = List.of(MeetingPlaceEntity.builder()
+        meetingPlaceEntityList = List.of(MeetingPlaceEntityV1.builder()
                 .promisePlace(meetingPlace)
                 .isConfirmed(false)
                 .meetingUserEntity(meetingUserEntity)
                 .build());
 
-        meetingUserTimetableEntityList = List.of(MeetingUserTimetableEntity.builder()
+        meetingUserTimetableEntityList = List.of(MeetingUserTimetableEntityV1.builder()
                 .promiseDate(LocalDate.now())
                 .promiseTime(PromiseTime.MORNING)
                 .isConfirmed(false)
                 .meetingUserEntity(meetingUserEntity)
                 .build());
 
-        meetingCreateReqDto = MeetingCreateReqDto.builder()
+        meetingCreateReqDto = MeetingCreateReqDtoV1.builder()
                 .meetingName(meetingName)
                 .userName(userName)
                 .minimumAlertMembers(conditionCount)
@@ -126,7 +122,7 @@ class MeetingServiceTest {
                 .promisePlaceList(promisePlaceList)
                 .build();
 
-        placeVoteEntityList = List.of(PlaceVoteEntity.builder()
+        placeVoteEntityList = List.of(PlaceVoteEntityV1.builder()
                 .meetingUserEntity(meetingUserEntity)
                 .meetingPlaceEntity(meetingPlaceEntityList.get(0))
                 .build());
@@ -152,10 +148,10 @@ class MeetingServiceTest {
         // when
         when(meetingRepository.findById(anyLong())).thenReturn(Optional.of(meetingEntity));
 //        when(pushService.send(any(), any())).thenReturn(anyString());
-        meetingService.putMeetingStatus(1L, MeetingStatus.VOTED);
+        meetingService.putMeetingStatus(1L, MeetingStatusV1.VOTED);
 
         // then
-        Assertions.assertEquals(MeetingStatus.VOTED, meetingEntity.getMeetingStatus());
+        Assertions.assertEquals(MeetingStatusV1.VOTED, meetingEntity.getMeetingStatus());
     }
 
     @Test
@@ -180,7 +176,7 @@ class MeetingServiceTest {
         given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingById(meetingEntity.getMeetingId(), meetingEntity.getCreator().getUserId());
-        meetingEntity.setMeetingStatus(MeetingStatus.DONE);
+        meetingEntity.setMeetingStatus(MeetingStatusV1.DONE);
         meetingService.getMeetingById(meetingEntity.getMeetingId(), meetingEntity.getCreator().getUserId());
 
         verify(meetingRepository, times(2)).findById(anyLong());
@@ -197,7 +193,7 @@ class MeetingServiceTest {
         given(userRepository.findById(anyLong())).willReturn(Optional.ofNullable(userEntity));
 
         meetingService.getMeetingByCode(anyString(), meetingEntity.getCreator().getUserId());
-        meetingEntity.setMeetingStatus(MeetingStatus.DONE);
+        meetingEntity.setMeetingStatus(MeetingStatusV1.DONE);
         meetingService.getMeetingByCode(anyString(), meetingEntity.getCreator().getUserId());
 
         verify(meetingRepository, times(2)).findByMeetingCode(anyString());

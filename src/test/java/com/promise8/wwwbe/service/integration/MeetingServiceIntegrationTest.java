@@ -1,12 +1,12 @@
 package com.promise8.wwwbe.service.integration;
 
+import com.promise8.wwwbe.repository.*;
+import com.promise8.wwwbe.service.MeetingService;
 import com.promise8.wwwbe.v1.model.dto.PromiseTime;
-import com.promise8.wwwbe.v1.model.dto.req.JoinMeetingReqDto;
-import com.promise8.wwwbe.v1.model.dto.req.MeetingConfirmDto;
-import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDto;
+import com.promise8.wwwbe.v1.model.dto.req.JoinMeetingReqDtoV1;
+import com.promise8.wwwbe.v1.model.dto.req.MeetingConfirmDtoV1;
+import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDtoV1;
 import com.promise8.wwwbe.v1.model.entity.*;
-import com.promise8.wwwbe.v1.repository.*;
-import com.promise8.wwwbe.v1.service.MeetingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,19 +50,19 @@ public class MeetingServiceIntegrationTest {
         //given
 
         // 방 생성자
-        UserEntity host = userRepository.save(UserEntity.builder()
+        UserEntityV1 host = userRepository.save(UserEntityV1.builder()
                 .userName("host")
                 .build());
 
         // meeting
-        MeetingEntity meeting = meetingRepository.save(MeetingEntity.builder()
+        MeetingEntityV1 meeting = meetingRepository.save(MeetingEntityV1.builder()
                 .creator(host)
                 .meetingUserEntityList(new ArrayList<>())
                 .conditionCount(2L)
                 .build());
 
         // 참여자
-        UserEntity meetingUser = userRepository.save(UserEntity.builder()
+        UserEntityV1 meetingUser = userRepository.save(UserEntityV1.builder()
                 .userName("meetingUser")
                 .build());
 
@@ -70,7 +70,7 @@ public class MeetingServiceIntegrationTest {
         // when
         LocalDate today = LocalDate.now();
         Long joinedMeetingId = meetingService.joinMeetingAndGetMeetingUserId(meetingUser.getUserId(), meeting.getMeetingId(),
-                JoinMeetingReqDto.builder()
+                JoinMeetingReqDtoV1.builder()
                         .nickname("kohen.kang")
                         .promisePlaceList(Arrays.asList("강남", "역삼", "홍대"))
                         .userPromiseTimeList(Arrays.asList(
@@ -80,42 +80,42 @@ public class MeetingServiceIntegrationTest {
 
 
         //then
-        Optional<MeetingUserEntity> meetingUserEntityOptional = meetingUserRepository.findById(joinedMeetingId);
+        Optional<MeetingUserEntityV1> meetingUserEntityOptional = meetingUserRepository.findById(joinedMeetingId);
 
         Assertions.assertTrue(meetingUserEntityOptional.isPresent());
 
-        MeetingUserEntity createdMeetingUserEntity = meetingUserEntityOptional.get();
+        MeetingUserEntityV1 createdMeetingUserEntity = meetingUserEntityOptional.get();
         Assertions.assertEquals(meeting.getMeetingId(), createdMeetingUserEntity.getMeetingEntity().getMeetingId());
 
-        List<MeetingPlaceEntity> createdMeetingPlaceEntityList =
+        List<MeetingPlaceEntityV1> createdMeetingPlaceEntityList =
                 meetingPlaceRepository.findByMeetingUserEntity(createdMeetingUserEntity);
         Assertions.assertEquals(3, createdMeetingPlaceEntityList.size());
 
-        List<MeetingUserTimetableEntity> createdMeetingUserTimetableEntityList = meetingUserTimetableRepository.findByMeetingUserEntity(createdMeetingUserEntity);
+        List<MeetingUserTimetableEntityV1> createdMeetingUserTimetableEntityList = meetingUserTimetableRepository.findByMeetingUserEntity(createdMeetingUserEntity);
         Assertions.assertEquals(2, createdMeetingUserTimetableEntityList.size());
     }
 
     @Test
     void test2() {
-        MeetingEntity savedMeeting = meetingRepository.save(MeetingEntity.builder()
+        MeetingEntityV1 savedMeeting = meetingRepository.save(MeetingEntityV1.builder()
                 .meetingName("meeting")
                 .build());
 
-        MeetingPlaceEntity savedMeetingPlace = meetingPlaceRepository.save(MeetingPlaceEntity.builder()
+        MeetingPlaceEntityV1 savedMeetingPlace = meetingPlaceRepository.save(MeetingPlaceEntityV1.builder()
                 .promisePlace("test")
                 .build());
 
-        MeetingUserTimetableEntity savedMeetingUserTimetable = meetingUserTimetableRepository.save(MeetingUserTimetableEntity.builder()
+        MeetingUserTimetableEntityV1 savedMeetingUserTimetable = meetingUserTimetableRepository.save(MeetingUserTimetableEntityV1.builder()
                 .promiseDate(LocalDate.now())
                 .promiseTime(PromiseTime.NIGHT)
                 .build());
 
-        meetingService.confirmMeeting(savedMeeting.getMeetingId(), new MeetingConfirmDto(
+        meetingService.confirmMeeting(savedMeeting.getMeetingId(), new MeetingConfirmDtoV1(
                 savedMeetingPlace.getMeetingPlaceId(),
                 savedMeetingUserTimetable.getMeetingUserTimetableId()));
 
-        MeetingPlaceEntity meetingPlaceEntity = meetingPlaceRepository.findById(savedMeetingPlace.getMeetingPlaceId()).get();
-        MeetingUserTimetableEntity meetingUserTimetableEntity = meetingUserTimetableRepository.findById(savedMeetingUserTimetable.getMeetingUserTimetableId()).get();
+        MeetingPlaceEntityV1 meetingPlaceEntity = meetingPlaceRepository.findById(savedMeetingPlace.getMeetingPlaceId()).get();
+        MeetingUserTimetableEntityV1 meetingUserTimetableEntity = meetingUserTimetableRepository.findById(savedMeetingUserTimetable.getMeetingUserTimetableId()).get();
 
         Assertions.assertTrue(meetingPlaceEntity.getIsConfirmed());
         Assertions.assertTrue(meetingUserTimetableEntity.getIsConfirmed());
@@ -123,17 +123,17 @@ public class MeetingServiceIntegrationTest {
     
     @Test
     public void test3() {
-        MeetingEntity meeting = MeetingEntity.builder().build();
+        MeetingEntityV1 meeting = MeetingEntityV1.builder().build();
         meeting.setVoteFinishDateTime(LocalDateTime.now().minusDays(1));
-        meeting.setMeetingStatus(MeetingStatus.VOTED);
+        meeting.setMeetingStatus(MeetingStatusV1.VOTED);
         meetingRepository.save(meeting);
 
-        List<MeetingEntity> voteNotiNeedMeetingList = meetingService.getVoteNotiNeedMeetingList();
+        List<MeetingEntityV1> voteNotiNeedMeetingList = meetingService.getVoteNotiNeedMeetingList();
         Assertions.assertTrue(voteNotiNeedMeetingList.size() >= 1);
     }
 
-    private UserPromiseTimeReqDto createPromise(LocalDate date, PromiseTime promiseTime) {
-        return UserPromiseTimeReqDto.builder()
+    private UserPromiseTimeReqDtoV1 createPromise(LocalDate date, PromiseTime promiseTime) {
+        return UserPromiseTimeReqDtoV1.builder()
                 .promiseDate(date)
                 .promiseTime(promiseTime)
                 .build();

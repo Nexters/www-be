@@ -1,7 +1,6 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDto;
-import com.promise8.wwwbe.v1.service.LinkService;
+import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDtoV1;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,7 @@ class LinkServiceTest {
 
     @Test
     void createLink() {
-        DynamicLinkResDto dynamicLink = linkService.createLink("abcde");
+        DynamicLinkResDtoV1 dynamicLink = linkService.createLink("abcde");
         System.out.println(dynamicLink);
     }
 }

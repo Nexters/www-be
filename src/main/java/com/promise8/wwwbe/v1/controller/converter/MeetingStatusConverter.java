@@ -1,12 +1,12 @@
 package com.promise8.wwwbe.v1.controller.converter;
 
-import com.promise8.wwwbe.v1.model.entity.MeetingStatus;
+import com.promise8.wwwbe.v1.model.entity.MeetingStatusV1;
 import org.springframework.core.convert.converter.Converter;
 
-public class MeetingStatusConverter implements Converter<String, MeetingStatus> {
+public class MeetingStatusConverter implements Converter<String, MeetingStatusV1> {
 
     @Override
-    public MeetingStatus convert(String source) {
-        return MeetingStatus.of(source);
+    public MeetingStatusV1 convert(String source) {
+        return MeetingStatusV1.of(source);
     }
 }
