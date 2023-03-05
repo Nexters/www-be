@@ -1,8 +1,8 @@
 package com.promise8.wwwbe.config.security;
 
-import com.promise8.wwwbe.model.dto.req.LoginReqDto;
-import com.promise8.wwwbe.model.entity.UserEntity;
 import com.promise8.wwwbe.repository.UserRepository;
+import com.promise8.wwwbe.v1.model.dto.req.LoginReqDtoV1;
+import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,23 +22,23 @@ public class DeviceIdAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        LoginReqDto loginReqDto = (LoginReqDto) authentication.getCredentials();
-        Optional<UserEntity> userEntityOptional = userRepository.findByDeviceId(loginReqDto.getDeviceId());
+        LoginReqDtoV1 loginReqDto = (LoginReqDtoV1) authentication.getCredentials();
+        Optional<UserEntityV1> userEntityOptional = userRepository.findByDeviceId(loginReqDto.getDeviceId());
 
         if (userEntityOptional.isPresent()) {
-            UserEntity user = userEntityOptional.get();
+            UserEntityV1 user = userEntityOptional.get();
             user.setFcmToken(loginReqDto.getFcmToken());
             user = userRepository.save(user);
 
             return new UsernamePasswordAuthenticationToken(UserPrincipal.create(user), user.getDeviceId(), new ArrayList<>());
         } else {
-            UserEntity user = UserEntity.builder()
+            UserEntityV1 user = UserEntityV1.builder()
                     .userName(loginReqDto.getUserName())
                     .deviceId(loginReqDto.getDeviceId())
                     .fcmToken(loginReqDto.getFcmToken())
                     .isAlarmOn(true)
                     .build();
-            UserEntity newUser = userRepository.save(user);
+            UserEntityV1 newUser = userRepository.save(user);
             return new UsernamePasswordAuthenticationToken(UserPrincipal.create(newUser), newUser.getDeviceId(), new ArrayList<>());
         }
     }

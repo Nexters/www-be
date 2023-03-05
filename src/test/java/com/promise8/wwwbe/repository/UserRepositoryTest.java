@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저 생성 테스트")
     void test() {
-        UserEntity user = userRepository.save(UserEntity.builder()
+        UserEntityV1 user = userRepository.save(UserEntityV1.builder()
                 .deviceId("test123")
                 .userName("seongchan.kang22")
                 .build());

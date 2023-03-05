@@ -1,7 +1,7 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.model.dto.PromiseTime;
-import com.promise8.wwwbe.model.entity.*;
+import com.promise8.wwwbe.v1.model.dto.PromiseTime;
+import com.promise8.wwwbe.v1.model.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,11 +28,11 @@ class MeetingRepositoryTest {
     private final LocalDate endDate = LocalDate.of(2023, 3, 1);
     private final String meetingCode = "nEwcOD";
     private final String meetingPlace = "서울";
-    private UserEntity userEntity;
-    private MeetingEntity meetingEntity;
-    private MeetingUserEntity meetingUserEntity;
-    private List<MeetingUserTimetableEntity> meetingUserTimetableEntityList;
-    private List<MeetingPlaceEntity> meetingPlaceEntityList;
+    private UserEntityV1 userEntity;
+    private MeetingEntityV1 meetingEntity;
+    private MeetingUserEntityV1 meetingUserEntity;
+    private List<MeetingUserTimetableEntityV1> meetingUserTimetableEntityList;
+    private List<MeetingPlaceEntityV1> meetingPlaceEntityList;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -46,37 +46,37 @@ class MeetingRepositoryTest {
 
     @BeforeEach
     void init() {
-        userEntity = userRepository.save(UserEntity.builder()
+        userEntity = userRepository.save(UserEntityV1.builder()
                 .deviceId(deviceId)
                 .userName(userName)
                 .build());
-        meetingEntity = meetingRepository.save(MeetingEntity.builder()
+        meetingEntity = meetingRepository.save(MeetingEntityV1.builder()
                 .meetingId(55L)
                 .meetingName(meetingName)
                 .conditionCount(conditionCount)
                 .startDate(startDate)
                 .endDate(endDate)
                 .meetingCode(meetingCode)
-                .meetingStatus(MeetingStatus.WAITING)
+                .meetingStatus(MeetingStatusV1.WAITING)
                 .creator(userEntity)
                 .build());
-        meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+        meetingUserEntity = meetingUserRepository.save(MeetingUserEntityV1.builder()
                 .meetingUserName(meetingUserName)
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .build());
-        meetingUserEntity = meetingUserRepository.save(MeetingUserEntity.builder()
+        meetingUserEntity = meetingUserRepository.save(MeetingUserEntityV1.builder()
                 .meetingUserName(meetingUserName)
                 .userEntity(userEntity)
                 .meetingEntity(meetingEntity)
                 .build());
-        meetingUserTimetableEntityList = meetingUserTimetableRepository.saveAll(List.of(MeetingUserTimetableEntity.builder()
+        meetingUserTimetableEntityList = meetingUserTimetableRepository.saveAll(List.of(MeetingUserTimetableEntityV1.builder()
                 .promiseDate(LocalDate.now().minusDays(1L))
                 .promiseTime(PromiseTime.MORNING)
                 .isConfirmed(true)
                 .meetingUserEntity(meetingUserEntity)
                 .build()));
-        meetingPlaceEntityList = meetingPlaceRepository.saveAll(List.of(MeetingPlaceEntity.builder()
+        meetingPlaceEntityList = meetingPlaceRepository.saveAll(List.of(MeetingPlaceEntityV1.builder()
                 .promisePlace(meetingPlace)
                 .isConfirmed(true)
                 .meetingUserEntity(meetingUserEntity)
@@ -91,7 +91,7 @@ class MeetingRepositoryTest {
         assertThat(meetingEntity.getStartDate()).isEqualTo(startDate);
         assertThat(meetingEntity.getEndDate()).isEqualTo(endDate);
         assertThat(meetingEntity.getMeetingCode()).isEqualTo(meetingCode);
-        assertThat(meetingEntity.getMeetingStatus()).isEqualTo(MeetingStatus.WAITING);
+        assertThat(meetingEntity.getMeetingStatus()).isEqualTo(MeetingStatusV1.WAITING);
         assertThat(meetingEntity.getCreator().getUserId()).isEqualTo(userEntity.getUserId());
     }
 
@@ -105,14 +105,14 @@ class MeetingRepositoryTest {
     @Test
     @DisplayName("약속방 코드로 약속방 조회 테스트")
     void findByMeetingCode() {
-        MeetingEntity findMeetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
+        MeetingEntityV1 findMeetingEntity = meetingRepository.findByMeetingCode(meetingCode).orElseThrow();
         assertThat(findMeetingEntity.getMeetingCode()).isEqualTo(meetingCode);
     }
 
     @Test
     @DisplayName("유저가 참여한 약속방 리스트 조회 테스트")
     void findMeetingByDeviceId() {
-        List<MeetingEntity> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
+        List<MeetingEntityV1> meetingEntityList = meetingRepository.findByUserEntity_DeviceId(deviceId);
         assertThat(meetingEntityList.size()).isGreaterThan(0);
         assertThat(meetingEntityList.get(0).getCreator().getDeviceId()).isEqualTo(deviceId);
     }
@@ -120,9 +120,9 @@ class MeetingRepositoryTest {
     @Test
     @DisplayName("")
     void findByMeetingStatusAndConfirmedDate() {
-        meetingEntity.setMeetingStatus(MeetingStatus.CONFIRMED);
+        meetingEntity.setMeetingStatus(MeetingStatusV1.CONFIRMED);
         meetingRepository.save(meetingEntity);
-        List<MeetingEntity> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatus.CONFIRMED);
+        List<MeetingEntityV1> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatusV1.CONFIRMED);
         assertThat(meetingEntityList.size()).isGreaterThanOrEqualTo(0);
     }
 }

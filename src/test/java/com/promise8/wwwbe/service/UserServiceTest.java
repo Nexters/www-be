@@ -1,15 +1,13 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
 import com.promise8.wwwbe.repository.UserRepository;
+import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("alpha")
@@ -24,7 +22,7 @@ class UserServiceTest {
 
     @Test
     void setAlarm() {
-        UserEntity newUser = userRepository.save(UserEntity.builder()
+        UserEntityV1 newUser = userRepository.save(UserEntityV1.builder()
                 .isAlarmOn(false)
                 .build());
 
@@ -32,7 +30,7 @@ class UserServiceTest {
 
         userService.setAlarm(newUser.getUserId(), true);
 
-        UserEntity savedUser = userRepository.findById(newUser.getUserId()).get();
+        UserEntityV1 savedUser = userRepository.findById(newUser.getUserId()).get();
         Assertions.assertTrue(savedUser.getIsAlarmOn());
     }
 }

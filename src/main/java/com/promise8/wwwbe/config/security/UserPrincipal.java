@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.config.security;//package com.promise8.wwwbe.model.security;
 
-import com.promise8.wwwbe.model.entity.UserEntity;
+import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,7 +24,7 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserPrincipal create(UserEntity user) {
+    public static UserPrincipal create(UserEntityV1 user) {
         List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
         return new UserPrincipal(user.getUserId(), user.getDeviceId(), user.getUserName(), user.getFcmToken(), authorities);
     }

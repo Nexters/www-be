@@ -3,11 +3,11 @@ package com.promise8.wwwbe.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.promise8.wwwbe.model.entity.PushMessageHistoryEntity;
-import com.promise8.wwwbe.model.exception.BizException;
-import com.promise8.wwwbe.model.http.BaseErrorCode;
-import com.promise8.wwwbe.model.mobile.PushMessage;
 import com.promise8.wwwbe.repository.PushMessageHistoryRepository;
+import com.promise8.wwwbe.v1.model.entity.PushMessageHistoryEntityV1;
+import com.promise8.wwwbe.v1.model.exception.BizException;
+import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.v1.model.mobile.PushMessageV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +18,9 @@ public class PushService {
     private final FirebaseMessaging fcm;
     private final ObjectMapper objectMapper;
 
-    public String send(String token, PushMessage pushMessage) {
+    public String send(String token, PushMessageV1 pushMessage) {
         try {
-            PushMessageHistoryEntity pushMessageHistoryEntity = pushMessageHistoryRepository.save(PushMessageHistoryEntity.builder()
+            PushMessageHistoryEntityV1 pushMessageHistoryEntity = pushMessageHistoryRepository.save(PushMessageHistoryEntityV1.builder()
                     .title(pushMessage.getTitle())
                     .text(pushMessage.getText())
                     .meetingId(pushMessage.getContentId())
