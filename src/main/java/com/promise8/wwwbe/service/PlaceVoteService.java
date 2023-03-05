@@ -6,6 +6,7 @@ import com.promise8.wwwbe.v1.model.dto.res.PromisePlaceResDtoWrapperV1;
 import com.promise8.wwwbe.v1.model.entity.*;
 import com.promise8.wwwbe.v1.model.exception.BizException;
 import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.v1.model.mobile.PushMessageV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,12 +57,20 @@ public class PlaceVoteService {
         int meetingUserSize = meetingEntity.getMeetingUserEntityList().size();
         int votedUserCount = placeVoteRepository.getVotedUserCount(meetingId);
         if (meetingUserSize == votedUserCount) {
-//            for (UserEntity user : userEntityList) {
-//                if (!user.getIsAlarmOn()) {
-//                    continue;
-//                }
-//                pushService.send(user.getFcmToken(), new PushMessage(PushMessage.ContentType.MEETING, meetingId, meetingEntity.getMeetingName(), "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"));
-//            }
+            for (UserEntityV1 user : userEntityList) {
+                if (!user.getIsAlarmOn()) {
+                    continue;
+                }
+                pushService.send(
+                        user.getFcmToken(),
+                        new PushMessageV1(
+                                PushMessageV1.ContentType.MEETING,
+                                meetingId,
+                                meetingEntity.getMeetingName(),
+                                "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"
+                        )
+                );
+            }
             meetingEntity.setVoteFinishDateTime(LocalDateTime.now());
             meetingEntity.setMeetingStatus(MeetingStatusV1.VOTED);
             meetingRepository.save(meetingEntity);
