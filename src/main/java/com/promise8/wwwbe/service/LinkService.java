@@ -1,7 +1,7 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.v1.model.dto.req.DynamicLinkReqDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDtoV1;
+import com.promise8.wwwbe.model.v1.dto.req.DynamicLinkReqDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.DynamicLinkResDtoV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

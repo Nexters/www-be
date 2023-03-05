@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.config.converter;
 
-import com.promise8.wwwbe.v1.model.entity.MeetingStatusV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingStatusV1;
 import org.springframework.core.convert.converter.Converter;
 
 public class MeetingStatusConverter implements Converter<String, MeetingStatusV1> {

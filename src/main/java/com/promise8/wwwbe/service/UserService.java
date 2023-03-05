@@ -1,9 +1,9 @@
 package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.repository.UserRepository;
-import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.entity.UserEntityV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

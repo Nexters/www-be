@@ -3,11 +3,11 @@ package com.promise8.wwwbe.service;
 import com.promise8.wwwbe.repository.MeetingRepository;
 import com.promise8.wwwbe.repository.MeetingUserRepository;
 import com.promise8.wwwbe.repository.PlaceVoteRepository;
-import com.promise8.wwwbe.v1.model.dto.res.UserPromisePlaceListResDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.UserPromisePlaceResDtoV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingEntityV1;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.dto.res.UserPromisePlaceListResDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.UserPromisePlaceResDtoV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingEntityV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
