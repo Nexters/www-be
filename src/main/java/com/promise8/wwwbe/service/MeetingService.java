@@ -10,7 +10,6 @@ import com.promise8.wwwbe.v1.model.dto.res.*;
 import com.promise8.wwwbe.v1.model.entity.*;
 import com.promise8.wwwbe.v1.model.exception.BizException;
 import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
-import com.promise8.wwwbe.v1.model.mobile.PushMessageV1;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -106,42 +104,42 @@ public class MeetingService {
         meetingEntity.setMeetingStatus(meetingStatus);
         meetingRepository.save(meetingEntity);
 
-        List<UserEntityV1> userEntityList = meetingEntity.getMeetingUserEntityList().stream()
-                .map(MeetingUserEntityV1::getUserEntity)
-                .collect(Collectors.toList());
-
-        if (MeetingStatusV1.VOTING.equals(meetingStatus)) {
-            for (UserEntityV1 user : userEntityList) {
-                if (!user.getIsAlarmOn()) {
-                    continue;
-                }
-                pushService.send(
-                        user.getFcmToken(),
-                        new PushMessageV1(
-                                PushMessageV1.ContentType.MEETING,
-                                meetingId,
-                                meetingEntity.getMeetingName(),
-                                "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"
-                        )
-                );
-            }
-        }
+//        List<UserEntityV1> userEntityList = meetingEntity.getMeetingUserEntityList().stream()
+//                .map(MeetingUserEntityV1::getUserEntity)
+//                .collect(Collectors.toList());
+//
+//        if (MeetingStatusV1.VOTING.equals(meetingStatus)) {
+//            for (UserEntityV1 user : userEntityList) {
+//                if (!user.getIsAlarmOn()) {
+//                    continue;
+//                }
+//                pushService.send(
+//                        user.getFcmToken(),
+//                        new PushMessageV1(
+//                                PushMessageV1.ContentType.MEETING,
+//                                meetingId,
+//                                meetingEntity.getMeetingName(),
+//                                "장소 선정 투표가 시작되었어요.\n내가 선호하는 장소에 투표해보세요!"
+//                        )
+//                );
+//            }
+//        }
 
         if (MeetingStatusV1.VOTED.equals(meetingStatus)) {
-            for (UserEntityV1 user : userEntityList) {
-                if (!user.getIsAlarmOn()) {
-                    continue;
-                }
-                pushService.send(
-                        user.getFcmToken(),
-                        new PushMessageV1(
-                                PushMessageV1.ContentType.MEETING,
-                                meetingId,
-                                meetingEntity.getMeetingName(),
-                                "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"
-                        )
-                );
-            }
+//            for (UserEntityV1 user : userEntityList) {
+//                if (!user.getIsAlarmOn()) {
+//                    continue;
+//                }
+//                pushService.send(
+//                        user.getFcmToken(),
+//                        new PushMessageV1(
+//                                PushMessageV1.ContentType.MEETING,
+//                                meetingId,
+//                                meetingEntity.getMeetingName(),
+//                                "장소 선정 투표가 완료되었어요.\n투표 결과를 확인해보세요!"
+//                        )
+//                );
+//            }
             MeetingEntityV1 votedMeeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BizException(BaseErrorCode.NOT_EXIST_MEETING));
             votedMeeting.setVoteFinishDateTime(LocalDateTime.now());
         }
@@ -297,21 +295,21 @@ public class MeetingService {
                     .build()));
         });
 
-        int currentUserCount = meetingEntity.getMeetingUserEntityList().size();
-
-        if (currentUserCount == meetingEntity.getConditionCount()) {
-            if (meetingEntity.getCreator().getIsAlarmOn()) {
-                pushService.send(
-                        meetingEntity.getCreator().getFcmToken(),
-                        new PushMessageV1(
-                                PushMessageV1.ContentType.MEETING,
-                                meetingId,
-                                meetingEntity.getMeetingName(),
-                                "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"
-                        )
-                );
-            }
-        }
+//        int currentUserCount = meetingEntity.getMeetingUserEntityList().size();
+//
+//        if (currentUserCount == meetingEntity.getConditionCount()) {
+//            if (meetingEntity.getCreator().getIsAlarmOn()) {
+//                pushService.send(
+//                        meetingEntity.getCreator().getFcmToken(),
+//                        new PushMessageV1(
+//                                PushMessageV1.ContentType.MEETING,
+//                                meetingId,
+//                                meetingEntity.getMeetingName(),
+//                                "약속 예상 인원이 다 모였어요.\n약속방에서 투표를 시작해보세요!"
+//                        )
+//                );
+//            }
+//        }
 
         meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
@@ -331,46 +329,46 @@ public class MeetingService {
         meetingRepository.saveAll(meetingEntityList);
     }
 
-    @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
-    public void getDDay() {
-        List<MeetingEntityV1> meetingEntityList =
-                meetingRepository.getMeetingOneDayLater(LocalDate.now().plusDays(1L), true, MeetingStatusV1.CONFIRMED);
-
-        for (MeetingEntityV1 meetingEntity : meetingEntityList) {
-            for (MeetingUserEntityV1 meetingUserEntity : meetingEntity.getMeetingUserEntityList()) {
-                if (!meetingUserEntity.getUserEntity().getIsAlarmOn()) {
-                    continue;
-                }
-
-                String confirmedTime = meetingUserTimetableRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
-                String confirmedPlace = meetingPlaceRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
-                pushService.send(
-                        meetingUserEntity.getUserEntity().getFcmToken(),
-                        new PushMessageV1(
-                                PushMessageV1.ContentType.MEETING,
-                                meetingEntity.getMeetingId(),
-                                meetingEntity.getMeetingName(),
-                                "내일은 " + confirmedTime + "에 " + confirmedPlace + "에서 약속이 있어요!")
-                );
-            }
-        }
-    }
-
-    @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
-    public void confirmRequestNoti() {
-        List<MeetingEntityV1> meetingEntityList = getVoteNotiNeedMeetingList();
-
-        for (MeetingEntityV1 meetingEntity : meetingEntityList) {
-            UserEntityV1 creator = meetingEntity.getCreator();
-            if (creator.getIsAlarmOn()) {
-                pushService.send(
-                        creator.getFcmToken(),
-                        new PushMessageV1(
-                                PushMessageV1.ContentType.MEETING,
-                                meetingEntity.getMeetingId(),
-                                meetingEntity.getMeetingName(),
-                                "약속장소와 시간이 확정되었나요?\n약속정보를 확정해주세요!"));
-            }
-        }
-    }
+//    @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
+//    public void getDDay() {
+//        List<MeetingEntityV1> meetingEntityList =
+//                meetingRepository.getMeetingOneDayLater(LocalDate.now().plusDays(1L), true, MeetingStatusV1.CONFIRMED);
+//
+//        for (MeetingEntityV1 meetingEntity : meetingEntityList) {
+//            for (MeetingUserEntityV1 meetingUserEntity : meetingEntity.getMeetingUserEntityList()) {
+//                if (!meetingUserEntity.getUserEntity().getIsAlarmOn()) {
+//                    continue;
+//                }
+//
+//                String confirmedTime = meetingUserTimetableRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
+//                String confirmedPlace = meetingPlaceRepository.findConfirmedPromiseTime(meetingUserEntity.getMeetingUserId());
+//                pushService.send(
+//                        meetingUserEntity.getUserEntity().getFcmToken(),
+//                        new PushMessageV1(
+//                                PushMessageV1.ContentType.MEETING,
+//                                meetingEntity.getMeetingId(),
+//                                meetingEntity.getMeetingName(),
+//                                "내일은 " + confirmedTime + "에 " + confirmedPlace + "에서 약속이 있어요!")
+//                );
+//            }
+//        }
+//    }
+//
+//    @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
+//    public void confirmRequestNoti() {
+//        List<MeetingEntityV1> meetingEntityList = getVoteNotiNeedMeetingList();
+//
+//        for (MeetingEntityV1 meetingEntity : meetingEntityList) {
+//            UserEntityV1 creator = meetingEntity.getCreator();
+//            if (creator.getIsAlarmOn()) {
+//                pushService.send(
+//                        creator.getFcmToken(),
+//                        new PushMessageV1(
+//                                PushMessageV1.ContentType.MEETING,
+//                                meetingEntity.getMeetingId(),
+//                                meetingEntity.getMeetingName(),
+//                                "약속장소와 시간이 확정되었나요?\n약속정보를 확정해주세요!"));
+//            }
+//        }
+//    }
 }
