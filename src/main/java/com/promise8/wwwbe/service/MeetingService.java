@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -321,7 +323,9 @@ public class MeetingService {
 
     @Scheduled(cron = "2 0 0 * * ?", zone = "Asia/Seoul")
     public void promiseDone() {
-        List<MeetingEntityV1> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(LocalDate.now(), true, MeetingStatusV1.CONFIRMED);
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime zonedDateTime = ZonedDateTime.now().withZoneSameInstant(zoneId);
+        List<MeetingEntityV1> meetingEntityList = meetingRepository.findByMeetingStatusAndConfirmedDate(zonedDateTime.toLocalDate(), true, MeetingStatusV1.CONFIRMED);
         for (MeetingEntityV1 meeting : meetingEntityList) {
             meeting.setMeetingStatus(MeetingStatusV1.DONE);
         }
