@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.promise8.wwwbe.repository.PushMessageHistoryRepository;
-import com.promise8.wwwbe.v1.model.entity.PushMessageHistoryEntityV1;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
-import com.promise8.wwwbe.v1.model.mobile.PushMessageV1;
+import com.promise8.wwwbe.model.v1.entity.PushMessageHistoryEntityV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.mobile.PushMessageV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

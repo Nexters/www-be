@@ -1,8 +1,8 @@
 package com.promise8.wwwbe.config;
 
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
-import com.promise8.wwwbe.v1.model.http.BaseResponse;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.http.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

@@ -1,15 +1,15 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.v1.model.dto.PromiseDayOfWeek;
-import com.promise8.wwwbe.v1.model.dto.PromiseTime;
-import com.promise8.wwwbe.v1.model.dto.res.ConfirmedPromiseResDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.UserInfoDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.UserPromisePlaceResDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.UserPromiseTimeResDtoV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingEntityV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingPlaceEntityV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingUserEntityV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingUserTimetableEntityV1;
+import com.promise8.wwwbe.model.v1.dto.PromiseDayOfWeek;
+import com.promise8.wwwbe.model.v1.dto.PromiseTime;
+import com.promise8.wwwbe.model.v1.dto.res.ConfirmedPromiseResDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.UserInfoDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.UserPromisePlaceResDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.UserPromiseTimeResDtoV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingEntityV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingPlaceEntityV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingUserEntityV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingUserTimetableEntityV1;
 import io.jsonwebtoken.lang.Collections;
 import org.springframework.stereotype.Component;
 

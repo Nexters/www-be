@@ -1,6 +1,6 @@
 package com.promise8.wwwbe.service;
 
-import com.promise8.wwwbe.v1.model.dto.res.DynamicLinkResDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.DynamicLinkResDtoV1;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

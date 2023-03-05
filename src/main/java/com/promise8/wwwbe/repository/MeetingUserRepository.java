@@ -1,8 +1,8 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.v1.model.entity.MeetingEntityV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingUserEntityV1;
-import com.promise8.wwwbe.v1.model.entity.UserEntityV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingEntityV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingUserEntityV1;
+import com.promise8.wwwbe.model.v1.entity.UserEntityV1;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,11 +1,11 @@
 package com.promise8.wwwbe.service;
 
+import com.promise8.wwwbe.model.v1.entity.*;
 import com.promise8.wwwbe.repository.*;
-import com.promise8.wwwbe.v1.model.dto.req.PlaceVoteReqDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.PromisePlaceResDtoWrapperV1;
-import com.promise8.wwwbe.v1.model.entity.*;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.dto.req.PlaceVoteReqDtoV1;
+import com.promise8.wwwbe.model.v1.dto.res.PromisePlaceResDtoWrapperV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

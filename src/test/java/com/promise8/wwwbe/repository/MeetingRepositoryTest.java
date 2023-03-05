@@ -1,7 +1,7 @@
 package com.promise8.wwwbe.repository;
 
-import com.promise8.wwwbe.v1.model.dto.PromiseTime;
-import com.promise8.wwwbe.v1.model.entity.*;
+import com.promise8.wwwbe.model.v1.dto.PromiseTime;
+import com.promise8.wwwbe.model.v1.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

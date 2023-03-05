@@ -1,10 +1,10 @@
 package com.promise8.wwwbe.service;
 
 import com.promise8.wwwbe.repository.MeetingRepository;
-import com.promise8.wwwbe.v1.model.dto.res.UserPromiseTimeResDtoV1;
-import com.promise8.wwwbe.v1.model.entity.MeetingEntityV1;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.dto.res.UserPromiseTimeResDtoV1;
+import com.promise8.wwwbe.model.v1.entity.MeetingEntityV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

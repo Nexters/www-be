@@ -1,15 +1,15 @@
 package com.promise8.wwwbe.service;
 
+import com.promise8.wwwbe.model.v1.dto.res.*;
+import com.promise8.wwwbe.model.v1.entity.*;
 import com.promise8.wwwbe.repository.*;
-import com.promise8.wwwbe.v1.model.dto.PromiseTime;
-import com.promise8.wwwbe.v1.model.dto.req.JoinMeetingReqDtoV1;
-import com.promise8.wwwbe.v1.model.dto.req.MeetingConfirmDtoV1;
-import com.promise8.wwwbe.v1.model.dto.req.MeetingCreateReqDtoV1;
-import com.promise8.wwwbe.v1.model.dto.req.UserPromiseTimeReqDtoV1;
-import com.promise8.wwwbe.v1.model.dto.res.*;
-import com.promise8.wwwbe.v1.model.entity.*;
-import com.promise8.wwwbe.v1.model.exception.BizException;
-import com.promise8.wwwbe.v1.model.http.BaseErrorCode;
+import com.promise8.wwwbe.model.v1.dto.PromiseTime;
+import com.promise8.wwwbe.model.v1.dto.req.JoinMeetingReqDtoV1;
+import com.promise8.wwwbe.model.v1.dto.req.MeetingConfirmDtoV1;
+import com.promise8.wwwbe.model.v1.dto.req.MeetingCreateReqDtoV1;
+import com.promise8.wwwbe.model.v1.dto.req.UserPromiseTimeReqDtoV1;
+import com.promise8.wwwbe.model.v1.exception.BizException;
+import com.promise8.wwwbe.model.v1.http.BaseErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
