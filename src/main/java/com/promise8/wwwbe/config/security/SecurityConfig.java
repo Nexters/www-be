@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .antMatchers(
                         // for login
                         "/users/join",
+                        // for appVersion
+                        "/versions/**",
                         // for swagger
                         "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"
                 )
