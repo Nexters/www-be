@@ -1,13 +1,13 @@
 package com.promise8.wwwbe.model.v1.dto.res;
 
 import com.promise8.wwwbe.model.v1.dto.PromiseDayOfWeek;
-import com.promise8.wwwbe.service.MeetingServiceHelper;
-import com.promise8.wwwbe.service.ThumbnailHelper;
 import com.promise8.wwwbe.model.v1.dto.PromiseTime;
 import com.promise8.wwwbe.model.v1.entity.MeetingEntityV1;
 import com.promise8.wwwbe.model.v1.entity.MeetingStatusV1;
 import com.promise8.wwwbe.model.v1.entity.MeetingUserEntityV1;
 import com.promise8.wwwbe.model.v1.entity.UserEntityV1;
+import com.promise8.wwwbe.service.MeetingServiceHelper;
+import com.promise8.wwwbe.service.ThumbnailHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -101,7 +101,7 @@ public class MeetingGetResDtoV1 {
                 .meetingName(meetingEntity.getMeetingName())
                 .minimumAlertMembers(meetingEntity.getConditionCount())
                 .hostName(confirmedPromiseResDto.getHostName())
-                .currentUserName(currentUserName)
+                .currentUserName(currentUserName == null ? userEntity.getUserName(): currentUserName)
                 .isHost(userEntity.getUserId().equals(meetingEntity.getCreator().getUserId()))
                 .joinedUserCount(isNoMeetingUser ? 0 : meetingEntity.getMeetingUserEntityList().size())
                 .votingUserCount(confirmedPromiseResDto.getVotingUserCount())
