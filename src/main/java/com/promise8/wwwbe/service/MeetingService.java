@@ -55,40 +55,8 @@ public class MeetingService {
                 .build()
         );
 
-        // TODO Refactoring
-        List<MeetingUserTimetableEntityV1> meetingUserTimetableEntityList = new ArrayList<>();
-
-        for (UserPromiseTimeReqDtoV1 userPromiseTimeReqDto : meetingCreateReqDto.getPromiseDateTimeList()) {
-            LocalDate promiseDate = userPromiseTimeReqDto.getPromiseDate();
-            PromiseTime promiseTime = userPromiseTimeReqDto.getPromiseTime();
-
-            MeetingUserTimetableEntityV1 meetingUserTimetableEntity = MeetingUserTimetableEntityV1.builder()
-                    .promiseDate(promiseDate)
-                    .promiseTime(promiseTime)
-                    .isConfirmed(false)
-                    .meetingUserEntity(meetingUserEntity)
-                    .build();
-            meetingUserTimetableEntityList.add(meetingUserTimetableEntity);
-        }
-        meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
-
-        // TODO Refactoring
-        HashSet<String> isExistPlaceHashSet = new HashSet<>();
-        List<MeetingPlaceEntityV1> meetingPlaceEntityList = new ArrayList<>();
-        for (String promisePlace : meetingCreateReqDto.getPromisePlaceList()) {
-            if (isExistPlaceHashSet.contains(promisePlace)) {
-                continue;
-            } else {
-                isExistPlaceHashSet.add(promisePlace);
-            }
-
-            meetingPlaceEntityList.add(MeetingPlaceEntityV1.builder()
-                    .promisePlace(promisePlace)
-                    .isConfirmed(false)
-                    .meetingUserEntity(meetingUserEntity)
-                    .build());
-        }
-        meetingPlaceRepository.saveAll(meetingPlaceEntityList);
+        saveMeetingUserTimetableList(meetingCreateReqDto.getPromiseDateTimeList(), meetingUserEntity);
+        saveMeetingPlaceList(meetingCreateReqDto.getPromisePlaceList(), meetingUserEntity, new HashSet<>());
 
         return MeetingCreateResDtoV1.of(meetingCode, shortLink);
     }
@@ -263,17 +231,7 @@ public class MeetingService {
         MeetingUserEntityV1 meetingUserEntity = meetingEntity.addMeetingUser(newMeetingUserEntity);
         meetingUserRepository.save(meetingUserEntity);
 
-        List<MeetingUserTimetableEntityV1> meetingUserTimetableEntityList = new ArrayList<>();
-        for (UserPromiseTimeReqDtoV1 userPromiseTimeReq : joinMeetingReqDto.getUserPromiseTimeList()) {
-            meetingUserTimetableEntityList.add(MeetingUserTimetableEntityV1.builder()
-                    .meetingUserEntity(meetingUserEntity)
-                    .promiseDate(userPromiseTimeReq.getPromiseDate())
-                    .promiseTime(userPromiseTimeReq.getPromiseTime())
-                    .isConfirmed(false)
-                    .build());
-        }
-
-        meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
+        saveMeetingUserTimetableList(joinMeetingReqDto.getUserPromiseTimeList(), meetingUserEntity);
 
         HashSet<String> existPromisePlaceHashSet = new HashSet<>();
         if (meetingEntity.getMeetingUserEntityList() != null) {
@@ -282,20 +240,7 @@ public class MeetingService {
             });
         }
 
-        List<MeetingPlaceEntityV1> meetingPlaceEntityList = new ArrayList<>();
-        joinMeetingReqDto.getPromisePlaceList().forEach(req -> {
-            if (existPromisePlaceHashSet.contains(req)) {
-                return;
-            } else {
-                existPromisePlaceHashSet.add(req);
-            }
-
-            meetingPlaceEntityList.add(meetingPlaceRepository.save(MeetingPlaceEntityV1.builder()
-                    .meetingUserEntity(meetingUserEntity)
-                    .promisePlace(req)
-                    .isConfirmed(false)
-                    .build()));
-        });
+        saveMeetingPlaceList(joinMeetingReqDto.getPromisePlaceList(), meetingUserEntity, existPromisePlaceHashSet);
 
 //        int currentUserCount = meetingEntity.getMeetingUserEntityList().size();
 //
@@ -313,8 +258,45 @@ public class MeetingService {
 //            }
 //        }
 
-        meetingPlaceRepository.saveAll(meetingPlaceEntityList);
         return meetingUserEntity.getMeetingUserId();
+    }
+
+    private void saveMeetingUserTimetableList(
+            List<UserPromiseTimeReqDtoV1> promiseDateTimeList, MeetingUserEntityV1 meetingUserEntity) {
+        List<MeetingUserTimetableEntityV1> meetingUserTimetableEntityList = new ArrayList<>();
+
+        for (UserPromiseTimeReqDtoV1 userPromiseTimeReqDto : promiseDateTimeList) {
+            LocalDate promiseDate = userPromiseTimeReqDto.getPromiseDate();
+            PromiseTime promiseTime = userPromiseTimeReqDto.getPromiseTime();
+
+            MeetingUserTimetableEntityV1 meetingUserTimetableEntity = MeetingUserTimetableEntityV1.builder()
+                    .promiseDate(promiseDate)
+                    .promiseTime(promiseTime)
+                    .isConfirmed(false)
+                    .meetingUserEntity(meetingUserEntity)
+                    .build();
+            meetingUserTimetableEntityList.add(meetingUserTimetableEntity);
+        }
+        meetingUserTimetableRepository.saveAll(meetingUserTimetableEntityList);
+    }
+
+    private void saveMeetingPlaceList(
+            List<String> promisePlaceList, MeetingUserEntityV1 meetingUserEntity, HashSet<String> isExistPlaceHashSet) {
+        List<MeetingPlaceEntityV1> meetingPlaceEntityList = new ArrayList<>();
+        for (String promisePlace : promisePlaceList) {
+            if (isExistPlaceHashSet.contains(promisePlace)) {
+                continue;
+            } else {
+                isExistPlaceHashSet.add(promisePlace);
+            }
+
+            meetingPlaceEntityList.add(MeetingPlaceEntityV1.builder()
+                    .promisePlace(promisePlace)
+                    .isConfirmed(false)
+                    .meetingUserEntity(meetingUserEntity)
+                    .build());
+        }
+        meetingPlaceRepository.saveAll(meetingPlaceEntityList);
     }
 
     public List<MeetingEntityV1> getVoteNotiNeedMeetingList() {
