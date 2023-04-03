@@ -2,6 +2,7 @@ package com.promise8.wwwbe.model.v2.dto.res;
 
 import com.promise8.wwwbe.model.v1.dto.PromiseDayOfWeek;
 import com.promise8.wwwbe.model.v1.dto.PromiseTime;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @Builder
+@ApiModel(value = "ConfirmedPromise", description = "확정된 약속 정보")
 public class ConfirmedPromise {
     @ApiModelProperty(value = "confirmedDate", notes = "확정된 날짜")
     private LocalDate promiseDate;
